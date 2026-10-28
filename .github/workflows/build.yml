@@ -39,6 +39,22 @@ jobs:
           npm install --save-dev @capacitor/cli
           npx cap init "MarketDesk India" "com.marketdesk.india" --web-dir www
           npx cap add android
+          
+      - name: Align Kotlin dependency versions
+        run: |
+          cat >> app/android/build.gradle <<'EOF'
+          subprojects {
+              configurations.configureEach {
+                  resolutionStrategy.eachDependency { details ->
+                      if (details.requested.group == 'org.jetbrains.kotlin' &&
+                          details.requested.name in ['kotlin-stdlib', 'kotlin-stdlib-jdk7', 'kotlin-stdlib-jdk8']) {
+                          details.useVersion '1.8.22'
+                      }
+                  }
+              }
+          }
+          EOF
+          
 
       - name: Build debug APK
         run: |
