@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<title>MarketDesk India</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#121d30;--line:#26364d;--text:#e8eef8;--muted:#91a3bc;--green:#35d49a;--red:#ff7185;--blue:#7ca8ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px Arial,sans-serif}
+header{padding:22px 18px;background:#101a2b;border-bottom:1px solid var(--line)}
+h1{font-size:23px;margin:0 0 7px}
+p{color:var(--muted);margin:5px 0}
+main{padding:16px;max-width:900px;margin:auto}
+.tag{font-size:11px;color:#f3ce7a;border:1px solid #65542d;padding:5px 8px;border-radius:20px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0}
+.card{background:var(--panel);border:1px solid var(--line);padding:15px;border-radius:14px;min-width:0}
+.label{color:var(--muted);font-size:13px}
+.value{font-size:24px;font-weight:bold;margin:12px 0}
+section{margin:22px 0}
+h2{font-size:17px}
+button,input,select{font:inherit;color:var(--text);background:#17253a;border:1px solid var(--line);padding:11px;border-radius:9px}
+button{cursor:pointer}
+button.active{border-color:var(--blue);background:#243b5e}
+input{width:100%;margin:10px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:12px 7px;border-bottom:1px solid var(--line)}
+th{color:var(--muted)}
+.note{font-size:12px;line-height:1.6}
+#status{color:#f3ce7a;font-size:13px}
+nav{display:flex;gap:8px;overflow:auto;padding:8px 0}
+nav button{white-space:nowrap}
+footer{padding:20px;text-align:center;color:var(--muted);font-size:12px}
+@media(max-width:380px){.value{font-size:20px}.card{padding:11px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="row">
+    <div>
+      <h1>MarketDesk <span style="color:#7ca8ff">India</span></h1>
+      <p>Personal market research terminal</p>
+    </div>
+    <span class="tag">PAPER MODE</span>
+  </div>
+</header>
+<main>
+  <div id="status">Demo mode · Live data connected nahi hai</div>
+
+  <nav>
+    <button class="active" onclick="showTab('overview',this)">Overview</button>
+    <button onclick="showTab('watchlist',this)">Watchlist</button>
+    <button onclick="showTab('paper',this)">Paper Trading</button>
+    <button onclick="showTab('research',this)">Research</button>
+  </nav>
+
+  <div id="overview" class="tab">
+    <section>
+      <h2>Market Overview</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="label">NIFTY 50</div>
+          <div class="value">—</div>
+          <p>Awaiting market data</p>
+        </div>
+        <div class="card">
+          <div class="label">SENSEX</div>
+          <div class="value">—</div>
+          <p>Awaiting market data</p>
+        </div>
+      </div>
+    </section>
+    <section class="card">
+      <h2>Market Intelligence</h2>
+      <p>Stock prices, volume aur trend indicators yahan dikhenge jab data source connect hoga.</p>
+      <p class="note">Koi live price ya trading signal abhi generate nahi ho raha hai.</p>
+    </section>
+    <section class="card">
+      <h2>Today's Research</h2>
+      <p>Watchlist banao aur historical data verify karke analysis shuru karo.</p>
+    </section>
+  </div>
+
+  <div id="watchlist" class="tab" hidden>
+    <section class="card">
+      <h2>My Watchlist</h2>
+      <p>Stock symbol add karo. Abhi list isi page ke session mein rahegi.</p>
+      <form id="watchForm">
+        <input id="symbol" placeholder="Example: RELIANCE" maxlength="20" required>
+        <button type="submit">Add Stock</button>
+      </form>
+      <table>
+        <thead><tr><th>Symbol</th><th>Price</th><th>Status</th><th></th></tr></thead>
+        <tbody id="watchRows"><tr><td colspan="4">Abhi koi stock add nahi hai.</td></tr></tbody>
+      </table>
+    </section>
+  </div>
+
+  <div id="paper" class="tab" hidden>
+    <section class="card">
+      <h2>Paper Trading</h2>
+      <p>Virtual balance: <strong id="balance">₹100,000.00</strong></p>
+      <p id="paperStatus">Virtual account ready. Yeh real trading nahi hai.</p>
+      <form id="tradeForm">
+        <label>Stock symbol</label>
+        <input id="tradeSymbol" placeholder="Example: TCS" maxlength="20" required>
+        <label>Simulated buy price (₹)</label>
+        <input id="tradePrice" type="number" min="0.01" step="0.01" placeholder="1000" required>
+        <label>Quantity</label>
+        <input id="tradeQty" type="number" min="1" step="1" placeholder="1" required>
+        <button type="submit">Simulate Buy</button>
+      </form>
+      <h2>Virtual Positions</h2>
+      <table>
+        <thead><tr><th>Stock</th><th>Qty</th><th>Buy Price</th><th>Action</th></tr></thead>
+        <tbody id="positions"><tr><td colspan="4">Abhi koi position nahi hai.</td></tr></tbody>
+      </table>
+      <p class="note">Simulated prices tum enter karte ho. Market prices se automatic sync nahi hota.</p>
+    </section>
+  </div>
+
+  <div id="research" class="tab" hidden>
+    <section class="card">
+      <h2>Research Lab</h2>
+      <p>Agla milestone: verified historical OHLCV data, RSI, moving averages aur realistic backtesting.</p>
+      <p>Strategy test mein brokerage, slippage aur out-of-sample results include karenge.</p>
+      <p class="note">Historical results future profit ki guarantee nahi hote.</p>
+    </section>
+  </div>
+</main>
+<footer>MarketDesk India · Personal research prototype · Not investment advice</footer>
+<script>
+function showTab(id,btn){
+  document.querySelectorAll('.tab').forEach(x=>x.hidden=true);
+  document.getElementById(id).hidden=false;
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+}
+const watchlist=[];
+function drawWatchlist(){
+  const body=document.getElementById('watchRows');
+  body.replaceChildren();
+  if(!watchlist.length){
+    body.innerHTML='<tr><td colspan="4">Abhi koi stock add nahi hai.</td></tr>';
+    return;
+  }
+  watchlist.forEach((symbol,i)=>{
+    const tr=document.createElement('tr');
+    [symbol,'—','Data pending'].forEach(v=>{
+      const td=document.createElement('td');td.textContent=v;tr.appendChild(td);
+    });
+    const td=document.createElement('td'),b=document.createElement('button');
+    b.textContent='Remove';b.onclick=()=>{watchlist.splice(i,1);drawWatchlist()};
+    td.appendChild(b);tr.appendChild(td);body.appendChild(tr);
+  });
+}
+document.getElementById('watchForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const s=document.getElementById('symbol').value.trim().toUpperCase();
+  if(!/^[A-Z0-9.&_-]{1,20}$/.test(s))return;
+  if(!watchlist.includes(s))watchlist.push(s);
+  drawWatchlist();e.target.reset();
+});
+let balance=100000;
+const positions=[];
+function money(n){return '₹'+n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function drawPositions(){
+  document.getElementById('balance').textContent=money(balance);
+  const body=document.getElementById('positions');body.replaceChildren();
+  if(!positions.length){body.innerHTML='<tr><td colspan="4">Abhi koi position nahi hai.</td></tr>';return}
+  positions.forEach((p,i)=>{
+    const tr=document.createElement('tr');
+    [p.symbol,p.qty,money(p.price)].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});
+    const td=document.createElement('td'),b=document.createElement('button');
+    b.textContent='Close';b.onclick=()=>{
+      balance+=p.price*p.qty;positions.splice(i,1);drawPositions();
+      document.getElementById('paperStatus').textContent='Virtual position closed at its simulated buy price; profit/loss excludes fees.';
+    };
+    td.appendChild(b);tr.appendChild(td);body.appendChild(tr);
+  });
+}
+document.getElementById('tradeForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const symbol=document.getElementById('tradeSymbol').value.trim().toUpperCase();
+  const price=Number(document.getElementById('tradePrice').value);
+  const qty=Number(document.getElementById('tradeQty').value);
+  const cost=price*qty;
+  if(!/^[A-Z0-9.&_-]{1,20}$/.test(symbol)||!Number.isFinite(cost)||price<=0||qty<1||!Number.isInteger(qty)||cost>balance){
+    document.getElementById('paperStatus').textContent='Details check karo: quantity, price aur virtual balance.';
+    return;
+  }
+  balance-=cost;positions.push({symbol,price,qty});drawPositions();e.target.reset();
+  document.getElementById('paperStatus').textContent='Virtual buy recorded. Yeh order exchange par send nahi hua.';
+});
+</script>
+</body>
+</html>
