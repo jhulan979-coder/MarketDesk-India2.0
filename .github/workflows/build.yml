@@ -8,7 +8,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -62,9 +62,16 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      
+      - name: Publish APK to GitHub Releases
+        uses: softprops/action-gh-release@v2
         with:
-          name: MarketDesk-India-APK
-          path: app/android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
+          tag_name: marketdesk-v${{ github.run_number }}
+          name: MarketDesk India v${{ github.run_number }}
+          body: |
+            MarketDesk India personal research app.
+            Download the APK below and install it on your Android phone.
+            Demo data only; live market data is not connected yet.
+          files: app/android/app/build/outputs/apk/debug/app-debug.apk
+          fail_on_unmatched_files: true
+          
