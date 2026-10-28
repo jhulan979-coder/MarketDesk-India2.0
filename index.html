@@ -126,7 +126,19 @@ footer{padding:20px;text-align:center;color:var(--muted);font-size:12px}
   
   <div id="research" class="tab" hidden>
     <section class="card">
-      <h2>Historical Stock Analysis</h2>
+  <h2>Historical Stock Analysis</h2>
+      <div class="grid">
+  <div class="card">
+    <div class="label">RSI (14)</div>
+    <div class="value" id="rsiValue">—</div>
+    <p id="rsiStatus">Data ka intezar hai</p>
+  </div>
+  <div class="card">
+    <div class="label">Moving Average (20)</div>
+    <div class="value" id="maValue">—</div>
+    <p id="maStatus">Data ka intezar hai</p>
+  </div>
+      </div>
       <p>Free historical daily data · NSE stocks</p>
 
       <label for="historySymbol">Stock symbol</label>
