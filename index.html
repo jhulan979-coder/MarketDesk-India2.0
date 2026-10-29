@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1220">
 <title>MarketDesk India</title>
 <style>
@@ -12,7 +11,8 @@
 body{margin:0;background:var(--bg);color:var(--text);font:15px Arial,sans-serif}
 header{padding:22px 18px;background:#101a2b;border-bottom:1px solid var(--line)}
 h1{font-size:23px;margin:0 0 7px}
-p{color:var(--muted);margin:5px 0}
+h2{font-size:17px}
+p{color:var(--muted);margin:7px 0}
 main{padding:16px;max-width:900px;margin:auto}
 .tag{font-size:11px;color:#f3ce7a;border:1px solid #65542d;padding:5px 8px;border-radius:20px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -21,21 +21,20 @@ main{padding:16px;max-width:900px;margin:auto}
 .label{color:var(--muted);font-size:13px}
 .value{font-size:24px;font-weight:bold;margin:12px 0}
 section{margin:22px 0}
-h2{font-size:17px}
 button,input,select{font:inherit;color:var(--text);background:#17253a;border:1px solid var(--line);padding:11px;border-radius:9px}
 button{cursor:pointer}
+button:disabled{opacity:.6}
 button.active{border-color:var(--blue);background:#243b5e}
-input{width:100%;margin:10px 0}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
+input,select{width:100%;margin:8px 0 12px}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{text-align:left;padding:12px 7px;border-bottom:1px solid var(--line)}
 th{color:var(--muted)}
 .note{font-size:12px;line-height:1.6}
 #status{color:#f3ce7a;font-size:13px}
-nav{display:flex;gap:8px;overflow:auto;padding:8px 0}
+nav{display:flex;gap:8px;overflow-x:auto;padding:8px 0}
 nav button{white-space:nowrap}
 footer{padding:20px;text-align:center;color:var(--muted);font-size:12px}
-@media(max-width:380px){.value{font-size:20px}.card{padding:11px}}
+@media(max-width:380px){.value{font-size:20px}.card{padding:11px}th,td{padding:9px 5px}}
 </style>
 </head>
 <body>
@@ -48,503 +47,534 @@ footer{padding:20px;text-align:center;color:var(--muted);font-size:12px}
     <span class="tag">PAPER MODE</span>
   </div>
 </header>
+
 <main>
-  <div id="status">Demo mode · Live data connected nahi hai</div>
+<div id="status">Demo mode · Live data connected nahi hai</div>
 
-  <nav>
-    <button class="active" onclick="showTab('overview',this)">Overview</button>
-    <button onclick="showTab('watchlist',this)">Watchlist</button>
-    <button onclick="showTab('paper',this)">Paper Trading</button>
-    <button onclick="showTab('research',this)">Research</button>
-  </nav>
+<nav>
+<button type="button" class="active" onclick="showTab('overview',this)">Overview</button>
+<button type="button" onclick="showTab('watchlist',this)">Watchlist</button>
+<button type="button" onclick="showTab('paper',this)">Paper Trading</button>
+<button type="button" onclick="showTab('research',this)">Research</button>
+</nav>
 
-  <div id="overview" class="tab">
-    <section>
-      <h2>Market Overview</h2>
-      <div class="grid">
-        <div class="card">
-          <div class="label">NIFTY 50</div>
-          <div class="value">—</div>
-          <p>Awaiting market data</p>
-        </div>
-        <div class="card">
-          <div class="label">SENSEX</div>
-          <div class="value">—</div>
-          <p>Awaiting market data</p>
-        </div>
-      </div>
-    </section>
-    <section class="card">
-      <h2>Market Intelligence</h2>
-      <p>Stock prices, volume aur trend indicators yahan dikhenge jab data source connect hoga.</p>
-      <p class="note">Koi live price ya trading signal abhi generate nahi ho raha hai.</p>
-    </section>
-    <section class="card">
-      <h2>Today's Research</h2>
-      <p>Watchlist banao aur historical data verify karke analysis shuru karo.</p>
-    </section>
-  </div>
+<div id="overview" class="tab">
+<section>
+<h2>Market Overview</h2>
+<div class="grid">
+<div class="card"><div class="label">NIFTY 50</div><div class="value">—</div><p>Awaiting market data</p></div>
+<div class="card"><div class="label">SENSEX</div><div class="value">—</div><p>Awaiting market data</p></div>
+</div>
+</section>
+<section class="card">
+<h2>Market Intelligence</h2>
+<p>Stock prices aur trend indicators tab dikhenge jab data source connect hoga.</p>
+<p class="note">Abhi live price ya trading signal generate nahi ho raha hai.</p>
+</section>
+<section class="card"><h2>Today's Research</h2><p>Watchlist banao aur historical data se analysis karo.</p></section>
+</div>
 
-  <div id="watchlist" class="tab" hidden>
-    <section class="card">
-      <h2>My Watchlist</h2>
-      <p>Stock symbol add karo. Abhi list isi page ke session mein rahegi.</p>
-      <form id="watchForm">
-        <input id="symbol" placeholder="Example: RELIANCE" maxlength="20" required>
-        <button type="submit">Add Stock</button>
-      </form>
-      <table>
-        <thead><tr><th>Symbol</th><th>Price</th><th>Status</th><th></th></tr></thead>
-        <tbody id="watchRows"><tr><td colspan="4">Abhi koi stock add nahi hai.</td></tr></tbody>
-      </table>
-    </section>
-  </div>
-
-  <div id="paper" class="tab" hidden>
-    <section class="card">
-      <h2>Paper Trading</h2>
-      <p>Virtual balance: <strong id="balance">₹100,000.00</strong></p>
-      <p id="paperStatus">Virtual account ready. Yeh real trading nahi hai.</p>
-      <form id="tradeForm">
-        <label>Stock symbol</label>
-        <input id="tradeSymbol" placeholder="Example: TCS" maxlength="20" required>
-        <label>Simulated buy price (₹)</label>
-        <input id="tradePrice" type="number" min="0.01" step="0.01" placeholder="1000" required>
-        <label>Quantity</label>
-        <input id="tradeQty" type="number" min="1" step="1" placeholder="1" required>
-        <button type="submit">Simulate Buy</button>
-      </form>
-      <h2>Virtual Positions</h2>
-      <table>
-        <thead><tr><th>Stock</th><th>Qty</th><th>Buy Price</th><th>Action</th></tr></thead>
-        <tbody id="positions"><tr><td colspan="4">Abhi koi position nahi hai.</td></tr></tbody>
-      </table>
-      <h2>Trade History</h2>
-<p>Realized Profit/Loss: <strong id="realizedPL">₹0.00</strong></p>
+<div id="watchlist" class="tab" hidden>
+<section class="card">
+<h2>My Watchlist</h2>
+<p>Stock symbol add karo. List is device par save hogi.</p>
+<form id="watchForm">
+<label for="symbol">Stock symbol</label>
+<input id="symbol" placeholder="Example: RELIANCE" maxlength="20" required>
+<button type="submit">Add Stock</button>
+</form>
+<div style="overflow-x:auto">
 <table>
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Stock</th>
-      <th>Action</th>
-      <th>Qty</th>
-      <th>Price</th>
-      <th>P/L</th>
-    </tr>
-  </thead>
-  <tbody id="marketHistoryRows">
-    <tr><td colspan="6">Abhi history nahi hai.</td></tr>
-  </tbody>
+<thead><tr><th>Symbol</th><th>Price</th><th>Status</th><th></th></tr></thead>
+<tbody id="watchRows"></tbody>
 </table>
-      <p class="note">Simulated prices tum enter karte ho. Market prices se automatic sync nahi hota.</p>
-    </section>
-  </div>
+</div>
+</section>
+</div>
 
-  
-  <div id="research" class="tab" hidden>
-    <section class="card">
-  <h2>Historical Stock Analysis</h2>
-      <div class="grid">
-  <div class="card">
-    <div class="label">RSI (14)</div>
-    <div class="value" id="rsiValue">—</div>
-    <p id="rsiStatus">Data ka intezar hai</p>
-  </div>
-  <div class="card">
-    <div class="label">Moving Average (20)</div>
-    <div class="value" id="maValue">—</div>
-    <p id="maStatus">Data ka intezar hai</p>
-  </div>
-      </div>
-      <p>Free historical daily data · NSE stocks</p>
+<div id="paper" class="tab" hidden>
+<section class="card">
+<h2>Paper Trading</h2>
+<p>Virtual balance: <strong id="balance">₹100,000.00</strong></p>
+<p id="paperStatus">Virtual account ready. Yeh real trading nahi hai.</p>
+<form id="tradeForm">
+<label for="tradeSymbol">Stock symbol</label>
+<input id="tradeSymbol" placeholder="Example: TCS" maxlength="20" required>
+<label for="tradePrice">Simulated buy price (₹)</label>
+<input id="tradePrice" type="number" min="0.01" step="0.01" placeholder="1000" required>
+<label for="tradeQty">Quantity</label>
+<input id="tradeQty" type="number" min="1" step="1" placeholder="1" required>
+<button type="submit">Simulate Buy</button>
+</form>
 
-      <label for="historySymbol">Stock symbol</label>
-      <select id="historySymbol">
-        <option value="RELIANCE">RELIANCE</option>
-        <option value="TCS">TCS</option>
-        <option value="SBIN">SBIN</option>
-        <option value="INFY">INFY</option>
-        <option value="HDFCBANK">HDFCBANK</option>
-      </select>
+<h2>Virtual Positions</h2>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>Stock</th><th>Qty</th><th>Buy Price</th><th>Action</th></tr></thead>
+<tbody id="positions"></tbody>
+</table>
+</div>
 
-      <label for="historyFrom">From date</label>
-      <input id="historyFrom" type="date" value="2026-01-01">
+<h2>Trade History</h2>
+<p>Realized Profit/Loss: <strong id="realizedPL">₹0.00</strong></p>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>Date</th><th>Stock</th><th>Action</th><th>Qty</th><th>Price</th><th>P/L</th></tr></thead>
+<tbody id="tradeHistoryRows"></tbody>
+</table>
+</div>
+<p class="note">Prices manually enter kiye jaate hain. Yeh simulated trading hai, real order nahi.</p>
+</section>
+</div>
 
-      <label for="historyTo">To date</label>
-      <input id="historyTo" type="date" value="2026-10-28">
+<div id="research" class="tab" hidden>
+<section class="card">
+<h2>Historical Stock Analysis</h2>
+<div class="grid">
+<div class="card">
+<div class="label">RSI (14)</div>
+<div class="value" id="rsiValue">—</div>
+<p id="rsiStatus">Data ka intezar hai</p>
+</div>
+<div class="card">
+<div class="label">Moving Average (20)</div>
+<div class="value" id="maValue">—</div>
+<p id="maStatus">Data ka intezar hai</p>
+</div>
+</div>
 
-      <button id="loadHistory" type="button">Load Historical Data</button>
-      <p id="historyStatus" class="note">Data load karne ke liye button dabao.</p>
+<p>Free historical daily data · NSE stocks</p>
+<label for="historySymbol">Stock symbol</label>
+<select id="historySymbol">
+<option value="RELIANCE">RELIANCE</option>
+<option value="TCS">TCS</option>
+<option value="SBIN">SBIN</option>
+<option value="INFY">INFY</option>
+<option value="HDFCBANK">HDFCBANK</option>
+</select>
 
-      <div style="overflow-x:auto">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>High</th>
-              <th>Low</th>
-              <th>Close</th>
-              <th>Volume</th>
-            </tr>
-          </thead>
-          <tbody id="historyRows">
-            <tr><td colspan="5">Abhi data load nahi hua.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-    <section class="card">
-      <h2>Research Notes</h2>
-      <p>Historical prices analysis aur backtesting ke liye hain, guaranteed trading signals ke liye nahi.</p>
-    </section>
-  </div>
-  
+<label for="historyFrom">From date</label>
+<input id="historyFrom" type="date" value="2026-01-01">
+<label for="historyTo">To date</label>
+<input id="historyTo" type="date" value="2026-10-28">
+
+<button id="loadHistory" type="button">Load Historical Data</button>
+<p id="historyStatus" class="note">Data load karne ke liye button dabao.</p>
+
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>Date</th><th>High</th><th>Low</th><th>Close</th><th>Volume</th></tr></thead>
+<tbody id="historyRows"></tbody>
+</table>
+</div>
+</section>
+<section class="card">
+<h2>Research Notes</h2>
+<p>Historical analysis future returns ki guarantee nahi deta.</p>
+</section>
+</div>
 </main>
+
 <footer>MarketDesk India · Personal research prototype · Not investment advice</footer>
+
 <script>
+'use strict';
+
+/* Navigation */
 function showTab(id,btn){
-  document.querySelectorAll('.tab').forEach(x=>x.hidden=true);
+  document.querySelectorAll('.tab').forEach(tab=>tab.hidden=true);
   document.getElementById(id).hidden=false;
-  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
-const watchlist=[];
+
+/* Watchlist storage */
+const WATCH_KEY='marketdesk_watchlist_v1';
+let watchlist=[];
+
+try{
+  const saved=JSON.parse(localStorage.getItem(WATCH_KEY)||'[]');
+  if(Array.isArray(saved))watchlist=saved.filter(s=>typeof s==='string');
+}catch(e){console.warn('Watchlist load failed',e)}
+
+function saveWatchlist(){
+  try{localStorage.setItem(WATCH_KEY,JSON.stringify(watchlist))}
+  catch(e){console.warn('Watchlist save failed',e)}
+}
+
 function drawWatchlist(){
   const body=document.getElementById('watchRows');
   body.replaceChildren();
+
   if(!watchlist.length){
     body.innerHTML='<tr><td colspan="4">Abhi koi stock add nahi hai.</td></tr>';
     return;
   }
+
   watchlist.forEach((symbol,i)=>{
     const tr=document.createElement('tr');
-    [symbol,'—','Data pending'].forEach(v=>{
-      const td=document.createElement('td');td.textContent=v;tr.appendChild(td);
-    });
-    const td=document.createElement('td'),b=document.createElement('button');
-    b.textContent='Remove';b.onclick=()=>{watchlist.splice(i,1);drawWatchlist()};
-    td.appendChild(b);tr.appendChild(td);body.appendChild(tr);
-  });
-}
-document.getElementById('watchForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const s=document.getElementById('symbol').value.trim().toUpperCase();
-  if(!/^[A-Z0-9.&_-]{1,20}$/.test(s))return;
-  if(!watchlist.includes(s))watchlist.push(s);
-  drawWatchlist();e.target.reset();
-});
-const PAPER_KEY = 'marketdesk_paper_v1';
-
-let balance = 100000;
-let positions = [];
-let tradeHistory = [];
-
-function savePaperData() {
-  try {
-    localStorage.setItem(PAPER_KEY, JSON.stringify({
-      balance,
-      positions,
-      tradeHistory
-    }));
-  } catch (error) {
-    console.error('Paper data save nahi hua:', error);
-  }
-}
-
-function loadPaperData() {
-  try {
-    const saved = localStorage.getItem(PAPER_KEY);
-    if (!saved) return;
-
-    const data = JSON.parse(saved);
-
-    if (
-      Number.isFinite(data.balance) &&
-      data.balance >= 0 &&
-      Array.isArray(data.positions) &&
-      Array.isArray(data.tradeHistory)
-    ) {
-      balance = data.balance;
-      positions = data.positions;
-      tradeHistory = data.tradeHistory;
-    }
-  } catch (error) {
-    console.error('Paper data load nahi hua:', error);
-  }
-}
-
-loadPaperData();
-function money(n){return '₹'+n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
-function drawPositions() {
-  document.getElementById('balance').textContent = money(balance);
-
-  const body = document.getElementById('positions');
-  body.replaceChildren();
-
-  if (!positions.length) {
-    body.innerHTML =
-      '<tr><td colspan="4">Abhi koi position nahi hai.</td></tr>';
-  } else {
-    positions.forEach((p, i) => {
-      const tr = document.createElement('tr');
-
-      [p.symbol, p.qty, money(p.price)].forEach(value => {
-        const td = document.createElement('td');
-        td.textContent = value;
-        tr.appendChild(td);
-      });
-
-      const actionCell = document.createElement('td');
-      const sellPrice = document.createElement('input');
-
-      sellPrice.type = 'number';
-      sellPrice.min = '0.01';
-      sellPrice.step = '0.01';
-      sellPrice.placeholder = 'Sell price ₹';
-      sellPrice.style.width = '100px';
-      sellPrice.setAttribute('aria-label', p.symbol + ' simulated sell price');
-
-      const closeButton = document.createElement('button');
-      closeButton.textContent = 'Close';
-
-      closeButton.onclick = () => {
-        const exitPrice = Number(sellPrice.value);
-
-        if (!Number.isFinite(exitPrice) || exitPrice <= 0) {
-          document.getElementById('paperStatus').textContent =
-            'Close karne se pehle valid simulated sell price bharo.';
-          return;
-        }
-
-        const pnl = (exitPrice - p.price) * p.qty;
-
-        balance += exitPrice * p.qty;
-
-  tradeHistory.push({
-  date: new Date().toLocaleString('en-IN'),
-  symbol: p.symbol,
-  action: 'SELL',
-  qty: p.qty,
-  price: exitPrice,
-  pnl: pnl
-});
-
-savePaperData();
-          symbol: p.symbol,
-          action: 'SELL',
-          qty: p.qty,
-          price: exitPrice,
-          pnl: pnl
-        });
-
-        positions.splice(i, 1);
-        drawPositions();
-        drawTradeHistory();
-
-        document.getElementById('paperStatus').textContent =
-          'Virtual position closed. Realized P/L: ' + money(pnl);
-      };
-
-      actionCell.appendChild(sellPrice);
-      actionCell.appendChild(closeButton);
-      tr.appendChild(actionCell);
-      body.appendChild(tr);
-    });
-  }
-}
-function drawTradeHistory() {
-const rows = document.getElementById('marketHistoryRows');
-  const plElement = document.getElementById('realizedPL');
-
-  rows.replaceChildren();
-
-  const totalPL = tradeHistory.reduce(
-    (sum, trade) => sum + trade.pnl,
-    0
-  );
-
-  plElement.textContent = money(totalPL);
-
-  if (!tradeHistory.length) {
-    rows.innerHTML =
-      '<tr><td colspan="6">Abhi history nahi hai.</td></tr>';
-    return;
-  }
-
-  [...tradeHistory].reverse().forEach(trade => {
-    const tr = document.createElement('tr');
-
-    [
-      trade.date,
-      trade.symbol,
-      trade.action,
-      trade.qty,
-      money(trade.price),
-      money(trade.pnl)
-    ].forEach(value => {
-      const td = document.createElement('td');
-      td.textContent = value;
+    [symbol,'—','Data pending'].forEach(value=>{
+      const td=document.createElement('td');
+      td.textContent=value;
       tr.appendChild(td);
     });
 
+    const td=document.createElement('td');
+    const button=document.createElement('button');
+    button.type='button';
+    button.textContent='Remove';
+    button.onclick=()=>{
+      watchlist.splice(i,1);
+      saveWatchlist();
+      drawWatchlist();
+    };
+    td.appendChild(button);
+    tr.appendChild(td);
+    body.appendChild(tr);
+  });
+}
+
+document.getElementById('watchForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const symbol=document.getElementById('symbol').value.trim().toUpperCase();
+
+  if(!/^[A-Z0-9.&_-]{1,20}$/.test(symbol)){
+    alert('Stock symbol check karo.');
+    return;
+  }
+
+  if(!watchlist.includes(symbol))watchlist.push(symbol);
+  saveWatchlist();
+  drawWatchlist();
+  e.target.reset();
+});
+
+/* Paper trading storage */
+const PAPER_KEY='marketdesk_paper_v1';
+let balance=100000;
+let positions=[];
+let tradeHistory=[];
+
+function savePaperData(){
+  try{
+    localStorage.setItem(PAPER_KEY,JSON.stringify({
+      balance:balance,
+      positions:positions,
+      tradeHistory:tradeHistory
+    }));
+  }catch(error){
+    console.error('Paper data save nahi hua:',error);
+    document.getElementById('paperStatus').textContent=
+      'Data save nahi hua. Device storage check karo.';
+  }
+}
+
+function loadPaperData(){
+  try{
+    const saved=localStorage.getItem(PAPER_KEY);
+    if(!saved)return;
+
+    const data=JSON.parse(saved);
+    if(
+      Number.isFinite(data.balance)&&data.balance>=0&&
+      Array.isArray(data.positions)&&
+      Array.isArray(data.tradeHistory)
+    ){
+      balance=data.balance;
+      positions=data.positions;
+      tradeHistory=data.tradeHistory;
+    }
+  }catch(error){
+    console.error('Paper data load nahi hua:',error);
+  }
+}
+
+function money(n){
+  return '₹'+Number(n||0).toLocaleString('en-IN',{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
+}
+
+function drawPositions(){
+  document.getElementById('balance').textContent=money(balance);
+  const body=document.getElementById('positions');
+  body.replaceChildren();
+
+  if(!positions.length){
+    body.innerHTML='<tr><td colspan="4">Abhi koi position nahi hai.</td></tr>';
+    return;
+  }
+
+  positions.forEach((p,i)=>{
+    const tr=document.createElement('tr');
+
+    [p.symbol,p.qty,money(p.price)].forEach(value=>{
+      const td=document.createElement('td');
+      td.textContent=value;
+      tr.appendChild(td);
+    });
+
+    const actionCell=document.createElement('td');
+    const sellPrice=document.createElement('input');
+    sellPrice.type='number';
+    sellPrice.min='0.01';
+    sellPrice.step='0.01';
+    sellPrice.placeholder='Sell price ₹';
+    sellPrice.style.width='110px';
+    sellPrice.setAttribute('aria-label',p.symbol+' simulated sell price');
+
+    const closeButton=document.createElement('button');
+    closeButton.type='button';
+    closeButton.textContent='Close';
+
+    closeButton.onclick=()=>{
+      const exitPrice=Number(sellPrice.value);
+
+      if(!Number.isFinite(exitPrice)||exitPrice<=0){
+        document.getElementById('paperStatus').textContent=
+          'Close karne se pehle valid simulated sell price bharo.';
+        return;
+      }
+
+      const pnl=(exitPrice-p.price)*p.qty;
+      balance+=exitPrice*p.qty;
+
+      tradeHistory.push({
+        date:new Date().toLocaleString('en-IN'),
+        symbol:p.symbol,
+        action:'SELL',
+        qty:p.qty,
+        price:exitPrice,
+        pnl:pnl
+      });
+
+      positions.splice(i,1);
+      savePaperData();
+      drawPositions();
+      drawTradeHistory();
+
+      document.getElementById('paperStatus').textContent=
+        'Virtual position closed. Realized P/L: '+money(pnl);
+    };
+
+    actionCell.appendChild(sellPrice);
+    actionCell.appendChild(closeButton);
+    tr.appendChild(actionCell);
+    body.appendChild(tr);
+  });
+}
+
+function drawTradeHistory(){
+  const rows=document.getElementById('tradeHistoryRows');
+  const plElement=document.getElementById('realizedPL');
+  rows.replaceChildren();
+
+  const totalPL=tradeHistory.reduce(
+    (sum,trade)=>sum+(Number(trade.pnl)||0),0
+  );
+  plElement.textContent=money(totalPL);
+
+  if(!tradeHistory.length){
+    rows.innerHTML='<tr><td colspan="6">Abhi history nahi hai.</td></tr>';
+    return;
+  }
+
+  [...tradeHistory].reverse().forEach(trade=>{
+    const tr=document.createElement('tr');
+    [
+      trade.date||'—',
+      trade.symbol||'—',
+      trade.action||'—',
+      trade.qty??'—',
+      money(trade.price),
+      money(trade.pnl)
+    ].forEach(value=>{
+      const td=document.createElement('td');
+      td.textContent=String(value);
+      tr.appendChild(td);
+    });
     rows.appendChild(tr);
   });
-  }
+}
+
 document.getElementById('tradeForm').addEventListener('submit',e=>{
   e.preventDefault();
+
   const symbol=document.getElementById('tradeSymbol').value.trim().toUpperCase();
   const price=Number(document.getElementById('tradePrice').value);
   const qty=Number(document.getElementById('tradeQty').value);
   const cost=price*qty;
-  if(!/^[A-Z0-9.&_-]{1,20}$/.test(symbol)||!Number.isFinite(cost)||price<=0||qty<1||!Number.isInteger(qty)||cost>balance){
-    document.getElementById('paperStatus').textContent='Details check karo: quantity, price aur virtual balance.';
-    return;
-  }
-  balance -= cost;
-positions.push({symbol, price, qty});
-tradeHistory.push({
-  date: new Date().toLocaleString('en-IN'),
-  symbol,
-  action: 'BUY',
-  qty,
-  price,
-  pnl: 0
-});
-savePaperData();
-drawPositions();
-drawTradeHistory();
-e.target.reset();
-  document.getElementById('paperStatus').textContent='Virtual buy recorded. Yeh order exchange par send nahi hua.';
-});
-  
-document.getElementById('loadHistory').addEventListener('click', async () => {
-  const symbol = document.getElementById('historySymbol').value;
-  const from = document.getElementById('historyFrom').value;
-  const to = document.getElementById('historyTo').value;
-  const status = document.getElementById('historyStatus');
-  const rows = document.getElementById('historyRows');
-  const button = document.getElementById('loadHistory');
 
-  if (!from || !to || from > to) {
-    status.textContent = 'Sahi From aur To dates select karo.';
+  if(
+    !/^[A-Z0-9.&_-]{1,20}$/.test(symbol)||
+    !Number.isFinite(cost)||price<=0||
+    qty<1||!Number.isInteger(qty)||cost>balance
+  ){
+    document.getElementById('paperStatus').textContent=
+      'Details check karo: quantity, price aur virtual balance.';
     return;
   }
 
-  button.disabled = true;
-  status.textContent = 'Historical data load ho raha hai...';
+  balance-=cost;
+  positions.push({symbol:symbol,price:price,qty:qty});
+
+  tradeHistory.push({
+    date:new Date().toLocaleString('en-IN'),
+    symbol:symbol,
+    action:'BUY',
+    qty:qty,
+    price:price,
+    pnl:0
+  });
+
+  savePaperData();
+  drawPositions();
+  drawTradeHistory();
+  e.target.reset();
+
+  document.getElementById('paperStatus').textContent=
+    'Virtual buy recorded. Yeh order exchange par send nahi hua.';
+});
+
+/* Historical data and indicators */
+function getNumber(item,...keys){
+  for(const key of keys){
+    const n=Number(item?.[key]);
+    if(Number.isFinite(n))return n;
+  }
+  return NaN;
+}
+
+document.getElementById('loadHistory').addEventListener('click',async()=>{
+  const symbol=document.getElementById('historySymbol').value;
+  const from=document.getElementById('historyFrom').value;
+  const to=document.getElementById('historyTo').value;
+  const status=document.getElementById('historyStatus');
+  const rows=document.getElementById('historyRows');
+  const button=document.getElementById('loadHistory');
+
+  if(!from||!to||from>to){
+    status.textContent='Sahi From aur To dates select karo.';
+    return;
+  }
+
+  button.disabled=true;
+  status.textContent='Historical data load ho raha hai...';
   rows.replaceChildren();
 
-  try {
-    const url =
-      'https://api.tejhq.dev/v1/ohlcv/nse/' +
-      encodeURIComponent(symbol) +
-      '?from=' + encodeURIComponent(from) +
-      '&to=' + encodeURIComponent(to);
+  try{
+    const url=
+      'https://api.tejhq.dev/v1/ohlcv/nse/'+
+      encodeURIComponent(symbol)+
+      '?from='+encodeURIComponent(from)+
+      '&to='+encodeURIComponent(to);
 
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('API response: ' + response.status);
-    }
+    const response=await fetch(url);
+    if(!response.ok)throw new Error('API response: '+response.status);
 
-    const result = await response.json();
-    const data = Array.isArray(result) ? result : result.data;
+    const result=await response.json();
+    const data=Array.isArray(result)?result:result.data;
 
-    if (!Array.isArray(data) || data.length === 0) {
+    if(!Array.isArray(data)||!data.length){
       throw new Error('Is date range mein data nahi mila.');
     }
 
-    
-    const ordered = data.slice().sort((a, b) =>
-      new Date(a.date ?? a.timestamp) -
-      new Date(b.date ?? b.timestamp)
+    const ordered=data.slice().sort((a,b)=>
+      new Date(a.date??a.timestamp)-new Date(b.date??b.timestamp)
     );
 
-    const closes = ordered
-      .map(item => Number(item.close ?? item.Close))
-      .filter(value => Number.isFinite(value) && value > 0);
+    const closes=ordered
+      .map(item=>getNumber(item,'close','Close'))
+      .filter(value=>Number.isFinite(value)&&value>0);
 
-    const last20 = closes.slice(-20);
-    const ma20 = last20.length === 20
-      ? last20.reduce((sum, value) => sum + value, 0) / 20
-      : null;
+    const last20=closes.slice(-20);
+    const ma20=last20.length===20
+      ?last20.reduce((sum,value)=>sum+value,0)/20
+      :null;
 
-    const last15 = closes.slice(-15);
-    let rsi14 = null;
+    const last15=closes.slice(-15);
+    let rsi14=null;
 
-    if (last15.length === 15) {
-      let gains = 0;
-      let losses = 0;
+    if(last15.length===15){
+      let gains=0;
+      let losses=0;
 
-      for (let i = 1; i < last15.length; i++) {
-        const change = last15[i] - last15[i - 1];
-        if (change > 0) gains += change;
-        else losses -= change;
+      for(let i=1;i<last15.length;i++){
+        const change=last15[i]-last15[i-1];
+        if(change>0)gains+=change;
+        else losses-=change;
       }
 
-      if (losses === 0) {
-        rsi14 = gains === 0 ? 50 : 100;
-      } else {
-        const rs = (gains / 14) / (losses / 14);
-        rsi14 = 100 - (100 / (1 + rs));
-      }
+      rsi14=losses===0
+        ?(gains===0?50:100)
+        :100-100/(1+(gains/14)/(losses/14));
     }
 
-    document.getElementById('maValue').textContent =
-      ma20 === null ? 'Not enough data' : '₹' + ma20.toFixed(2);
+    document.getElementById('maValue').textContent=
+      ma20===null?'Not enough data':'₹'+ma20.toFixed(2);
 
-    document.getElementById('maStatus').textContent =
-      ma20 === null ? '20 valid closing prices chahiye' :
-      closes[closes.length - 1] >= ma20
-        ? 'Latest close MA20 ke upar hai'
-        : 'Latest close MA20 ke neeche hai';
+    document.getElementById('maStatus').textContent=
+      ma20===null?'20 valid closing prices chahiye':
+      closes[closes.length-1]>=ma20
+      ?'Latest close MA20 ke upar hai'
+      :'Latest close MA20 ke neeche hai';
 
-    document.getElementById('rsiValue').textContent =
-      rsi14 === null ? 'Not enough data' : rsi14.toFixed(2);
+    document.getElementById('rsiValue').textContent=
+      rsi14===null?'Not enough data':rsi14.toFixed(2);
 
-    document.getElementById('rsiStatus').textContent =
-      rsi14 === null ? '14 price changes chahiye' :
-      rsi14 >= 70 ? 'Momentum high — overbought zone' :
-      rsi14 <= 30 ? 'Momentum low — oversold zone' :
+    document.getElementById('rsiStatus').textContent=
+      rsi14===null?'14 price changes chahiye':
+      rsi14>=70?'Momentum high — overbought zone':
+      rsi14<=30?'Momentum low — oversold zone':
       'RSI 30–70 range mein';
 
     rows.replaceChildren();
 
-    ordered.slice().reverse().forEach(item => {
-      const tr = document.createElement('tr');
-      const values = [
-        item.date ?? item.timestamp ?? '—',
-        item.high ?? item.High ?? '—',
-        item.low ?? item.Low ?? '—',
-        item.close ?? item.Close ?? '—',
-        item.volume ?? item.Volume ?? '—'
+    ordered.slice().reverse().forEach(item=>{
+      const tr=document.createElement('tr');
+      const values=[
+        item.date??item.timestamp??'—',
+        item.high??item.High??'—',
+        item.low??item.Low??'—',
+        item.close??item.Close??'—',
+        item.volume??item.Volume??'—'
       ];
 
-      values.forEach(value => {
-        const td = document.createElement('td');
-        td.textContent = String(value);
+      values.forEach(value=>{
+        const td=document.createElement('td');
+        td.textContent=String(value);
         tr.appendChild(td);
       });
 
       rows.appendChild(tr);
     });
-    
-    status.textContent =
-      data.length + ' historical records load hue. Data verify kar lena.';
-  } catch (error) {
-    status.textContent =
-      'Data load nahi hua: ' + error.message +
+
+    status.textContent=
+      data.length+' historical records load hue. Data verify kar lena.';
+
+  }catch(error){
+    status.textContent=
+      'Data load nahi hua: '+error.message+
       '. Internet ya API availability check karo.';
-    const tr = document.createElement('tr');
-    const td = document.createElement('td');
-    td.colSpan = 5;
-    td.textContent = 'Data unavailable.';
+
+    const tr=document.createElement('tr');
+    const td=document.createElement('td');
+    td.colSpan=5;
+    td.textContent='Data unavailable.';
     tr.appendChild(td);
     rows.appendChild(tr);
-  } finally {
-    button.disabled = false;
+
+  }finally{
+    button.disabled=false;
   }
 });
-  
+
+/* Restore saved data and render the screen */
+loadPaperData();
+drawWatchlist();
+drawPositions();
+drawTradeHistory();
 </script>
 </body>
 </html>
