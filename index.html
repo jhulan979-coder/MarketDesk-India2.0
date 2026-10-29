@@ -284,7 +284,63 @@ document.getElementById('loadHistory').addEventListener('click', async () => {
       throw new Error('Is date range mein data nahi mila.');
     }
 
-    data.slice().reverse().forEach(item => {
+    
+    const ordered = data.slice().sort((a, b) =>
+      new Date(a.date ?? a.timestamp) -
+      new Date(b.date ?? b.timestamp)
+    );
+
+    const closes = ordered
+      .map(item => Number(item.close ?? item.Close))
+      .filter(value => Number.isFinite(value) && value > 0);
+
+    const last20 = closes.slice(-20);
+    const ma20 = last20.length === 20
+      ? last20.reduce((sum, value) => sum + value, 0) / 20
+      : null;
+
+    const last15 = closes.slice(-15);
+    let rsi14 = null;
+
+    if (last15.length === 15) {
+      let gains = 0;
+      let losses = 0;
+
+      for (let i = 1; i < last15.length; i++) {
+        const change = last15[i] - last15[i - 1];
+        if (change > 0) gains += change;
+        else losses -= change;
+      }
+
+      if (losses === 0) {
+        rsi14 = gains === 0 ? 50 : 100;
+      } else {
+        const rs = (gains / 14) / (losses / 14);
+        rsi14 = 100 - (100 / (1 + rs));
+      }
+    }
+
+    document.getElementById('maValue').textContent =
+      ma20 === null ? 'Not enough data' : '₹' + ma20.toFixed(2);
+
+    document.getElementById('maStatus').textContent =
+      ma20 === null ? '20 valid closing prices chahiye' :
+      closes[closes.length - 1] >= ma20
+        ? 'Latest close MA20 ke upar hai'
+        : 'Latest close MA20 ke neeche hai';
+
+    document.getElementById('rsiValue').textContent =
+      rsi14 === null ? 'Not enough data' : rsi14.toFixed(2);
+
+    document.getElementById('rsiStatus').textContent =
+      rsi14 === null ? '14 price changes chahiye' :
+      rsi14 >= 70 ? 'Momentum high — overbought zone' :
+      rsi14 <= 30 ? 'Momentum low — oversold zone' :
+      'RSI 30–70 range mein';
+
+    rows.replaceChildren();
+
+    ordered.slice().reverse().forEach(item => {
       const tr = document.createElement('tr');
       const values = [
         item.date ?? item.timestamp ?? '—',
@@ -302,7 +358,7 @@ document.getElementById('loadHistory').addEventListener('click', async () => {
 
       rows.appendChild(tr);
     });
-
+    
     status.textContent =
       data.length + ' historical records load hue. Data verify kar lena.';
   } catch (error) {
