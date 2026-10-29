@@ -218,6 +218,7 @@ document.getElementById('watchForm').addEventListener('submit',e=>{
 });
 let balance=100000;
 const positions=[];
+const tradeHistory = [];
 function money(n){return '₹'+n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function drawPositions(){
   document.getElementById('balance').textContent=money(balance);
