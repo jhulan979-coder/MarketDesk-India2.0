@@ -237,21 +237,113 @@ let balance=100000;
 const positions=[];
 const tradeHistory = [];
 function money(n){return '₹'+n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
-function drawPositions(){
-  document.getElementById('balance').textContent=money(balance);
-  const body=document.getElementById('positions');body.replaceChildren();
-  if(!positions.length){body.innerHTML='<tr><td colspan="4">Abhi koi position nahi hai.</td></tr>';return}
-  positions.forEach((p,i)=>{
-    const tr=document.createElement('tr');
-    [p.symbol,p.qty,money(p.price)].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td)});
-    const td=document.createElement('td'),b=document.createElement('button');
-    b.textContent='Close';b.onclick=()=>{
-      balance+=p.price*p.qty;positions.splice(i,1);drawPositions();
-      document.getElementById('paperStatus').textContent='Virtual position closed at its simulated buy price; profit/loss excludes fees.';
-    };
-    td.appendChild(b);tr.appendChild(td);body.appendChild(tr);
-  });
+function drawPositions() {
+  document.getElementById('balance').textContent = money(balance);
+
+  const body = document.getElementById('positions');
+  body.replaceChildren();
+
+  if (!positions.length) {
+    body.innerHTML =
+      '<tr><td colspan="4">Abhi koi position nahi hai.</td></tr>';
+  } else {
+    positions.forEach((p, i) => {
+      const tr = document.createElement('tr');
+
+      [p.symbol, p.qty, money(p.price)].forEach(value => {
+        const td = document.createElement('td');
+        td.textContent = value;
+        tr.appendChild(td);
+      });
+
+      const actionCell = document.createElement('td');
+      const sellPrice = document.createElement('input');
+
+      sellPrice.type = 'number';
+      sellPrice.min = '0.01';
+      sellPrice.step = '0.01';
+      sellPrice.placeholder = 'Sell price ₹';
+      sellPrice.style.width = '100px';
+      sellPrice.setAttribute('aria-label', p.symbol + ' simulated sell price');
+
+      const closeButton = document.createElement('button');
+      closeButton.textContent = 'Close';
+
+      closeButton.onclick = () => {
+        const exitPrice = Number(sellPrice.value);
+
+        if (!Number.isFinite(exitPrice) || exitPrice <= 0) {
+          document.getElementById('paperStatus').textContent =
+            'Close karne se pehle valid simulated sell price bharo.';
+          return;
+        }
+
+        const pnl = (exitPrice - p.price) * p.qty;
+
+        balance += exitPrice * p.qty;
+
+        tradeHistory.push({
+          date: new Date().toLocaleString('en-IN'),
+          symbol: p.symbol,
+          action: 'SELL',
+          qty: p.qty,
+          price: exitPrice,
+          pnl: pnl
+        });
+
+        positions.splice(i, 1);
+        drawPositions();
+        drawTradeHistory();
+
+        document.getElementById('paperStatus').textContent =
+          'Virtual position closed. Realized P/L: ' + money(pnl);
+      };
+
+      actionCell.appendChild(sellPrice);
+      actionCell.appendChild(closeButton);
+      tr.appendChild(actionCell);
+      body.appendChild(tr);
+    });
+  }
 }
+function drawTradeHistory() {
+  const rows = document.getElementById('historyRows');
+  const plElement = document.getElementById('realizedPL');
+
+  rows.replaceChildren();
+
+  const totalPL = tradeHistory.reduce(
+    (sum, trade) => sum + trade.pnl,
+    0
+  );
+
+  plElement.textContent = money(totalPL);
+
+  if (!tradeHistory.length) {
+    rows.innerHTML =
+      '<tr><td colspan="6">Abhi history nahi hai.</td></tr>';
+    return;
+  }
+
+  [...tradeHistory].reverse().forEach(trade => {
+    const tr = document.createElement('tr');
+
+    [
+      trade.date,
+      trade.symbol,
+      trade.action,
+      trade.qty,
+      money(trade.price),
+      money(trade.pnl)
+    ].forEach(value => {
+      const td = document.createElement('td');
+      td.textContent = value;
+      tr.appendChild(td);
+    });
+
+    rows.appendChild(tr);
+  });
+  }
 document.getElementById('tradeForm').addEventListener('submit',e=>{
   e.preventDefault();
   const symbol=document.getElementById('tradeSymbol').value.trim().toUpperCase();
