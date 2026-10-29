@@ -245,7 +245,18 @@ document.getElementById('tradeForm').addEventListener('submit',e=>{
     document.getElementById('paperStatus').textContent='Details check karo: quantity, price aur virtual balance.';
     return;
   }
-  balance-=cost;positions.push({symbol,price,qty});drawPositions();e.target.reset();
+  balance -= cost;
+positions.push({symbol, price, qty});
+tradeHistory.push({
+  date: new Date().toLocaleString('en-IN'),
+  symbol,
+  action: 'BUY',
+  qty,
+  price,
+  pnl: 0
+});
+drawPositions();
+e.target.reset();
   document.getElementById('paperStatus').textContent='Virtual buy recorded. Yeh order exchange par send nahi hua.';
 });
   
