@@ -132,7 +132,7 @@ footer{padding:20px;text-align:center;color:var(--muted);font-size:12px}
       <th>P/L</th>
     </tr>
   </thead>
-  <tbody id="historyRows">
+  <tbody id="marketHistoryRows">
     <tr><td colspan="6">Abhi history nahi hai.</td></tr>
   </tbody>
 </table>
@@ -353,7 +353,7 @@ savePaperData();
   }
 }
 function drawTradeHistory() {
-  const rows = document.getElementById('historyRows');
+const rows = document.getElementById('marketHistoryRows');
   const plElement = document.getElementById('realizedPL');
 
   rows.replaceChildren();
@@ -410,6 +410,7 @@ tradeHistory.push({
   price,
   pnl: 0
 });
+savePaperData();
 drawPositions();
 drawTradeHistory();
 e.target.reset();
