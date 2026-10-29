@@ -233,9 +233,47 @@ document.getElementById('watchForm').addEventListener('submit',e=>{
   if(!watchlist.includes(s))watchlist.push(s);
   drawWatchlist();e.target.reset();
 });
-let balance=100000;
-const positions=[];
-const tradeHistory = [];
+const PAPER_KEY = 'marketdesk_paper_v1';
+
+let balance = 100000;
+let positions = [];
+let tradeHistory = [];
+
+function savePaperData() {
+  try {
+    localStorage.setItem(PAPER_KEY, JSON.stringify({
+      balance,
+      positions,
+      tradeHistory
+    }));
+  } catch (error) {
+    console.error('Paper data save nahi hua:', error);
+  }
+}
+
+function loadPaperData() {
+  try {
+    const saved = localStorage.getItem(PAPER_KEY);
+    if (!saved) return;
+
+    const data = JSON.parse(saved);
+
+    if (
+      Number.isFinite(data.balance) &&
+      data.balance >= 0 &&
+      Array.isArray(data.positions) &&
+      Array.isArray(data.tradeHistory)
+    ) {
+      balance = data.balance;
+      positions = data.positions;
+      tradeHistory = data.tradeHistory;
+    }
+  } catch (error) {
+    console.error('Paper data load nahi hua:', error);
+  }
+}
+
+loadPaperData();
 function money(n){return '₹'+n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function drawPositions() {
   document.getElementById('balance').textContent = money(balance);
@@ -283,6 +321,7 @@ function drawPositions() {
         balance += exitPrice * p.qty;
 
         tradeHistory.push({
+          savePaperData();
           date: new Date().toLocaleString('en-IN'),
           symbol: p.symbol,
           action: 'SELL',
