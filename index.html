@@ -320,9 +320,16 @@ function drawPositions() {
 
         balance += exitPrice * p.qty;
 
-        tradeHistory.push({
-          savePaperData();
-          date: new Date().toLocaleString('en-IN'),
+  tradeHistory.push({
+  date: new Date().toLocaleString('en-IN'),
+  symbol: p.symbol,
+  action: 'SELL',
+  qty: p.qty,
+  price: exitPrice,
+  pnl: pnl
+});
+
+savePaperData();
           symbol: p.symbol,
           action: 'SELL',
           qty: p.qty,
