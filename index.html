@@ -760,6 +760,9 @@ function renderStrategy(ordered){
       :'Is date range mein qualifying bullish trades nahi mile. Date range ya data badal kar test karo.';
   }
  /* MULTI-STOCK SCANNER */
+
+/* MULTI-STOCK SCANNER - HUGGING FACE DATA */
+
 const SCANNER_STOCKS = [
   'RELIANCE',
   'TCS',
@@ -775,52 +778,75 @@ document.getElementById('runScanner').addEventListener('click', async function()
 
   button.disabled = true;
   rows.replaceChildren();
-  status.textContent = '5 stocks ka historical data check ho raha hai...';
+  status.textContent = 'Hugging Face se historical data load ho raha hai...';
 
-  const from = '2026-01-01';
-  const to = new Date().toISOString().slice(0,10);
   let completed = 0;
 
   for(const symbol of SCANNER_STOCKS){
     const tr = document.createElement('tr');
     const name = document.createElement('td');
-    name.textContent = symbol;
-
     const price = document.createElement('td');
-    price.textContent = 'Loading...';
-
     const scoreCell = document.createElement('td');
-    scoreCell.textContent = '—';
-
     const signalCell = document.createElement('td');
+
+    name.textContent = symbol;
+    price.textContent = 'Loading...';
+    scoreCell.textContent = '—';
     signalCell.textContent = 'Checking...';
 
     tr.append(name, price, scoreCell, signalCell);
     rows.appendChild(tr);
 
     try{
-      const url = 'https://api.tejhq.dev/v1/ohlcv/nse/' +
-        encodeURIComponent(symbol) +
-        '?from=' + from + '&to=' + to;
+      const base =
+        'https://datasets-server.huggingface.co/filter' +
+        '?dataset=tejhq%2Findian-markets' +
+        '&config=nse&split=train';
 
-      const response = await fetch(url);
-      if(!response.ok) throw new Error('Data unavailable');
+      const where = '"symbol"=\'' + symbol + '\'';
+
+      const firstUrl =
+        base + '&where=' + encodeURIComponent(where) +
+        '&offset=0&length=1';
+
+      const firstResponse = await fetch(firstUrl);
+      if(!firstResponse.ok){
+        throw new Error('Dataset response ' + firstResponse.status);
+      }
+
+      const firstResult = await firstResponse.json();
+      const total = Number(firstResult.num_rows_total);
+
+      if(!Number.isFinite(total) || total < 60){
+        throw new Error('Not enough historical data');
+      }
+
+      const offset = Math.max(0, total - 100);
+
+      const latestUrl =
+        base + '&where=' + encodeURIComponent(where) +
+        '&offset=' + offset + '&length=100';
+
+      const response = await fetch(latestUrl);
+      if(!response.ok){
+        throw new Error('Data response ' + response.status);
+      }
 
       const result = await response.json();
-      const data = Array.isArray(result) ? result : result.data;
 
-      if(!Array.isArray(data) || data.length < 60){
+      const data = Array.isArray(result.rows)
+        ? result.rows.map(item => item.row)
+        : [];
+
+      if(data.length < 60){
         throw new Error('Not enough data');
       }
 
       const ordered = data.slice().sort((a,b)=>
-        new Date(a.date ?? a.timestamp) -
-        new Date(b.date ?? b.timestamp)
+        new Date(a.date) - new Date(b.date)
       );
 
-      const closes = ordered.map(item =>
-        getNumber(item, 'close', 'Close')
-      );
+      const closes = ordered.map(item => Number(item.close));
 
       if(!closes.every(v => Number.isFinite(v) && v > 0)){
         throw new Error('Invalid prices');
@@ -836,7 +862,9 @@ document.getElementById('runScanner').addEventListener('click', async function()
         }
       }
 
-      if(!latest) throw new Error('Indicators unavailable');
+      if(!latest){
+        throw new Error('Indicators unavailable');
+      }
 
       price.textContent = money(closes[closes.length - 1]);
       scoreCell.textContent = latest.score + ' / 6';
@@ -858,9 +886,10 @@ document.getElementById('runScanner').addEventListener('click', async function()
 
   status.textContent =
     'Scan complete. Results historical data par based hain.';
+
   button.disabled = false;
 });
-
+  
 document.getElementById('loadHistory').addEventListener('click',async()=>{
   const symbol=document.getElementById('historySymbol').value;
   const from=document.getElementById('historyFrom').value;
