@@ -56,6 +56,7 @@ footer{padding:20px;text-align:center;color:var(--muted);font-size:12px}
 <button type="button" onclick="showTab('watchlist',this)">Watchlist</button>
 <button type="button" onclick="showTab('paper',this)">Paper Trading</button>
 <button type="button" onclick="showTab('research',this)">Research</button>
+<button type="button" onclick="showTab('scanner',this)">Stock Scanner</button>
 </nav>
 
 <div id="overview" class="tab">
@@ -126,6 +127,25 @@ footer{padding:20px;text-align:center;color:var(--muted);font-size:12px}
 <p class="note">Prices manually enter kiye jaate hain. Yeh simulated trading hai, real order nahi.</p>
 </section>
 </div>
+ <div id="scanner" class="tab" hidden>
+  <section class="card">
+    <h2>Multi-Stock Scanner</h2>
+    <p>5 stocks ka historical trend aur technical score check karo.</p>
+    <button id="runScanner" type="button">Scan 5 Stocks</button>
+    <p id="scannerStatus" class="note">Scan shuru karne ke liye button dabao.</p>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr><th>Stock</th><th>Latest Close</th><th>Score</th><th>Signal</th></tr>
+        </thead>
+        <tbody id="scannerRows">
+          <tr><td colspan="4">Abhi scan nahi hua.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Ye historical data par based educational analysis hai, real-time signal ya investment advice nahi.</p>
+  </section>
+  </div>
 
 <div id="research" class="tab" hidden>
 <section class="card">
@@ -248,7 +268,6 @@ function saveWatchlist(){
   catch(e){console.warn('Watchlist save failed',e)}
 }
 
-function drawWatchlist(){
 
 async function drawWatchlist(){
   const body=document.getElementById('watchRows');
@@ -740,6 +759,107 @@ function renderStrategy(ordered){
       ?'Historical test complete. Brokerage, taxes, slippage aur market impact include nahi hain.'
       :'Is date range mein qualifying bullish trades nahi mile. Date range ya data badal kar test karo.';
   }
+ /* MULTI-STOCK SCANNER */
+const SCANNER_STOCKS = [
+  'RELIANCE',
+  'TCS',
+  'INFY',
+  'SBIN',
+  'HDFCBANK'
+];
+
+document.getElementById('runScanner').addEventListener('click', async function(){
+  const button = this;
+  const rows = document.getElementById('scannerRows');
+  const status = document.getElementById('scannerStatus');
+
+  button.disabled = true;
+  rows.replaceChildren();
+  status.textContent = '5 stocks ka historical data check ho raha hai...';
+
+  const from = '2026-01-01';
+  const to = new Date().toISOString().slice(0,10);
+  let completed = 0;
+
+  for(const symbol of SCANNER_STOCKS){
+    const tr = document.createElement('tr');
+    const name = document.createElement('td');
+    name.textContent = symbol;
+
+    const price = document.createElement('td');
+    price.textContent = 'Loading...';
+
+    const scoreCell = document.createElement('td');
+    scoreCell.textContent = '—';
+
+    const signalCell = document.createElement('td');
+    signalCell.textContent = 'Checking...';
+
+    tr.append(name, price, scoreCell, signalCell);
+    rows.appendChild(tr);
+
+    try{
+      const url = 'https://api.tejhq.dev/v1/ohlcv/nse/' +
+        encodeURIComponent(symbol) +
+        '?from=' + from + '&to=' + to;
+
+      const response = await fetch(url);
+      if(!response.ok) throw new Error('Data unavailable');
+
+      const result = await response.json();
+      const data = Array.isArray(result) ? result : result.data;
+
+      if(!Array.isArray(data) || data.length < 60){
+        throw new Error('Not enough data');
+      }
+
+      const ordered = data.slice().sort((a,b)=>
+        new Date(a.date ?? a.timestamp) -
+        new Date(b.date ?? b.timestamp)
+      );
+
+      const closes = ordered.map(item =>
+        getNumber(item, 'close', 'Close')
+      );
+
+      if(!closes.every(v => Number.isFinite(v) && v > 0)){
+        throw new Error('Invalid prices');
+      }
+
+      const signals = buildStrategy(closes);
+      let latest = null;
+
+      for(let i = signals.length - 1; i >= 0; i--){
+        if(signals[i]){
+          latest = signals[i];
+          break;
+        }
+      }
+
+      if(!latest) throw new Error('Indicators unavailable');
+
+      price.textContent = money(closes[closes.length - 1]);
+      scoreCell.textContent = latest.score + ' / 6';
+      signalCell.textContent = latest.signal;
+
+      signalCell.style.color =
+        latest.signal === 'BULLISH' ? '#35d49a' :
+        latest.signal === 'BEARISH' ? '#ff7185' : '#f3ce7a';
+
+    }catch(error){
+      price.textContent = '—';
+      scoreCell.textContent = '—';
+      signalCell.textContent = 'Data unavailable';
+    }
+
+    completed++;
+    status.textContent = completed + ' / 5 stocks checked.';
+  }
+
+  status.textContent =
+    'Scan complete. Results historical data par based hain.';
+  button.disabled = false;
+});
 
 document.getElementById('loadHistory').addEventListener('click',async()=>{
   const symbol=document.getElementById('historySymbol').value;
