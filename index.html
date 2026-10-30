@@ -849,7 +849,7 @@ document.getElementById('runScanner').addEventListener('click', async function()
     }catch(error){
       price.textContent = '—';
       scoreCell.textContent = '—';
-      signalCell.textContent = 'Data unavailable';
+      signalCell.textContent = error.message || 'Data unavailable';
     }
 
     completed++;
