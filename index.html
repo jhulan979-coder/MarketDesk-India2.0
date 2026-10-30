@@ -249,6 +249,8 @@ function saveWatchlist(){
 }
 
 function drawWatchlist(){
+
+async function drawWatchlist(){
   const body=document.getElementById('watchRows');
   body.replaceChildren();
 
@@ -257,63 +259,71 @@ function drawWatchlist(){
     return;
   }
 
-  watchlist.forEach((symbol,i)=>{
+  for(const symbol of watchlist){
     const tr=document.createElement('tr');
-    [symbol,'—','Data pending'].forEach(value=>{
-      const td=document.createElement('td');
-      td.textContent=value;
-      tr.appendChild(td);
-    });
 
-    const td=document.createElement('td');
+    const name=document.createElement('td');
+    name.textContent=symbol;
+
+    const price=document.createElement('td');
+    price.textContent='Loading...';
+
+    const status=document.createElement('td');
+    status.textContent='Fetching';
+
+    const action=document.createElement('td');
     const button=document.createElement('button');
     button.type='button';
     button.textContent='Remove';
+
     button.onclick=()=>{
-      watchlist.splice(i,1);
+      watchlist=watchlist.filter(s=>s!==symbol);
       saveWatchlist();
       drawWatchlist();
     };
-    td.appendChild(button);
-    tr.appendChild(td);
+
+    action.appendChild(button);
+    tr.append(name,price,status,action);
     body.appendChild(tr);
-  });
-}
 
-document.getElementById('watchForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  const symbol=document.getElementById('symbol').value.trim().toUpperCase();
+    try{
+      const to=new Date();
+      const from=new Date();
+      from.setDate(from.getDate()-15);
 
-  if(!/^[A-Z0-9.&_-]{1,20}$/.test(symbol)){
-    alert('Stock symbol check karo.');
-    return;
+      const format=d=>d.toISOString().slice(0,10);
+
+      const url='https://api.tejhq.dev/v1/ohlcv/nse/' +
+        encodeURIComponent(symbol) +
+        '?from='+format(from)+'&to='+format(to);
+
+      const response=await fetch(url);
+      if(!response.ok)throw new Error('API error');
+
+      const result=await response.json();
+      const data=Array.isArray(result)?result:result.data;
+
+      if(!Array.isArray(data)||!data.length)
+        throw new Error('No data');
+
+      const latest=data
+        .slice()
+        .sort((a,b)=>new Date(b.date??b.timestamp)-new Date(a.date??a.timestamp))[0];
+
+      const close=Number(latest.close??latest.Close);
+
+      if(!Number.isFinite(close)||close<=0)
+        throw new Error('Invalid price');
+
+      price.textContent=money(close);
+      status.textContent='Latest available close';
+    }catch(error){
+      price.textContent='—';
+      status.textContent='Data unavailable';
+    }
   }
-
-  if(!watchlist.includes(symbol))watchlist.push(symbol);
-  saveWatchlist();
-  drawWatchlist();
-  e.target.reset();
-});
-
-/* Paper trading storage */
-const PAPER_KEY='marketdesk_paper_v1';
-let balance=100000;
-let positions=[];
-let tradeHistory=[];
-
-function savePaperData(){
-  try{
-    localStorage.setItem(PAPER_KEY,JSON.stringify({
-      balance:balance,
-      positions:positions,
-      tradeHistory:tradeHistory
-    }));
-  }catch(error){
-    console.error('Paper data save nahi hua:',error);
-    document.getElementById('paperStatus').textContent=
-      'Data save nahi hua. Device storage check karo.';
-  }
 }
+  
 
 function loadPaperData(){
   try{
