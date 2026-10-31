@@ -91,7 +91,14 @@
   </div>
 </div> </p><div class="table-wrap"><table><thead><tr><th>Date</th><th>High</th><th>Low</th><th>Close</th><th>Volume</th></tr></thead><tbody id="historyRows"><tr><td colspan="5">No data loaded.</td></tr></tbody></table></div></section>
 <section class="card" id="strategyEngine"><h2>MarketDesk Strategy Analysis</h2><p>EMA 20/50 + RSI 14 + MACD confirmation</p><div class="grid"><div class="card"><div class="label">Historical technical state</div><div class="value" id="strategySignal">—</div><p id="strategyReason">Historical data load karo</p></div><div class="card"><div class="label">Confirmation score</div><div class="value" id="strategyScore">—</div><p>Technical score; win probability nahi</p></div></div><h2>Indicator Confirmation</h2><p id="emaCheck">EMA 20/50: Waiting</p><p id="macdCheck">MACD: Waiting</p><p id="rsiCheck">RSI: Waiting</p><div class="divider"></div><h2>Historical Backtest</h2><p class="note">Illustrative rule: bullish condition ke agle session mein entry, 5 sessions baad exit. Brokerage, taxes, slippage aur market impact included nahi.</p><div class="grid"><div class="card"><div class="label">Tested trades</div><div class="value" id="btTrades">—</div></div><div class="card"><div class="label">Historical positive trades</div><div class="value" id="btWinRate">—</div></div><div class="card"><div class="label">Average return</div><div class="value" id="btAverage">—</div></div><div class="card"><div class="label">Buy & hold return</div><div class="value" id="btHold">—</div></div></div><p id="backtestStatus" class="note">Backtest ke liye historical data load karo.</p></section></div>
-<div id="scanner" class="tab" hidden><section class="card"><h2>Multi-Stock Scanner</h2><p>5 stocks ka historical trend aur technical score check karo.</p><button id="runScanner" type="button">Scan 5 Stocks</button><p id="scannerStatus" class="note">Scan shuru karne ke liye button dabao.</p><div class="table-wrap"><table><thead><tr><th>Stock</th><th>Latest close</th><th>Score</th><th>Historical state</th></tr></thead><tbody id="scannerRows"><tr><td colspan="4">Abhi scan nahi hua.</td></tr></tbody></table></div><p class="note">Historical educational analysis only; real-time signal ya investment advice nahi.</p></section></div>
+<div id="scanner" class="tab" hidden><section class="card"><h2>Multi-Stock Scanner</h2><p>5 stocks ka historical trend aur technical score check karo.</p><button id="runScanner" type="button">Scan 5 Stocks</button><p id="scannerStatus" class="note">Scan shuru karne ke liye button dabao.</p><div class="table-wrap"><table><thead><th>Stock</th>
+<th>Latest Close</th>
+<th>Score</th>
+<th>Signal</th>
+<th>RSI</th>
+<th>Volume Ratio</th>
+<th>Breakout</th>
+<th>Trend</th><tr></tr></thead><tbody id="scannerRows"><tr><td colspan="8">Abhi scan nahi hua.</td></tr></tbody></table></div><p class="note">Historical educational analysis only; real-time signal ya investment advice nahi.</p></section></div>
 </main><footer>MarketDesk India · Personal research prototype · Not investment advice</footer>
 <script>
 'use strict';
