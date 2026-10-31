@@ -21,6 +21,46 @@
 <div id="watchlist" class="tab" hidden><section class="card"><h2>My Watchlist</h2><p>Stock symbols is device par save honge. Price field latest available historical close dikhata hai, live price nahi.</p><form id="watchForm"><label for="symbol">NSE stock symbol</label><input id="symbol" placeholder="Example: RELIANCE" maxlength="20" required><button type="submit">Add Stock</button></form><div class="table-wrap"><table><thead><tr><th>Symbol</th><th>Latest close</th><th>Data status</th><th></th></tr></thead><tbody id="watchRows"></tbody></table></div></section></div>
 <div id="paper" class="tab" hidden><section class="card"><h2>Paper Trading</h2><p>Virtual balance: <strong id="balance">₹100,000.00</strong></p><p id="paperStatus">Virtual account ready. Yeh real trading nahi hai.</p><form id="tradeForm"><label for="tradeSymbol">Stock symbol</label><input id="tradeSymbol" placeholder="Example: TCS" maxlength="20" required><label for="tradePrice">Simulated buy price (₹)</label><input id="tradePrice" type="number" min="0.01" step="0.01" placeholder="1000" required><label for="tradeQty">Quantity</label><input id="tradeQty" type="number" min="1" step="1" placeholder="1" required><button type="submit">Simulate Buy</button></form><h2>Virtual Positions</h2><div class="table-wrap"><table><thead><tr><th>Stock</th><th>Qty</th><th>Buy price</th><th>Sell price / action</th></tr></thead><tbody id="positions"></tbody></table></div><h2 style="margin-top:18px">Trade History</h2><p>Realized Profit/Loss: <strong id="realizedPL">₹0.00</strong></p><div class="table-wrap"><table><thead><tr><th>Date</th><th>Stock</th><th>Action</th><th>Qty</th><th>Price</th><th>P/L</th></tr></thead><tbody id="tradeHistoryRows"></tbody></table></div><p class="note">Prices manually enter kiye jaate hain. Yeh simulated trading hai; koi real order exchange par nahi jaata.</p></section></div>
 <div id="research" class="tab" hidden><section class="card"><h2>Historical Stock Analysis</h2><div class="grid"><div class="card"><div class="label">RSI (14)</div><div class="value" id="rsiValue">—</div><p id="rsiStatus">Data ka intezar hai</p></div><div class="card"><div class="label">Moving Average (20)</div><div class="value" id="maValue">—</div><p id="maStatus">Data ka intezar hai</p></div></div><p>Free historical daily data · NSE stocks · Hugging Face dataset</p><label for="historySymbol">Stock symbol</label><select id="historySymbol"><option>RELIANCE</option><option>TCS</option><option>SBIN</option><option>INFY</option><option>HDFCBANK</option></select><label for="historyFrom">From date</label><input id="historyFrom" type="date" value="2026-01-01"><label for="historyTo">To date</label><input id="historyTo" type="date" value="2026-10-31"><button id="loadHistory" type="button">Load Historical Data</button><p id="historyStatus" class="note">Data load karne ke liye button dabao.<div class="card" style="margin-top:16px">
+  <div class="card" style="margin-top:16px">
+  <h2>Advanced Technical Analysis</h2>
+
+  <div class="stats-grid">
+    <div class="stat">
+      <span>SMA 20</span>
+      <strong id="smaValue">—</strong>
+    </div>
+
+    <div class="stat">
+      <span>Bollinger Upper</span>
+      <strong id="bbUpper">—</strong>
+    </div>
+
+    <div class="stat">
+      <span>Bollinger Lower</span>
+      <strong id="bbLower">—</strong>
+    </div>
+
+    <div class="stat">
+      <span>MACD</span>
+      <strong id="macdValue">—</strong>
+    </div>
+
+    <div class="stat">
+      <span>MACD Signal</span>
+      <strong id="macdSignal">—</strong>
+    </div>
+
+    <div class="stat">
+      <span>ATR 14</span>
+      <strong id="atrValue">—</strong>
+    </div>
+  </div>
+
+  <h3 style="margin-top:18px">Risk Management Plan</h3>
+  <p>Stop Loss: <strong id="riskStop">—</strong></p>
+  <p>Target: <strong id="riskTarget">—</strong></p>
+  <p>Risk: <strong id="riskPercent">—</strong></p>
+  </div>
   <h2>Historical Price Chart</h2>
   <p class="note">Daily closing price (₹)</p>
   <div id="priceChart">
@@ -141,7 +181,153 @@ function drawTradeHistory(){const body=document.getElementById('tradeHistoryRows
 document.getElementById('tradeForm').addEventListener('submit',e=>{e.preventDefault();const symbol=safeSymbol(document.getElementById('tradeSymbol').value);const price=Number(document.getElementById('tradePrice').value);const qty=Number(document.getElementById('tradeQty').value);const cost=price*qty;if(!/^[A-Z0-9.&_-]{1,20}$/.test(symbol)||!Number.isFinite(cost)||price<=0||!Number.isInteger(qty)||qty<1||cost>balance){document.getElementById('paperStatus').textContent='Details check karo: valid symbol, price, quantity aur virtual balance.';return;}balance-=cost;positions.push({symbol,price,qty});tradeHistory.push({date:new Date().toLocaleString('en-IN'),symbol,action:'BUY',qty,price,pnl:0});savePaperData();drawPositions();drawTradeHistory();e.target.reset();document.getElementById('paperStatus').textContent='Virtual buy recorded. Real order send nahi hua.';});
 
 function calculateEMA(values,period){const out=Array(values.length).fill(null);if(values.length<period)return out;const k=2/(period+1);let sum=0;for(let i=0;i<period;i++)sum+=values[i];let prev=sum/period;out[period-1]=prev;for(let i=period;i<values.length;i++){prev=(values[i]-prev)*k+prev;out[i]=prev;}return out;}
-function calculateRSI(values,period=14){const out=Array(values.length).fill(null);if(values.length<=period)return out;let gains=0,losses=0;for(let i=1;i<=period;i++){const d=values[i]-values[i-1];if(d>0)gains+=d;else losses-=d;}let avgG=gains/period,avgL=losses/period;out[period]=avgL===0?(avgG===0?50:100):100-100/(1+avgG/avgL);for(let i=period+1;i<values.length;i++){const d=values[i]-values[i-1];avgG=(avgG*(period-1)+Math.max(d,0))/period;avgL=(avgL*(period-1)+Math.max(-d,0))/period;out[i]=avgL===0?(avgG===0?50:100):100-100/(1+avgG/avgL);}return out;}
+function calculateRSI(values,period=14){const out=Array(values.length).fill(null);if(values.length<=period)return out;let gains=0,losses=0;for(let i=1;i<=period;i++){const d=values[i]-values[i-1];if(d>0)gains+=d;else losses-=d;}let avgG=gains/period,avgL=losses/period;out[period]=avgL===0?(avgG===0?50:100):100-100/(1+avgG/avgL);for(let i=period+1;i<values.length;i++){const d=values[i]-values[i-1];avgG=(avgG*(period-1)+Math.max(d,0))/period;avgL=(avgL*(period-1)+Math.max(-d,0))/period;out[i]=avgL===0?(avgG===0?50:100):100-100/(1+avgG/avgL);}return out;}// ===== ADVANCED TECHNICAL ANALYSIS =====
+
+function calculateSMA(values, period = 20) {
+  return values.map((_, i) => {
+    if (i + 1 < period) return null;
+
+    const slice = values.slice(i - period + 1, i + 1);
+    return slice.reduce((a, b) => a + b, 0) / period;
+  });
+}
+
+function calculateBollingerBands(values, period = 20, multiplier = 2) {
+  return values.map((_, i) => {
+    if (i + 1 < period) return null;
+
+    const slice = values.slice(i - period + 1, i + 1);
+    const mean = slice.reduce((a, b) => a + b, 0) / period;
+
+    const variance = slice.reduce(
+      (sum, value) => sum + Math.pow(value - mean, 2), 0
+    ) / period;
+
+    const deviation = Math.sqrt(variance);
+
+    return {
+      middle: mean,
+      upper: mean + multiplier * deviation,
+      lower: mean - multiplier * deviation
+    };
+  });
+}
+
+function calculateMACD(values) {
+  const ema12 = calculateEMA(values, 12);
+  const ema26 = calculateEMA(values, 26);
+
+  const macd = values.map((_, i) =>
+    ema12[i] == null || ema26[i] == null
+      ? null
+      : ema12[i] - ema26[i]
+  );
+
+  const valid = macd.filter(v => v !== null);
+  const signalValues = calculateEMA(valid, 9);
+  let index = 0;
+
+  const signal = macd.map(v =>
+    v === null ? null : signalValues[index++]
+  );
+
+  return {
+    macd,
+    signal,
+    histogram: macd.map((v, i) =>
+      v === null || signal[i] === null
+        ? null
+        : v - signal[i]
+    )
+  };
+}
+
+function calculateATR(data, period = 14) {
+  const trueRanges = data.map((item, i) => {
+    if (i === 0) return item.high - item.low;
+
+    const previousClose = data[i - 1].close;
+
+    return Math.max(
+      item.high - item.low,
+      Math.abs(item.high - previousClose),
+      Math.abs(item.low - previousClose)
+    );
+  });
+
+  return calculateSMA(trueRanges, period);
+}
+
+function calculateRiskPlan(entry, atr, riskReward = 2) {
+  if (
+    !Number.isFinite(entry) ||
+    !Number.isFinite(atr) ||
+    entry <= 0 ||
+    atr <= 0
+  ) return null;
+
+  const stopLoss = entry - (atr * 2);
+  const risk = entry - stopLoss;
+
+  return {
+    entry,
+    stopLoss,
+    target: entry + (risk * riskReward),
+    riskReward,
+    riskPercent: (risk / entry) * 100
+  };
+}
+  // ===== ADVANCED INDICATORS DISPLAY =====
+
+function renderAdvancedIndicators(data) {
+  if (!data || data.length < 30) return;
+
+  const closes = data.map(x => x.close);
+  const last = closes.length - 1;
+
+  const sma = calculateSMA(closes, 20);
+  const bands = calculateBollingerBands(closes, 20);
+  const macd = calculateMACD(closes);
+  const atr = calculateATR(data, 14);
+
+  const latestBand = bands[last];
+  const latestATR = atr[last];
+  const latestMACD = macd.macd[last];
+  const latestSignal = macd.signal[last];
+  const entry = closes[last];
+
+  const money = value =>
+    Number.isFinite(value) ? '₹' + value.toFixed(2) : '—';
+
+  document.getElementById('smaValue').textContent =
+    money(sma[last]);
+
+  document.getElementById('bbUpper').textContent =
+    money(latestBand?.upper);
+
+  document.getElementById('bbLower').textContent =
+    money(latestBand?.lower);
+
+  document.getElementById('macdValue').textContent =
+    Number.isFinite(latestMACD) ? latestMACD.toFixed(2) : '—';
+
+  document.getElementById('macdSignal').textContent =
+    Number.isFinite(latestSignal) ? latestSignal.toFixed(2) : '—';
+
+  document.getElementById('atrValue').textContent =
+    money(latestATR);
+
+  const plan = calculateRiskPlan(entry, latestATR);
+
+  document.getElementById('riskStop').textContent =
+    plan ? money(plan.stopLoss) : '—';
+
+  document.getElementById('riskTarget').textContent =
+    plan ? money(plan.target) : '—';
+
+  document.getElementById('riskPercent').textContent =
+    plan ? plan.riskPercent.toFixed(2) + '%' : '—';
+}
 function buildStrategy(closes){const e20=calculateEMA(closes,20),e50=calculateEMA(closes,50),e12=calculateEMA(closes,12),e26=calculateEMA(closes,26),rsi=calculateRSI(closes,14);const macd=closes.map((_,i)=>e12[i]!==null&&e26[i]!==null?e12[i]-e26[i]:null);const valid=macd.map(v=>v===null?0:v);const sig=calculateEMA(valid,9);return closes.map((close,i)=>{if(e20[i]===null||e50[i]===null||rsi[i]===null||macd[i]===null||sig[i]===null)return null;let score=0;const checks=[];if(e20[i]>e50[i]){score+=2;checks.push('EMA trend positive');}else{score-=2;checks.push('EMA trend negative');}if(close>e20[i]){score++;checks.push('Price above EMA20');}else{score--;checks.push('Price below EMA20');}if(macd[i]>sig[i]){score+=2;checks.push('MACD positive');}else{score-=2;checks.push('MACD negative');}if(rsi[i]>=50&&rsi[i]<70)score++;else if(rsi[i]>=30&&rsi[i]<50)score--;const signal=score>=4?'BULLISH':score<=-4?'BEARISH':'NEUTRAL';return{close,ema20:e20[i],ema50:e50[i],rsi:rsi[i],macd:macd[i],macdSignal:sig[i],score,signal,checks};});}
 function runBacktest(closes,signals){const returns=[],hold=closes.length>1?(closes.at(-1)-closes[0])/closes[0]*100:null;for(let i=0;i<signals.length-6;i++){if(!signals[i]||signals[i].signal!=='BULLISH')continue;const entry=closes[i+1],exit=closes[i+6];if(entry>0&&Number.isFinite(exit))returns.push((exit-entry)/entry*100);i+=5;}return{trades:returns.length,winRate:returns.length?returns.filter(x=>x>0).length/returns.length*100:null,average:returns.length?returns.reduce((a,b)=>a+b,0)/returns.length:null,hold};}
 function renderStrategy(data){const closes=data.map(x=>x.close);const signals=buildStrategy(closes);let i=signals.length-1;while(i>=0&&!signals[i])i--;const latest=signals[i];if(!latest){document.getElementById('strategyReason').textContent='Indicators ke liye kam se kam 50+ historical sessions chahiye.';return;}const signal=document.getElementById('strategySignal');signal.textContent=latest.signal;signal.style.color=latest.signal==='BULLISH'?'var(--green)':latest.signal==='BEARISH'?'var(--red)':'var(--yellow)';document.getElementById('strategyScore').textContent=(latest.score>0?'+':'')+latest.score+' / 6';document.getElementById('strategyReason').textContent=latest.checks.join(' · ');document.getElementById('emaCheck').textContent='EMA 20: '+money(latest.ema20)+' | EMA 50: '+money(latest.ema50);document.getElementById('macdCheck').textContent=latest.macd>latest.macdSignal?'MACD: Positive historical confirmation':'MACD: Negative historical confirmation';document.getElementById('rsiCheck').textContent='RSI 14: '+latest.rsi.toFixed(2);const bt=runBacktest(closes,signals);document.getElementById('btTrades').textContent=bt.trades;document.getElementById('btWinRate').textContent=bt.winRate===null?'Not enough trades':bt.winRate.toFixed(1)+'%';document.getElementById('btAverage').textContent=bt.average===null?'—':(bt.average>0?'+':'')+bt.average.toFixed(2)+'%';document.getElementById('btHold').textContent=bt.hold===null?'—':(bt.hold>0?'+':'')+bt.hold.toFixed(2)+'%';document.getElementById('backtestStatus').textContent=bt.trades?'Historical calculation complete; costs aur slippage excluded.':'Is range mein qualifying bullish conditions nahi mili.';}
