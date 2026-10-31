@@ -48,30 +48,69 @@ function loadWatchlist(){try{const value=JSON.parse(localStorage.getItem(WATCH_K
 function savePaperData(){try{localStorage.setItem(PAPER_KEY,JSON.stringify({balance,positions,tradeHistory}));}catch(e){document.getElementById('paperStatus').textContent='Device storage mein data save nahi ho saka.';}}
 function loadPaperData(){try{const data=JSON.parse(localStorage.getItem(PAPER_KEY)||'null');if(data&&Number.isFinite(data.balance)&&data.balance>=0&&Array.isArray(data.positions)&&Array.isArray(data.tradeHistory)){balance=data.balance;positions=data.positions;tradeHistory=data.tradeHistory;}}catch(e){console.warn('Paper data load failed',e);}}
 
-async function fetchStockHistory(symbol,limit=500){
+
+async function fetchStockHistory(symbol, limit=500){
   const clean=safeSymbol(symbol);
-  if(!/^[A-Z0-9.&_-]{1,20}$/.test(clean))throw new Error('Invalid stock symbol');
-  const base='https://datasets-server.huggingface.co/filter?dataset='+encodeURIComponent(DATASET)+'&config='+encodeURIComponent(CONFIG)+'&split='+encodeURIComponent(SPLIT);
-  const where='"symbol"=\''+clean+'\'';
-  const firstUrl=base+'&where='+encodeURIComponent(where)+'&offset=0&length=1';
-  const firstResponse=await fetch(firstUrl);
-  if(!firstResponse.ok)throw new Error('Dataset response '+firstResponse.status);
-  const first=await firstResponse.json();
-  const total=Number(first.num_rows_total);
-  if(!Number.isFinite(total)||total<1)throw new Error('Is symbol ka historical data nahi mila');
-  const start=Math.max(0,total-limit);
-  const jobs=[];
-  for(let offset=start;offset<total;offset+=100){
-    const url=base+'&where='+encodeURIComponent(where)+'&offset='+offset+'&length='+Math.min(100,total-offset);
-    jobs.push(fetch(url).then(r=>{if(!r.ok)throw new Error('Dataset response '+r.status);return r.json();}));
+
+  if(!/^[A-Z0-9.&_-]{1,20}$/.test(clean)){
+    throw new Error('Invalid stock symbol');
   }
-  const pages=await Promise.all(jobs);
-  const rows=pages.flatMap(page=>Array.isArray(page.rows)?page.rows.map(x=>x.row||x):[]);
-  const normalized=rows.map(r=>({date:r.date??r.timestamp??'',open:Number(r.open??r.Open),high:Number(r.high??r.High),low:Number(r.low??r.Low),close:Number(r.close??r.Close),volume:Number(r.volume??r.Volume)})).filter(r=>r.date&&Number.isFinite(r.close)&&r.close>0);
-  normalized.sort((a,b)=>new Date(a.date)-new Date(b.date));
-  if(!normalized.length)throw new Error('Dataset mein valid closing prices nahi mile');
-  return normalized;
+
+  const today=new Date();
+  const to=[
+    today.getFullYear(),
+    String(today.getMonth()+1).padStart(2,'0'),
+    String(today.getDate()).padStart(2,'0')
+  ].join('-');
+
+  const url='https://api.tejhq.dev/v1/ohlcv/nse/'
+    +encodeURIComponent(clean)
+    +'?from=2010-01-04&to='+to;
+
+  const response=await fetch(url);
+
+  if(!response.ok){
+    throw new Error('Dataset API response '+response.status);
+  }
+
+  const payload=await response.json();
+
+  const rows=Array.isArray(payload)
+    ? payload
+    : Array.isArray(payload.data)
+      ? payload.data
+      : Array.isArray(payload.rows)
+        ? payload.rows
+        : [];
+
+  if(!rows.length){
+    throw new Error('Is symbol ka historical data nahi mila');
+  }
+
+  const normalized=rows.map(r=>({
+    date:r.date??r.timestamp??'',
+    open:Number(r.open??r.Open),
+    high:Number(r.high??r.High),
+    low:Number(r.low??r.Low),
+    close:Number(r.close??r.Close),
+    volume:Number(r.volume??r.Volume)
+  })).filter(r=>
+    r.date &&
+    Number.isFinite(r.close) &&
+    r.close>0
+  );
+
+  normalized.sort((a,b)=>
+    new Date(a.date)-new Date(b.date)
+  );
+
+  if(!normalized.length){
+    throw new Error('Valid historical prices nahi mile');
+  }
+
+  return normalized.slice(-limit);
 }
+  
 
 function drawWatchlist(){
   const body=document.getElementById('watchRows');body.replaceChildren();
