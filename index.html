@@ -402,7 +402,156 @@ drawPriceChart(data);
 document.getElementById('loadHistory').addEventListener('click',async()=>{const button=document.getElementById('loadHistory'),symbol=document.getElementById('historySymbol').value,from=document.getElementById('historyFrom').value,to=document.getElementById('historyTo').value,status=document.getElementById('historyStatus');if(!from||!to||from>to){status.textContent='Sahi From aur To dates select karo.';return;}button.disabled=true;status.textContent='Historical dataset se data load ho raha hai…';try{const all=await fetchStockHistory(symbol,1000);const filtered=all.filter(x=>{const d=String(x.date).slice(0,10);return d>=from&&d<=to;});if(!filtered.length)throw new Error('Selected date range mein records nahi mile.');renderHistory(filtered);
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         drawPriceChart(filtered);status.textContent=filtered.length+' historical records load hue. Last available date: '+String(filtered.at(-1).date).slice(0,10)+'.';}catch(error){status.textContent='Data load nahi hua: '+error.message+'. Dataset service ya internet baad mein try karo.';}finally{button.disabled=false;}});
 
-document.getElementById('runScanner').addEventListener('click',async function(){const button=this,body=document.getElementById('scannerRows'),status=document.getElementById('scannerStatus');button.disabled=true;body.replaceChildren();let done=0;status.textContent='Historical data load ho raha hai…';for(const symbol of SCANNER_STOCKS){const tr=document.createElement('tr'),cells=[];for(let i=0;i<4;i++){const td=document.createElement('td');td.textContent=i===0?symbol:i===1?'Loading…':'—';tr.appendChild(td);cells.push(td);}body.appendChild(tr);try{const data=await fetchStockHistory(symbol,150);const closes=data.map(x=>x.close);const signals=buildStrategy(closes);let latest=null;for(let i=signals.length-1;i>=0;i--){if(signals[i]){latest=signals[i];break;}}if(!latest)throw new Error('Not enough data');cells[1].textContent=money(closes.at(-1));cells[2].textContent=(latest.score>0?'+':'')+latest.score+' / 6';cells[3].textContent=latest.signal;cells[3].style.color=latest.signal==='BULLISH'?'var(--green)':latest.signal==='BEARISH'?'var(--red)':'var(--yellow)';}catch(error){cells[1].textContent='—';cells[2].textContent='—';cells[3].textContent=error.message||'Data unavailable';}done++;status.textContent=done+' / '+SCANNER_STOCKS.length+' stocks checked.';}status.textContent='Scan complete. Results historical dataset par based hain; live prices nahi.';button.disabled=false;});
+// ===== ADVANCED SMART STOCK SCANNER =====
+
+document.getElementById('runScanner').addEventListener('click', async function() {
+  const button = this;
+  const body = document.getElementById('scannerRows');
+  const status = document.getElementById('scannerStatus');
+
+  button.disabled = true;
+  body.replaceChildren();
+
+  let done = 0;
+
+  status.textContent = 'Advanced historical scan running...';
+
+  for (const symbol of SCANNER_STOCKS) {
+    const tr = document.createElement('tr');
+    const cells = [];
+
+    for (let i = 0; i < 8; i++) {
+      const td = document.createElement('td');
+      td.textContent = i === 0 ? symbol : 'Loading...';
+      tr.appendChild(td);
+      cells.push(td);
+    }
+
+    body.appendChild(tr);
+
+    try {
+      const data = await fetchStockHistory(symbol, 150);
+
+      if (!data || data.length < 50) {
+        throw new Error('Insufficient historical data');
+      }
+
+      const closes = data.map(x => x.close);
+      const latest = data[data.length - 1];
+
+      const signals = buildStrategy(closes);
+
+      let signal = null;
+
+      for (let i = signals.length - 1; i >= 0; i--) {
+        if (signals[i]) {
+          signal = signals[i];
+          break;
+        }
+      }
+
+      if (!signal) throw new Error('Signal unavailable');
+
+      // RSI
+      const rsiValues = calculateRSI(closes, 14);
+      const rsi = rsiValues[rsiValues.length - 1];
+
+      // Volume ratio: current vs previous 20 sessions
+      const previousVolumes = data
+        .slice(-21, -1)
+        .map(x => Number(x.volume) || 0);
+
+      const averageVolume =
+        previousVolumes.reduce((a, b) => a + b, 0) /
+        previousVolumes.length;
+
+      const currentVolume = Number(latest.volume) || 0;
+
+      const volumeRatio = averageVolume > 0
+        ? currentVolume / averageVolume
+        : null;
+
+      // Previous 20-session high breakout
+      const previousHighs = data
+        .slice(-21, -1)
+        .map(x => Number(x.high))
+        .filter(x => Number.isFinite(x));
+
+      const previousHigh = previousHighs.length
+        ? Math.max(...previousHighs)
+        : null;
+
+      const breakout = previousHigh === null
+        ? 'Unavailable'
+        : latest.close > previousHigh
+          ? 'Breakout'
+          : 'No Breakout';
+
+      // EMA trend
+      const ema20 = calculateEMA(closes, 20);
+      const ema50 = calculateEMA(closes, 50);
+
+      const last = closes.length - 1;
+
+      const trend =
+        closes[last] > ema20[last] && ema20[last] > ema50[last]
+          ? 'Strong Uptrend'
+          : closes[last] > ema20[last]
+            ? 'Uptrend'
+            : closes[last] < ema20[last] && ema20[last] < ema50[last]
+              ? 'Downtrend'
+              : 'Sideways';
+
+      cells[1].textContent = money(latest.close);
+
+      cells[2].textContent =
+        (signal.score > 0 ? '+' : '') + signal.score + ' / 6';
+
+      cells[3].textContent = signal.signal;
+
+      cells[4].textContent =
+        Number.isFinite(rsi) ? rsi.toFixed(2) : '—';
+
+      cells[5].textContent =
+        volumeRatio === null ? '—' : volumeRatio.toFixed(2) + 'x';
+
+      cells[6].textContent = breakout;
+
+      cells[7].textContent = trend;
+
+      cells[3].style.color =
+        signal.signal === 'BULLISH' ? 'var(--green)' :
+        signal.signal === 'BEARISH' ? 'var(--red)' :
+        'var(--yellow)';
+
+      cells[6].style.color =
+        breakout === 'Breakout' ? 'var(--green)' : 'var(--yellow)';
+
+      cells[7].style.color =
+        trend.includes('Uptrend') ? 'var(--green)' :
+        trend === 'Downtrend' ? 'var(--red)' :
+        'var(--yellow)';
+
+    } catch (error) {
+      cells[1].textContent = '—';
+      cells[2].textContent = '—';
+
+      for (let i = 3; i < 8; i++) {
+        cells[i].textContent = 'Unavailable';
+      }
+    }
+
+    done++;
+
+    status.textContent =
+      done + ' / ' + SCANNER_STOCKS.length + ' stocks scanned.';
+  }
+
+  status.textContent =
+    'Advanced scan complete. Historical analysis only; live prices unavailable.';
+
+  button.disabled = false;
+});
 
 loadWatchlist();loadPaperData();drawWatchlist();drawPositions();drawTradeHistory();
   function drawPriceChart(data){
