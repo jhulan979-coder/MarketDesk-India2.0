@@ -39,7 +39,7 @@ jobs:
           npm install --save-dev @capacitor/cli
           npx cap init "MarketDesk India" "com.marketdesk.india" --web-dir www
           npx cap add android
-          
+
       - name: Align Kotlin dependency versions
         run: |
           cat >> app/android/build.gradle <<'EOF'
@@ -54,24 +54,59 @@ jobs:
               }
           }
           EOF
-          
 
-      - name: Build debug APK
+      - name: Decode release signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.MARKETDESK_KEYSTORE_BASE64 }}
+        run: |
+          mkdir -p app/android/app
+          echo "$KEYSTORE_BASE64" | base64 --decode > app/android/app/marketdesk-release.jks
+          test -s app/android/app/marketdesk-release.jks
+
+      - name: Configure release signing and version
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.MARKETDESK_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.MARKETDESK_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.MARKETDESK_KEY_PASSWORD }}
+        run: |
+          cat >> app/android/app/build.gradle <<'EOF'
+
+          android {
+              defaultConfig {
+                  versionCode Integer.parseInt(System.getenv("GITHUB_RUN_NUMBER"))
+              }
+
+              signingConfigs {
+                  release {
+                      storeFile file("marketdesk-release.jks")
+                      storePassword System.getenv("KEYSTORE_PASSWORD")
+                      keyAlias System.getenv("KEY_ALIAS")
+                      keyPassword System.getenv("KEY_PASSWORD")
+                  }
+              }
+
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.release
+                  }
+              }
+          }
+          EOF
+
+      - name: Build signed release APK
         run: |
           cd app/android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleRelease
 
-      
       - name: Publish APK to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: marketdesk-v${{ github.run_number }}
+          tag_name: marketdesk-v${{ github.run_number }}-${{ github.run_attempt }}
           name: MarketDesk India v${{ github.run_number }}
           body: |
             MarketDesk India personal research app.
-            Download the APK below and install it on your Android phone.
-            Demo data only; live market data is not connected yet.
-          files: app/android/app/build/outputs/apk/debug/app-debug.apk
+            Signed release APK.
+            Educational paper mode only; not for real trading.
+          files: app/android/app/build/outputs/apk/release/app-release.apk
           fail_on_unmatched_files: true
-          
