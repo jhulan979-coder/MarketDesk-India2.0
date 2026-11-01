@@ -90,7 +90,79 @@
     Chart data ka intezar hai.
   </div>
 </div> </p><div class="table-wrap"><table><thead><tr><th>Date</th><th>High</th><th>Low</th><th>Close</th><th>Volume</th></tr></thead><tbody id="historyRows"><tr><td colspan="5">No data loaded.</td></tr></tbody></table></div></section>
-<section class="card" id="strategyEngine"><h2>MarketDesk Strategy Analysis</h2><p>EMA 20/50 + RSI 14 + MACD confirmation</p><div class="grid"><div class="card"><div class="label">Historical technical state</div><div class="value" id="strategySignal">—</div><p id="strategyReason">Historical data load karo</p></div><div class="card"><div class="label">Confirmation score</div><div class="value" id="strategyScore">—</div><p>Technical score; win probability nahi</p></div></div><h2>Indicator Confirmation</h2><p id="emaCheck">EMA 20/50: Waiting</p><p id="macdCheck">MACD: Waiting</p><p id="rsiCheck">RSI: Waiting</p><div class="divider"></div><h2>Historical Backtest</h2><p class="note">Illustrative rule: bullish condition ke agle session mein entry, 5 sessions baad exit. Brokerage, taxes, slippage aur market impact included nahi.</p><div class="grid"><div class="card"><div class="label">Tested trades</div><div class="value" id="btTrades">—</div></div><div class="card"><div class="label">Historical positive trades</div><div class="value" id="btWinRate">—</div></div><div class="card"><div class="label">Average return</div><div class="value" id="btAverage">—</div></div><div class="card"><div class="label">Buy & hold return</div><div class="value" id="btHold">—</div></div></div><p id="backtestStatus" class="note">Backtest ke liye historical data load karo.</p></section></div>
+<section class="card" id="strategyEngine"><h2>MarketDesk Strategy Analysis</h2><p>EMA 20/50 + RSI 14 + MACD confirmation</p><div class="grid"><div class="card"><div class="label">Historical technical state</div><div class="value" id="strategySignal">—</div><p id="strategyReason">Historical data load karo</p></div><div class="card"><div class="label">Confirmation score</div><div class="value" id="strategyScore">—</div><p>Technical score; win probability nahi</p></div></div><h2>Indicator Confirmation</h2><p id="emaCheck">EMA 20/50: Waiting</p><p id="macdCheck">MACD: Waiting</p><p id="rsiCheck">RSI: Waiting</p><div class="divider"></div><h2>Historical Backtest</h2><p class="note">Illustrative rule: bullish condition ke agle session mein entry, 5 sessions baad exit. Brokerage, taxes, slippage aur market impact included nahi.</p><div class="grid"><div class="card"><div class="label">Tested trades</div><div class="value" id="btTrades">—</div></div><div class="card"><div class="label">Historical positive trades</div><div class="value" id="btWinRate">—</div></div><div class="card"><div class="label">Average return</div><div class="value" id="btAverage">—</div></div><div class="card"><div class="label">Buy & hold return</div><div class="value" id="btHold">—</div></div></div><p id="backtestStatus" class="note">Backtest ke liye historical data load karo.</p><div class="divider"></div>
+
+<h2>Equity Curve</h2>
+<p class="note">Simulated capital growth after each completed historical trade.</p>
+<div id="equityChart" class="card">
+  Backtest data ka intezar hai.
+</div>
+
+<div class="divider"></div>
+
+<h2>Benchmark Comparison</h2>
+<div class="grid">
+  <div class="card">
+    <div class="label">Strategy Total Return</div>
+    <div class="value" id="strategyReturn">—</div>
+  </div>
+  <div class="card">
+    <div class="label">Buy & Hold Return</div>
+    <div class="value" id="benchmarkReturn">—</div>
+  </div>
+</div>
+<p id="benchmarkStatus" class="note">Comparison ke liye data load karo.</p>
+
+<div class="divider"></div>
+
+<h2>Monthly Performance</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Month</th><th>Trades</th><th>Monthly Return</th></tr>
+    </thead>
+    <tbody id="monthlyRows">
+      <tr><td colspan="3">No data.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="divider"></div>
+
+<h2>Trade-by-Trade History</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Entry Date</th>
+        <th>Exit Date</th>
+        <th>Entry ₹</th>
+        <th>Exit ₹</th>
+        <th>Return</th>
+      </tr>
+    </thead>
+    <tbody id="backtestTradeRows">
+      <tr><td colspan="5">No trades.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="divider"></div>
+
+<h2>Backtest Reliability</h2>
+<div class="grid">
+  <div class="card">
+    <div class="label">Sample Size</div>
+    <div class="value" id="reliabilityTrades">—</div>
+  </div>
+  <div class="card">
+    <div class="label">Assessment</div>
+    <div class="value" id="reliabilityStatus">—</div>
+  </div>
+</div>
+<p id="reliabilityNote" class="note">
+  Reliability assessment ke liye historical data load karo.
+</p></section></div>
 <div id="scanner" class="tab" hidden><section class="card"><h2>Multi-Stock Scanner</h2><p>5 stocks ka historical trend aur technical score check karo.</p><button id="runScanner" type="button">Scan 5 Stocks</button><p id="scannerStatus" class="note">Scan shuru karne ke liye button dabao.</p><div class="table-wrap"><table><thead><th>Stock</th>
 <th>Latest Close</th>
 <th>Score</th>
@@ -395,14 +467,16 @@ function renderVolumeAnalysis(data) {
 } 
 function buildStrategy(closes){const e20=calculateEMA(closes,20),e50=calculateEMA(closes,50),e12=calculateEMA(closes,12),e26=calculateEMA(closes,26),rsi=calculateRSI(closes,14);const macd=closes.map((_,i)=>e12[i]!==null&&e26[i]!==null?e12[i]-e26[i]:null);const valid=macd.map(v=>v===null?0:v);const sig=calculateEMA(valid,9);return closes.map((close,i)=>{if(e20[i]===null||e50[i]===null||rsi[i]===null||macd[i]===null||sig[i]===null)return null;let score=0;const checks=[];if(e20[i]>e50[i]){score+=2;checks.push('EMA trend positive');}else{score-=2;checks.push('EMA trend negative');}if(close>e20[i]){score++;checks.push('Price above EMA20');}else{score--;checks.push('Price below EMA20');}if(macd[i]>sig[i]){score+=2;checks.push('MACD positive');}else{score-=2;checks.push('MACD negative');}if(rsi[i]>=50&&rsi[i]<70)score++;else if(rsi[i]>=30&&rsi[i]<50)score--;const signal=score>=4?'BULLISH':score<=-4?'BEARISH':'NEUTRAL';return{close,ema20:e20[i],ema50:e50[i],rsi:rsi[i],macd:macd[i],macdSignal:sig[i],score,signal,checks};});}
 
-function runBacktest(closes, signals) {
-  const trades = [];
-
+function runBacktest(data, signals) {
   const initialCapital = 100000;
   let equity = initialCapital;
   let peak = initialCapital;
   let maxDrawdown = 0;
-  let maxDrawdownAmount = 0;
+
+  const trades = [];
+  const monthly = {};
+
+  const closes = data.map(x => x.close);
 
   const hold = closes.length > 1
     ? ((closes.at(-1) - closes[0]) / closes[0]) * 100
@@ -413,47 +487,70 @@ function runBacktest(closes, signals) {
       continue;
     }
 
-    const entry = closes[i + 1];
-    const exit = closes[i + 6];
+    const entryIndex = i + 1;
+    const exitIndex = i + 6;
+
+    const entry = closes[entryIndex];
+    const exit = closes[exitIndex];
 
     if (
-      Number.isFinite(entry) &&
-      Number.isFinite(exit) &&
-      entry > 0
+      !Number.isFinite(entry) ||
+      !Number.isFinite(exit) ||
+      entry <= 0
     ) {
-      const result = ((exit - entry) / entry) * 100;
+      continue;
+    }
 
-      trades.push(result);
+    const result = ((exit - entry) / entry) * 100;
 
-      equity *= (1 + result / 100);
+    equity *= (1 + result / 100);
+    peak = Math.max(peak, equity);
 
-      peak = Math.max(peak, equity);
+    const drawdown = peak > 0
+      ? ((peak - equity) / peak) * 100
+      : 0;
 
-      const drawdownAmount = peak - equity;
-      const drawdown = peak > 0
-        ? (drawdownAmount / peak) * 100
-        : 0;
+    maxDrawdown = Math.max(maxDrawdown, drawdown);
 
-      maxDrawdown = Math.max(maxDrawdown, drawdown);
-      maxDrawdownAmount = Math.max(
-        maxDrawdownAmount,
-        drawdownAmount
-      );
+    const entryDate = String(data[entryIndex].date || '').slice(0, 10);
+    const exitDate = String(data[exitIndex].date || '').slice(0, 10);
+
+    trades.push({
+      entryDate,
+      exitDate,
+      entry,
+      exit,
+      return: result,
+      equity
+    });
+
+    const month = exitDate.slice(0, 7);
+
+    if (month) {
+      if (!monthly[month]) {
+        monthly[month] = {
+          trades: 0,
+          equity: 1
+        };
+      }
+
+      monthly[month].trades++;
+      monthly[month].equity *= 1 + result / 100;
     }
 
     i += 5;
   }
 
-  const wins = trades.filter(x => x > 0);
-  const losses = trades.filter(x => x <= 0);
+  const returns = trades.map(t => t.return);
+  const wins = returns.filter(x => x > 0);
+  const losses = returns.filter(x => x <= 0);
 
   const grossProfit = wins.reduce((a, b) => a + b, 0);
-  const grossLoss = Math.abs(
-    losses.reduce((a, b) => a + b, 0)
-  );
+  const grossLoss = Math.abs(losses.reduce((a, b) => a + b, 0));
 
-  const totalReturn =
-    ((equity - initialCapital) / initialCapital) * 100;
+  const average = returns.length
+    ? returns.reduce((a, b) => a + b, 0) / returns.length
+    : null;
 
   const averageWin = wins.length
     ? grossProfit / wins.length
@@ -463,70 +560,242 @@ function runBacktest(closes, signals) {
     ? losses.reduce((a, b) => a + b, 0) / losses.length
     : null;
 
-  const average = trades.length
-    ? trades.reduce((a, b) => a + b, 0) / trades.length
-    : null;
+  const totalReturn =
+    ((equity - initialCapital) / initialCapital) * 100;
 
-  const expectancy = average;
-
-  const recoveryFactor = maxDrawdownAmount > 0
-    ? (equity - initialCapital) / maxDrawdownAmount
-    : null;
+  const monthlyRows = Object.entries(monthly)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([month, value]) => ({
+      month,
+      trades: value.trades,
+      return: (value.equity - 1) * 100
+    }));
 
   return {
-    trades: trades.length,
+    trades,
     wins: wins.length,
     losses: losses.length,
-
-    winRate: trades.length
-      ? wins.length / trades.length * 100
+    winRate: returns.length
+      ? wins.length / returns.length * 100
       : null,
-
     average,
+    averageWin,
+    averageLoss,
     hold,
+    totalReturn,
+    equity,
     maxDrawdown,
-
     profitFactor: grossLoss > 0
       ? grossProfit / grossLoss
       : grossProfit > 0 ? Infinity : null,
-
-    equity,
-    totalReturn,
-    averageWin,
-    averageLoss,
-    expectancy,
-    recoveryFactor,
-
-    bestTrade: trades.length
-      ? Math.max(...trades)
-      : null,
-
-    worstTrade: trades.length
-      ? Math.min(...trades)
-      : null
+    expectancy: average,
+    bestTrade: returns.length ? Math.max(...returns) : null,
+    worstTrade: returns.length ? Math.min(...returns) : null,
+    monthlyRows
   };
 }
-function renderStrategy(data){const closes=data.map(x=>x.close);const signals=buildStrategy(closes);let i=signals.length-1;while(i>=0&&!signals[i])i--;const latest=signals[i];if(!latest){document.getElementById('strategyReason').textContent='Indicators ke liye kam se kam 50+ historical sessions chahiye.';return;}const signal=document.getElementById('strategySignal');signal.textContent=latest.signal;signal.style.color=latest.signal==='BULLISH'?'var(--green)':latest.signal==='BEARISH'?'var(--red)':'var(--yellow)';document.getElementById('strategyScore').textContent=(latest.score>0?'+':'')+latest.score+' / 6';document.getElementById('strategyReason').textContent=latest.checks.join(' · ');document.getElementById('emaCheck').textContent='EMA 20: '+money(latest.ema20)+' | EMA 50: '+money(latest.ema50);document.getElementById('macdCheck').textContent=latest.macd>latest.macdSignal?'MACD: Positive historical confirmation':'MACD: Negative historical confirmation';document.getElementById('rsiCheck').textContent='RSI 14: '+latest.rsi.toFixed(2);const bt=runBacktest(closes,signals);document.getElementById('btTrades').textContent=bt.trades;document.getElementById('btWinRate').textContent=bt.winRate===null?'Not enough trades':bt.winRate.toFixed(1)+'%';document.getElementById('btAverage').textContent=bt.average===null?'—':(bt.average>0?'+':'')+bt.average.toFixed(2)+'%';document.getElementById('btHold').textContent=bt.hold===null?'—':(bt.hold>0?'+':'')+bt.hold.toFixed(2)+'%';document.getElementById('backtestStatus').textContent =
-  bt.trades
-    ? 'Trades: ' + bt.trades +
-      ' | Wins: ' + bt.wins +
-      ' | Losses: ' + bt.losses +
-      ' | Return: ' + bt.totalReturn.toFixed(2) +
-      '% | Avg Win: ' +
-      (bt.averageWin === null ? '—' : bt.averageWin.toFixed(2) + '%') +
-      ' | Avg Loss: ' +
-      (bt.averageLoss === null ? '—' : bt.averageLoss.toFixed(2) + '%') +
-      ' | Expectancy: ' + bt.expectancy.toFixed(2) +
-      '% | Drawdown: ' + bt.maxDrawdown.toFixed(2) +
-      '% | Recovery: ' +
-      (bt.recoveryFactor === null ? 'N/A' : bt.recoveryFactor.toFixed(2)) +
-      ' | Best: ' + bt.bestTrade.toFixed(2) +
-      '% | Worst: ' + bt.worstTrade.toFixed(2) +
-      '% | Profit Factor: ' +
-      (Number.isFinite(bt.profitFactor) ? bt.profitFactor.toFixed(2) : 'N/A') +
-      ' | Costs and slippage excluded.'
-    : 'No qualifying historical trades found.';
-                             }
+function renderStrategy(data) {
+  const closes = data.map(x => x.close);
+  const signals = buildStrategy(closes);
+
+  let i = signals.length - 1;
+
+  while (i >= 0 && !signals[i]) i--;
+
+  const latest = signals[i];
+
+  const bt = runBacktest(data, signals);
+
+  const signal = document.getElementById('strategySignal');
+
+  if (!latest) {
+    signal.textContent = '—';
+    document.getElementById('strategyReason').textContent =
+      'Indicators ke liye kam se kam 50+ historical sessions chahiye.';
+  } else {
+    signal.textContent = latest.signal;
+
+    signal.style.color =
+      latest.signal === 'BULLISH' ? 'var(--green)' :
+      latest.signal === 'BEARISH' ? 'var(--red)' :
+      'var(--yellow)';
+
+    document.getElementById('strategyScore').textContent =
+      (latest.score > 0 ? '+' : '') + latest.score + ' / 6';
+
+    document.getElementById('strategyReason').textContent =
+      latest.checks.join(' · ');
+
+    document.getElementById('emaCheck').textContent =
+      'EMA 20: ' + money(latest.ema20) +
+      ' | EMA 50: ' + money(latest.ema50);
+
+    document.getElementById('macdCheck').textContent =
+      latest.macd > latest.macdSignal
+        ? 'MACD: Positive historical confirmation'
+        : 'MACD: Negative historical confirmation';
+
+    document.getElementById('rsiCheck').textContent =
+      'RSI 14: ' + latest.rsi.toFixed(2);
+  }
+
+  document.getElementById('btTrades').textContent = bt.trades.length;
+
+  document.getElementById('btWinRate').textContent =
+    bt.winRate === null ? 'Not enough trades' :
+    bt.winRate.toFixed(1) + '%';
+
+  document.getElementById('btAverage').textContent =
+    bt.average === null ? '—' :
+    (bt.average > 0 ? '+' : '') + bt.average.toFixed(2) + '%';
+
+  document.getElementById('btHold').textContent =
+    bt.hold === null ? '—' :
+    (bt.hold > 0 ? '+' : '') + bt.hold.toFixed(2) + '%';
+
+  document.getElementById('backtestStatus').textContent =
+    bt.trades.length
+      ? 'Trades: ' + bt.trades.length +
+        ' | Wins: ' + bt.wins +
+        ' | Losses: ' + bt.losses +
+        ' | Return: ' + bt.totalReturn.toFixed(2) +
+        '% | Drawdown: ' + bt.maxDrawdown.toFixed(2) +
+        '% | Profit Factor: ' +
+        (Number.isFinite(bt.profitFactor)
+          ? bt.profitFactor.toFixed(2) : 'N/A') +
+        ' | Costs and slippage excluded.'
+      : 'No qualifying historical trades found.';
+
+  document.getElementById('strategyReturn').textContent =
+    bt.totalReturn.toFixed(2) + '%';
+
+  document.getElementById('benchmarkReturn').textContent =
+    bt.hold === null ? '—' : bt.hold.toFixed(2) + '%';
+
+  document.getElementById('benchmarkStatus').textContent =
+    bt.hold === null ? 'Benchmark unavailable.' :
+    'Strategy aur Buy & Hold returns same historical date range par calculate hue hain.';
+
+  // Equity curve
+  const chart = document.getElementById('equityChart');
+
+  if (!bt.trades.length) {
+    chart.textContent = 'Equity curve ke liye qualifying trades nahi mile.';
+  } else {
+    const values = [100000, ...bt.trades.map(t => t.equity)];
+    const width = 600;
+    const height = 220;
+    const pad = 35;
+
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min || 1;
+
+    const points = values.map((value, index) => {
+      const x = pad + index * (width - 2 * pad) / (values.length - 1);
+      const y = height - pad -
+        ((value - min) / range) * (height - 2 * pad);
+
+      return x + ',' + y;
+    }).join(' ');
+
+    chart.innerHTML = `
+      <svg viewBox="0 0 ${width} ${height}"
+           style="width:100%;height:auto">
+        <polyline points="${points}"
+          fill="none"
+          stroke="#7ca8ff"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+        <text x="${pad}" y="18" fill="currentColor" font-size="12">
+          ₹${max.toFixed(0)}
+        </text>
+        <text x="${pad}" y="${height - 5}" fill="currentColor" font-size="12">
+          ₹${min.toFixed(0)}
+        </text>
+      </svg>
+      <p class="note">Starting capital: ₹1,00,000 · Ending capital: ${money(bt.equity)}</p>
+    `;
+  }
+
+  // Monthly performance
+  const monthlyBody = document.getElementById('monthlyRows');
+  monthlyBody.replaceChildren();
+
+  if (!bt.monthlyRows.length) {
+    monthlyBody.innerHTML =
+      '<tr><td colspan="3">No monthly data.</td></tr>';
+  } else {
+    bt.monthlyRows.forEach(item => {
+      const tr = document.createElement('tr');
+
+      [
+        item.month,
+        item.trades,
+        (item.return > 0 ? '+' : '') + item.return.toFixed(2) + '%'
+      ].forEach(value => {
+        const td = document.createElement('td');
+        td.textContent = String(value);
+        tr.appendChild(td);
+      });
+
+      monthlyBody.appendChild(tr);
+    });
+  }
+
+  // Trade history
+  const tradeBody = document.getElementById('backtestTradeRows');
+  tradeBody.replaceChildren();
+
+  if (!bt.trades.length) {
+    tradeBody.innerHTML =
+      '<tr><td colspan="5">No qualifying trades.</td></tr>';
+  } else {
+    bt.trades.forEach(trade => {
+      const tr = document.createElement('tr');
+
+      [
+        trade.entryDate || '—',
+        trade.exitDate || '—',
+        money(trade.entry),
+        money(trade.exit),
+        (trade.return > 0 ? '+' : '') + trade.return.toFixed(2) + '%'
+      ].forEach(value => {
+        const td = document.createElement('td');
+        td.textContent = String(value);
+        tr.appendChild(td);
+      });
+
+      tradeBody.appendChild(tr);
+    });
+  }
+
+  // Reliability assessment
+  const count = bt.trades.length;
+
+  document.getElementById('reliabilityTrades').textContent = count;
+
+  let assessment;
+  let note;
+
+  if (count < 30) {
+    assessment = 'Low';
+    note = '30 se kam trades hain. Sample bahut chhota hai; result par bharosa nahi kiya ja sakta.';
+  } else if (count < 100) {
+    assessment = 'Limited';
+    note = 'Sample size abhi limited hai. Alag market conditions mein aur testing zaroori hai.';
+  } else {
+    assessment = 'Larger Sample';
+    note = 'Sample bada hai, lekin yeh future performance ya reliability ki guarantee nahi hai.';
+  }
+
+  document.getElementById('reliabilityStatus').textContent =
+    assessment;
+
+  document.getElementById('reliabilityNote').textContent =
+    note + ' Fees, taxes, slippage aur execution costs excluded hain.';
+}
 function renderHistory(data){const rows=document.getElementById('historyRows');rows.replaceChildren();data.slice().reverse().forEach(item=>{const tr=document.createElement('tr');[item.date,Number.isFinite(item.high)?item.high.toFixed(2):'—',Number.isFinite(item.low)?item.low.toFixed(2):'—',item.close.toFixed(2),Number.isFinite(item.volume)?item.volume.toLocaleString('en-IN'):'—'].forEach(v=>{const td=document.createElement('td');td.textContent=String(v);tr.appendChild(td);});rows.appendChild(tr);});const closes=data.map(x=>x.close);const last20=closes.slice(-20);const ma=last20.length===20?last20.reduce((a,b)=>a+b,0)/20:null;document.getElementById('maValue').textContent=ma===null?'Not enough data':money(ma);document.getElementById('maStatus').textContent=ma===null?'20 valid closing prices chahiye':closes.at(-1)>=ma?'Latest close MA20 ke upar hai':'Latest close MA20 ke neeche hai';const rsiArr=calculateRSI(closes,14);const rsi=rsiArr.at(-1);document.getElementById('rsiValue').textContent=rsi===null?'Not enough data':rsi.toFixed(2);document.getElementById('rsiStatus').textContent=rsi===null?'14 price changes chahiye':rsi>=70?'Momentum high — overbought zone':rsi<=30?'Momentum low — oversold zone':'RSI 30–70 range mein';renderStrategy(data);renderAdvancedIndicators(data);renderVolumeAnalysis(data);
 drawPriceChart(data);
                             }
