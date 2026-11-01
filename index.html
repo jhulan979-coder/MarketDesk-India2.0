@@ -465,7 +465,92 @@ function renderVolumeAnalysis(data) {
 
   document.getElementById('volumeSignal').textContent = signal;
 } 
-function buildStrategy(closes){const e20=calculateEMA(closes,20),e50=calculateEMA(closes,50),e12=calculateEMA(closes,12),e26=calculateEMA(closes,26),rsi=calculateRSI(closes,14);const macd=closes.map((_,i)=>e12[i]!==null&&e26[i]!==null?e12[i]-e26[i]:null);const valid=macd.map(v=>v===null?0:v);const sig=calculateEMA(valid,9);return closes.map((close,i)=>{if(e20[i]===null||e50[i]===null||rsi[i]===null||macd[i]===null||sig[i]===null)return null;let score=0;const checks=[];if(e20[i]>e50[i]){score+=2;checks.push('EMA trend positive');}else{score-=2;checks.push('EMA trend negative');}if(close>e20[i]){score++;checks.push('Price above EMA20');}else{score--;checks.push('Price below EMA20');}if(macd[i]>sig[i]){score+=2;checks.push('MACD positive');}else{score-=2;checks.push('MACD negative');}if(rsi[i]>=50&&rsi[i]<70)score++;else if(rsi[i]>=30&&rsi[i]<50)score--;const signal=score>=4?'BULLISH':score<=-4?'BEARISH':'NEUTRAL';return{close,ema20:e20[i],ema50:e50[i],rsi:rsi[i],macd:macd[i],macdSignal:sig[i],score,signal,checks};});}
+
+function buildStrategy(closes) {
+  const e20 = calculateEMA(closes, 20);
+  const e50 = calculateEMA(closes, 50);
+  const e12 = calculateEMA(closes, 12);
+  const e26 = calculateEMA(closes, 26);
+  const rsi = calculateRSI(closes, 14);
+
+  const macd = closes.map((_, i) =>
+    e12[i] !== null && e26[i] !== null
+      ? e12[i] - e26[i]
+      : null
+  );
+
+  // Signal EMA ko sirf valid MACD values par calculate karo
+  const firstValid = macd.findIndex(v => v !== null);
+  const validMacd = macd.slice(firstValid);
+  const validSignal = calculateEMA(validMacd, 9);
+
+  const macdSignal = Array(closes.length).fill(null);
+
+  validSignal.forEach((value, i) => {
+    macdSignal[firstValid + i] = value;
+  });
+
+  return closes.map((close, i) => {
+    if (
+      e20[i] === null ||
+      e50[i] === null ||
+      rsi[i] === null ||
+      macd[i] === null ||
+      macdSignal[i] === null
+    ) return null;
+
+    let score = 0;
+    const checks = [];
+
+    if (e20[i] > e50[i]) {
+      score += 2;
+      checks.push('EMA trend positive');
+    } else {
+      score -= 2;
+      checks.push('EMA trend negative');
+    }
+
+    if (close > e20[i]) {
+      score++;
+      checks.push('Price above EMA20');
+    } else {
+      score--;
+      checks.push('Price below EMA20');
+    }
+
+    if (macd[i] > macdSignal[i]) {
+      score += 2;
+      checks.push('MACD positive');
+    } else {
+      score -= 2;
+      checks.push('MACD negative');
+    }
+
+    if (rsi[i] >= 50 && rsi[i] < 70) {
+      score++;
+    } else if (rsi[i] >= 30 && rsi[i] < 50) {
+      score--;
+    }
+
+    const signal =
+      score >= 4 ? 'BULLISH' :
+      score <= -4 ? 'BEARISH' :
+      'NEUTRAL';
+
+    return {
+      close,
+      ema20: e20[i],
+      ema50: e50[i],
+      rsi: rsi[i],
+      macd: macd[i],
+      macdSignal: macdSignal[i],
+      score,
+      signal,
+      checks
+    };
+  });
+}
+  
 
 function runBacktest(data, signals) {
   const initialCapital = 100000;
