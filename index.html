@@ -391,7 +391,7 @@ footer{
   </section>
   <section class="card">
     <h2>Data refresh</h2>
-    <p>Automatic refresh: every 5 minutes while the app is open. Provider timestamp is shown separately. If the provider returns no new data, the app keeps the last quote and its timestamp.</p>
+    <p>Manual refresh only. This avoids consuming the free API request allowance in the background.</p>
     <p class="note">IndianAPI documents delayed stock prices and 5-minute intraday candle intervals. It does not promise that every quote is exactly 5 minutes delayed.</p>
   </section>
 </div>
@@ -419,8 +419,8 @@ footer{
 
   <section class="card">
     <h2>Market Intelligence</h2>
-    <p>Market quotes provider ke delayed feed se aate hain. App har 5 minute mein refresh check karta hai.</p>
-    <p class="note">Refresh interval 5 minute hai; provider ka actual data delay alag ho sakta hai. Ye app sirf educational virtual paper trading ke liye hai.</p>
+    <p>Market quotes provider ke delayed feed se aate hain. Market data manual refresh se load hota hai.</p>
+    <p class="note">Provider data timing aur delay plan ke hisaab se badal sakta hai. Ye app sirf educational virtual paper trading ke liye hai.</p>
     <p id="marketUpdatedAt" class="note">Last update: —</p>
     <button id="refreshMarket" type="button">Refresh Market Data</button>
   </section>
@@ -437,7 +437,7 @@ footer{
 
   <section class="card">
     <h2>My Watchlist</h2>
-    <p>Stock symbols is device par save honge. Price field latest available provider quote dikhata hai; timestamp bhi check karo.</p>
+    <p>Stock symbols is device par save honge. Price field provider quote dikhata hai; provider timestamp available ho to check karo.</p>
 
     <form id="watchForm">
       <label for="symbol">NSE stock symbol</label>
@@ -450,7 +450,7 @@ footer{
         <thead>
           <tr>
             <th>Symbol</th>
-            <th>Latest close</th>
+            <th>Latest quote</th>
             <th>Data status</th>
             <th>Action</th>
           </tr>
@@ -545,7 +545,7 @@ footer{
       </div>
     </div>
 
-    <p>Free historical daily data · NSE stocks · Historical data provider</p>
+    <p>IndianAPI historical daily price series · historical technical analysis only</p>
 
     <label for="historySymbol">Stock symbol</label>
     <select id="historySymbol">
@@ -631,7 +631,7 @@ footer{
     </div>
 
     <h2>Historical Price Chart</h2>
-    <p class="note">Daily closing price (₹)</p>
+    <p class="note">Daily closing price (₹); High/Low may not be supplied by price-only endpoint</p>
     <div id="priceChart">Chart data ka intezar hai.</div>
 
     <div class="table-wrap">
@@ -654,11 +654,11 @@ footer{
     <!-- STRATEGY ANALYSIS -->
   <section class="card" id="strategyEngine">
     <h2>MarketDesk Strategy Analysis</h2>
-    <p>EMA 20/50 + RSI 14 + MACD confirmation</p>
+    <p>Educational trend state: EMA 20/50 + RSI 14 + MACD confirmation</p>
 
     <div class="grid">
       <div class="card">
-        <div class="label">Historical technical state</div>
+        <div class="label">Educational technical state</div>
         <div class="value" id="strategySignal">—</div>
         <p id="strategyReason">Historical data load karo</p>
       </div>
@@ -854,8 +854,8 @@ footer{
 const WATCH_KEY = 'marketdesk_watchlist_v2';
 const PAPER_KEY = 'marketdesk_paper_v2';
 const INDIANAPI_KEY = 'marketdesk_indianapi_key_v1';
-const INDIANAPI_BASE = 'https://analyst.indianapi.in';
-const MARKET_REFRESH_MS = 5 * 60 * 1000;
+const INDIANAPI_BASE = 'https://stock.indianapi.in';
+// Manual refresh only: protects the free-plan request allowance.
 let marketQuotes = {};
 let indexQuotes = {};
 let lastMarketFetch = null;
@@ -919,19 +919,9 @@ async function indianApiFetch(path, options = {}) {
 }
 
 function renderIndexQuote(name, value, meta) {
-  const item = (Array.isArray(indexQuotes) ? indexQuotes : []).find(row =>
-    String(row.name || '').toUpperCase() === name
-  );
-  const valueEl = document.getElementById(value);
-  const metaEl = document.getElementById(meta);
-  if (!item) {
-    valueEl.textContent = '—';
-    metaEl.textContent = 'Provider data unavailable';
-    return;
-  }
-  const price = Number(item.price);
-  valueEl.textContent = Number.isFinite(price) ? money(price) : '—';
-  metaEl.textContent = [item.date || '', item.time || ''].filter(Boolean).join(' ') || 'Timestamp unavailable';
+  document.getElementById(value).textContent = '—';
+  document.getElementById(meta).textContent =
+    name + ' feed is not listed in the current IndianAPI Free API reference.';
 }
 
 function renderMarketOverview() {
@@ -941,41 +931,76 @@ function renderMarketOverview() {
     'App checked: ' + (lastMarketFetch ? lastMarketFetch.toLocaleString('en-IN') : '—');
 }
 
+const COMPANY_NAMES = {
+  RELIANCE: 'Reliance',
+  TCS: 'TCS',
+  INFY: 'Infosys',
+  SBIN: 'State Bank of India',
+  HDFCBANK: 'HDFC Bank'
+};
+
+function extractStockQuote(payload, symbol) {
+  const root = payload && typeof payload === 'object' ? payload : {};
+  const current = root.currentPrice || root.current_price || {};
+  const nse = current.NSE ?? current.nse ?? root.NSE ?? root.nse;
+  const bse = current.BSE ?? current.bse ?? root.BSE ?? root.bse;
+  const raw = nse ?? bse ?? root;
+  const price = Number(
+    (raw && typeof raw === 'object' ? (raw.ltp ?? raw.price ?? raw.currentPrice ?? raw.close) : raw) ??
+    root.ltp ?? root.price
+  );
+  if (!Number.isFinite(price) || price <= 0) {
+    throw new Error(symbol + ': provider response mein valid NSE/BSE price nahi mila.');
+  }
+  const details = raw && typeof raw === 'object' ? raw : root;
+  return {
+    ltp: price,
+    timestamp: details.timestamp || details.date || details.time || '',
+    exchange: nse !== undefined ? 'NSE' : 'BSE',
+    dayChange: Number(details.day_change ?? details.net_change ?? root.percentChange),
+    dayChangePercent: Number(details.day_change_percent ?? details.percent_change ?? root.percentChange),
+    source: 'IndianAPI /stock'
+  };
+}
+
+async function fetchStockQuote(symbol) {
+  const clean = safeSymbol(symbol);
+  const company = COMPANY_NAMES[clean] || clean;
+  const payload = await indianApiFetch('/stock?name=' + encodeURIComponent(company));
+  const quote = extractStockQuote(payload, clean);
+  marketQuotes[clean] = quote;
+  return quote;
+}
+
 async function refreshMarketData() {
   if (!getIndianApiKey()) {
-    setStatus('Settings mein IndianAPI key save karo; abhi historical mode active hai.');
-    return;
+    throw new Error('Settings mein approved IndianAPI key save karo.');
   }
-  setStatus('IndianAPI se market data load ho raha hai…');
-  const symbols = [...new Set([...SCANNER_STOCKS, ...watchlist, ...positions.map(item => item.symbol)])].slice(0, 25);
-  const [indicesResult, stocksResult] = await Promise.allSettled([
-    indianApiFetch('/indices'),
-    symbols.length ? indianApiFetch('/nse_stock_batch_live_price', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ stock_symbols: symbols })
-    }) : Promise.resolve({})
-  ]);
-  if (indicesResult.status === 'fulfilled') {
-    const payload = indicesResult.value;
-    indexQuotes = Array.isArray(payload) ? payload : (payload.indices || payload.data || []);
-  }
-  if (stocksResult.status === 'fulfilled') {
-    const payload = stocksResult.value;
-    marketQuotes = { ...marketQuotes, ...(payload.data || payload) };
+  const symbols = [...new Set([...SCANNER_STOCKS, ...watchlist, ...positions.map(item => item.symbol)])].slice(0, 10);
+  if (!symbols.length) throw new Error('Refresh karne ke liye pehle stock add karo.');
+  setStatus('IndianAPI se stock details load ho rahe hain…');
+  const results = [];
+  for (const symbol of symbols) {
+    try {
+      await fetchStockQuote(symbol);
+      results.push({ symbol, ok: true });
+    } catch (error) {
+      results.push({ symbol, ok: false, error: error.message });
+    }
   }
   lastMarketFetch = new Date();
   renderMarketOverview();
-  if (typeof drawWatchlist === 'function') drawWatchlist();
-  const errors = [indicesResult, stocksResult].filter(x => x.status === 'rejected');
-  if (errors.length === 2) {
-    throw new Error(errors[0].reason.message || 'Both market endpoints failed');
-  }
-  if (errors.length === 1) {
-    setStatus('Partial market data loaded. Ek endpoint failed: ' + errors[0].reason.message);
-  } else {
-    setStatus('Market data checked. Provider timestamps ko quote ke saath verify karo.');
-  }
+  drawWatchlist();
+  const succeeded = results.filter(item => item.ok).length;
+  const failed = results.filter(item => !item.ok);
+  if (!succeeded) throw new Error(failed[0]?.error || 'Provider se quote nahi mila.');
+  setStatus(succeeded + '/' + results.length + ' stock quote(s) loaded. Provider timestamp agar available ho to quote ke saath check karo.');
+  if (failed.length) keyStatusSafe('Some stocks unavailable: ' + failed.map(item => item.symbol).join(', '));
+}
+
+function keyStatusSafe(message) {
+  const el = document.getElementById('apiKeyStatus');
+  if (el) el.textContent = message;
 }
 
 function quoteFor(symbol) {
@@ -1062,75 +1087,39 @@ function loadPaperData() {
   }
 }
 
-/* Historical data provider */
+/* IndianAPI historical price data: /historical_data */
 async function fetchStockHistory(symbol, limit = 500) {
   const clean = safeSymbol(symbol);
-
-  if (!/^[A-Z0-9.&_-]{1,20}$/.test(clean)) {
-    throw new Error('Invalid stock symbol');
-  }
-
-  const today = new Date();
-
-  const to = [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, '0'),
-    String(today.getDate()).padStart(2, '0')
-  ].join('-');
-
-  const url =
-    'https://api.tejhq.dev/v1/ohlcv/nse/' +
-    encodeURIComponent(clean) +
-    '?from=2010-01-04&to=' + to;
-
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error('Historical API response ' + response.status);
-  }
-
-  const payload = await response.json();
-
-  const rows = Array.isArray(payload)
-    ? payload
-    : Array.isArray(payload.data)
-      ? payload.data
-      : Array.isArray(payload.rows)
-        ? payload.rows
-        : [];
-
-  if (!rows.length) {
-    throw new Error('Is symbol ka historical data nahi mila');
-  }
-
-  const normalized = rows.map(row => ({
-    date: row.date ?? row.timestamp ?? '',
-    open: Number(row.open ?? row.Open),
-    high: Number(row.high ?? row.High),
-    low: Number(row.low ?? row.Low),
-    close: Number(row.close ?? row.Close),
-    volume: Number(row.volume ?? row.Volume)
-  })).filter(row =>
-    row.date &&
-    Number.isFinite(row.close) &&
-    row.close > 0
+  if (!/^[A-Z0-9.&_-]{1,20}$/.test(clean)) throw new Error('Invalid stock symbol');
+  const company = COMPANY_NAMES[clean] || clean;
+  const payload = await indianApiFetch(
+    '/historical_data?stock_name=' + encodeURIComponent(company) +
+    '&period=10yr&filter=price'
   );
-
-  normalized.sort((a, b) =>
-    new Date(a.date) - new Date(b.date)
-  );
-
-  if (!normalized.length) {
-    throw new Error('Valid historical prices nahi mile');
+  const datasets = Array.isArray(payload?.datasets) ? payload.datasets : [];
+  const priceSet = datasets.find(item => /price/i.test(String(item.metric || item.label || '')));
+  const volumeSet = datasets.find(item => /volume/i.test(String(item.metric || item.label || '')));
+  if (!priceSet || !Array.isArray(priceSet.values) || !priceSet.values.length) {
+    throw new Error('IndianAPI historical response mein Price dataset nahi mila.');
   }
-
+  const volumeByDate = new Map((volumeSet?.values || []).map(row => [String(row[0]).slice(0,10), Number(row[1])]));
+  const normalized = priceSet.values.map(row => {
+    const date = String(row[0] || '').slice(0,10);
+    const close = Number(row[1]);
+    return {
+      date,
+      open: NaN,
+      high: NaN,
+      low: NaN,
+      close,
+      volume: volumeByDate.has(date) ? volumeByDate.get(date) : NaN
+    };
+  }).filter(row => /^\d{4}-\d{2}-\d{2}$/.test(row.date) && Number.isFinite(row.close) && row.close > 0)
+    .sort((a,b) => a.date.localeCompare(b.date));
+  if (!normalized.length) throw new Error('Valid historical prices nahi mile.');
   return normalized.slice(-limit);
 }
+
  function drawWatchlist() {
   const body = document.getElementById('watchRows');
   body.replaceChildren();
@@ -1443,7 +1432,7 @@ document.getElementById('testIndianApi').addEventListener('click', async () => {
   keyStatus.textContent = 'API test running…';
   try {
     await refreshMarketData();
-    keyStatus.textContent = 'API response received. Overview aur Watchlist check karo.';
+    keyStatus.textContent = 'API response received. Watchlist check karo. NIFTY/SENSEX endpoint current Free reference mein nahi hai.';
   } catch (error) {
     keyStatus.textContent = 'API test failed: ' + error.message;
   }
@@ -1460,31 +1449,14 @@ document.getElementById('fillTradePrice').addEventListener('click', async () => 
     document.getElementById('paperStatus').textContent = 'Pehle valid stock symbol enter karo.';
     return;
   }
-  let quote = quoteFor(symbol);
-  if (!quote && getIndianApiKey()) {
-    try {
-      const payload = await indianApiFetch('/nse_stock_batch_live_price', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ stock_symbols: [symbol] })
-      });
-      const result = payload.data || payload;
-      if (result[symbol]) marketQuotes[symbol] = result[symbol];
-      quote = quoteFor(symbol);
-    } catch (error) {
-      document.getElementById('paperStatus').textContent = 'Quote load failed: ' + error.message;
-      return;
-    }
-  }
-  const price = quote ? Number(quote.ltp) : NaN;
-  if (!Number.isFinite(price) || price <= 0) {
+  try {
+    const quote = quoteFor(symbol) || await fetchStockQuote(symbol);
+    document.getElementById('tradePrice').value = quote.ltp.toFixed(2);
     document.getElementById('paperStatus').textContent =
-      'Is stock ka latest quote nahi mila. API key, symbol aur provider access check karo.';
-    return;
+      'Provider quote filled (' + (quote.timestamp || 'provider timestamp unavailable') + '). Virtual simulation only.';
+  } catch (error) {
+    document.getElementById('paperStatus').textContent = 'Quote load failed: ' + error.message;
   }
-  document.getElementById('tradePrice').value = price.toFixed(2);
-  document.getElementById('paperStatus').textContent =
-    'Latest provider quote filled (' + (quote.timestamp || 'timestamp unavailable') + '). Virtual order only.';
 });
 
 /* TECHNICAL INDICATORS */
@@ -2330,8 +2302,8 @@ function renderHistory(data) {
     average === null
       ? '20 valid closing prices chahiye'
       : closes[closes.length - 1] >= average
-        ? 'Latest close MA20 ke upar hai'
-        : 'Latest close MA20 ke neeche hai';
+        ? 'Latest quote MA20 ke upar hai'
+        : 'Latest quote MA20 ke neeche hai';
 
   const rsiValues = calculateRSI(closes, 14);
   const rsi = rsiValues[rsiValues.length - 1];
@@ -2581,7 +2553,7 @@ document.getElementById('runScanner').addEventListener(
     }
 
     status.textContent =
-      'Scan complete. Historical analysis only; live prices unavailable.';
+      'Scan complete. Historical technical states only; BUY/SELL orders ya recommendations nahi.';
 
     button.disabled = false;
   }
@@ -2621,11 +2593,9 @@ drawWatchlist();
 drawPositions();
 drawTradeHistory();
 renderMarketOverview();
+// No background polling: user refreshes manually to conserve free API credits.
 if (getIndianApiKey()) {
-  refreshMarketData().catch(error => setStatus('Market data error: ' + error.message));
-  marketRefreshTimer = setInterval(() => {
-    refreshMarketData().catch(error => setStatus('Auto refresh error: ' + error.message));
-  }, MARKET_REFRESH_MS);
+  keyStatusSafe('API key saved on this device. Press Test API & Load Market when ready.');
 }
 
 </script>
