@@ -2,228 +2,926 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1220">
 <title>MarketDesk India</title>
+
 <style>
-:root{color-scheme:dark;--bg:#0b1220;--panel:#121d30;--line:#26364d;--text:#e8eef8;--muted:#91a3bc;--green:#35d49a;--red:#ff7185;--blue:#7ca8ff;--yellow:#f3ce7a}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px Arial,sans-serif}header{padding:20px 16px;background:#101a2b;border-bottom:1px solid var(--line)}h1{font-size:23px;margin:0 0 7px}h2{font-size:17px;margin:0 0 12px}p{color:var(--muted);margin:7px 0;line-height:1.5}main{padding:14px;max-width:960px;margin:auto}.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.tag{font-size:11px;color:var(--yellow);border:1px solid #65542d;padding:5px 8px;border-radius:20px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.card{background:var(--panel);border:1px solid var(--line);padding:14px;border-radius:13px;min-width:0}.label{color:var(--muted);font-size:13px}.value{font-size:23px;font-weight:bold;margin:10px 0;overflow-wrap:anywhere}.tab section{margin:16px 0}.note{font-size:12px;line-height:1.6}#status{color:var(--yellow);font-size:13px;margin:8px 0}nav{display:flex;gap:7px;overflow-x:auto;padding:8px 0}button,input,select{font:inherit;color:var(--text);background:#17253a;border:1px solid var(--line);padding:10px;border-radius:8px}button{cursor:pointer}button:disabled{opacity:.55;cursor:wait}button.active{border-color:var(--blue);background:#243b5e}input,select{width:100%;margin:7px 0 12px}form button{width:auto}table{width:100%;border-collapse:collapse;font-size:13px;min-width:480px}th,td{text-align:left;padding:10px 7px;border-bottom:1px solid var(--line);vertical-align:middle}th{color:var(--muted)}.table-wrap{overflow-x:auto}.small-btn{padding:7px 9px;font-size:12px}.good{color:var(--green)}.bad{color:var(--red)}.divider{height:1px;background:var(--line);margin:15px 0}footer{padding:20px;text-align:center;color:var(--muted);font-size:12px}@media(max-width:380px){.value{font-size:19px}.card{padding:11px}th,td{padding:8px 5px}}
+:root{
+  color-scheme:dark;
+  --bg:#0b1220;
+  --panel:#121d30;
+  --line:#26364d;
+  --text:#e8eef8;
+  --muted:#91a3bc;
+  --green:#35d49a;
+  --red:#ff7185;
+  --blue:#7ca8ff;
+  --yellow:#f3ce7a;
+}
+
+*{box-sizing:border-box}
+
+html{
+  scroll-behavior:smooth;
+  -webkit-text-size-adjust:100%;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font:15px Arial,sans-serif;
+  line-height:1.45;
+}
+
+header{
+  padding:18px 14px;
+  background:#101a2b;
+  border-bottom:1px solid var(--line);
+}
+
+h1{
+  font-size:22px;
+  margin:0 0 5px;
+}
+
+h2{
+  font-size:17px;
+  margin:0 0 12px;
+}
+
+h3{
+  font-size:15px;
+  margin:16px 0 10px;
+}
+
+p{
+  color:var(--muted);
+  margin:7px 0;
+  line-height:1.5;
+}
+
+main{
+  padding:12px;
+  width:100%;
+  max-width:960px;
+  margin:auto;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.tag{
+  font-size:11px;
+  color:var(--yellow);
+  border:1px solid #65542d;
+  padding:5px 8px;
+  border-radius:20px;
+  white-space:nowrap;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin:12px 0;
+}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  padding:14px;
+  border-radius:13px;
+  min-width:0;
+  margin:12px 0;
+}
+
+.label{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.value{
+  font-size:23px;
+  font-weight:bold;
+  margin:10px 0;
+  overflow-wrap:anywhere;
+}
+
+.tab section{
+  margin:14px 0;
+}
+
+.note{
+  font-size:12px;
+  line-height:1.6;
+}
+
+#status{
+  color:var(--yellow);
+  font-size:13px;
+  margin:8px 0;
+  line-height:1.5;
+}
+
+nav{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  padding:8px 0 12px;
+  scrollbar-width:thin;
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:var(--bg);
+}
+
+nav button{
+  flex:0 0 auto;
+  white-space:nowrap;
+}
+
+button,input,select{
+  font:inherit;
+  color:var(--text);
+  background:#17253a;
+  border:1px solid var(--line);
+  padding:11px;
+  border-radius:8px;
+  min-height:42px;
+}
+
+button{
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:wait;
+}
+
+button.active{
+  border-color:var(--blue);
+  background:#243b5e;
+}
+
+input,select{
+  display:block;
+  width:100%;
+  margin:7px 0 12px;
+}
+
+form button{
+  width:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+  min-width:520px;
+}
+
+th,td{
+  text-align:left;
+  padding:10px 7px;
+  border-bottom:1px solid var(--line);
+  vertical-align:middle;
+  white-space:nowrap;
+}
+
+th{
+  color:var(--muted);
+}
+
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  margin-top:10px;
+}
+
+.small-btn{
+  padding:7px 9px;
+  font-size:12px;
+  min-height:34px;
+}
+
+.good{color:var(--green)}
+.bad{color:var(--red)}
+
+.divider{
+  height:1px;
+  background:var(--line);
+  margin:16px 0;
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin:12px 0;
+}
+
+.stat{
+  background:#0e192a;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:11px;
+  min-width:0;
+}
+
+.stat span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:7px;
+}
+
+.stat strong{
+  font-size:16px;
+  overflow-wrap:anywhere;
+}
+
+#priceChart,#equityChart{
+  width:100%;
+  overflow:hidden;
+  background:#0e192a;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px;
+  margin:10px 0;
+}
+
+#priceChart svg,#equityChart svg{
+  display:block;
+  max-width:100%;
+}
+
+footer{
+  padding:20px 12px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+
+[hidden]{display:none!important}
+
+@media(max-width:480px){
+  main{padding:10px}
+  header{padding:15px 12px}
+  h1{font-size:20px}
+  .grid{gap:8px}
+  .card{padding:11px}
+  .value{font-size:20px}
+  .stats-grid{gap:7px}
+  .stat{padding:9px}
+  .stat strong{font-size:14px}
+  button,input,select{font-size:14px}
+}
+
+@media(max-width:340px){
+  .grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr}
+  .tag{font-size:10px}
+}
 </style>
 </head>
+
 <body>
-<header><div class="row"><div><h1>MarketDesk <span style="color:#7ca8ff">India</span></h1><p>Personal market research terminal</p></div><span class="tag">PAPER MODE</span></div></header>
+
+<header>
+  <div class="row">
+    <div>
+      <h1>MarketDesk <span style="color:#7ca8ff">India</span></h1>
+      <p>Personal market research terminal</p>
+    </div>
+    <span class="tag">PAPER MODE</span>
+  </div>
+</header>
+
 <main>
-<div id="status">Historical data source ready · Live prices are not provided</div>
+
+<div id="status">
+  Historical data source ready · Live prices are not provided
+</div>
+
 <nav>
-<button class="active" type="button" data-tab="overview">Overview</button><button type="button" data-tab="watchlist">Watchlist</button><button type="button" data-tab="paper">Paper Trading</button><button type="button" data-tab="research">Research</button><button type="button" data-tab="scanner">Stock Scanner</button>
+  <button class="active" type="button" data-tab="overview">Overview</button>
+  <button type="button" data-tab="watchlist">Watchlist</button>
+  <button type="button" data-tab="paper">Paper Trading</button>
+  <button type="button" data-tab="research">Research</button>
+  <button type="button" data-tab="scanner">Stock Scanner</button>
 </nav>
-<div id="overview" class="tab"><section><h2>Market Overview</h2><div class="grid"><div class="card"><div class="label">NIFTY 50</div><div class="value">—</div><p>Live index feed not connected</p></div><div class="card"><div class="label">SENSEX</div><div class="value">—</div><p>Live index feed not connected</p></div></div></section><section class="card"><h2>Market Intelligence</h2><p>Historical daily data se technical indicators aur educational analysis mil sakta hai.</p><p class="note">Live price, guaranteed prediction ya trading recommendation generate nahi hoti.</p></section><section class="card"><h2>Today's Research</h2><p>Watchlist banao, historical data load karo aur paper trading ko virtual balance ke saath practice karo.</p></section></div>
-<div id="watchlist" class="tab" hidden><section class="card"><h2>My Watchlist</h2><p>Stock symbols is device par save honge. Price field latest available historical close dikhata hai, live price nahi.</p><form id="watchForm"><label for="symbol">NSE stock symbol</label><input id="symbol" placeholder="Example: RELIANCE" maxlength="20" required><button type="submit">Add Stock</button></form><div class="table-wrap"><table><thead><tr><th>Symbol</th><th>Latest close</th><th>Data status</th><th></th></tr></thead><tbody id="watchRows"></tbody></table></div></section></div>
-<div id="paper" class="tab" hidden><section class="card"><h2>Paper Trading</h2><p>Virtual balance: <strong id="balance">₹100,000.00</strong></p><p id="paperStatus">Virtual account ready. Yeh real trading nahi hai.</p><form id="tradeForm"><label for="tradeSymbol">Stock symbol</label><input id="tradeSymbol" placeholder="Example: TCS" maxlength="20" required><label for="tradePrice">Simulated buy price (₹)</label><input id="tradePrice" type="number" min="0.01" step="0.01" placeholder="1000" required><label for="tradeQty">Quantity</label><input id="tradeQty" type="number" min="1" step="1" placeholder="1" required><button type="submit">Simulate Buy</button></form><h2>Virtual Positions</h2><div class="table-wrap"><table><thead><tr><th>Stock</th><th>Qty</th><th>Buy price</th><th>Sell price / action</th></tr></thead><tbody id="positions"></tbody></table></div><h2 style="margin-top:18px">Trade History</h2><p>Realized Profit/Loss: <strong id="realizedPL">₹0.00</strong></p><div class="table-wrap"><table><thead><tr><th>Date</th><th>Stock</th><th>Action</th><th>Qty</th><th>Price</th><th>P/L</th></tr></thead><tbody id="tradeHistoryRows"></tbody></table></div><p class="note">Prices manually enter kiye jaate hain. Yeh simulated trading hai; koi real order exchange par nahi jaata.</p></section></div>
-<div id="research" class="tab" hidden><section class="card"><h2>Historical Stock Analysis</h2><div class="grid"><div class="card"><div class="label">RSI (14)</div><div class="value" id="rsiValue">—</div><p id="rsiStatus">Data ka intezar hai</p></div><div class="card"><div class="label">Moving Average (20)</div><div class="value" id="maValue">—</div><p id="maStatus">Data ka intezar hai</p></div></div><p>Free historical daily data · NSE stocks · Hugging Face dataset</p><label for="historySymbol">Stock symbol</label><select id="historySymbol"><option>RELIANCE</option><option>TCS</option><option>SBIN</option><option>INFY</option><option>HDFCBANK</option></select><label for="historyFrom">From date</label><input id="historyFrom" type="date" value="2026-01-01"><label for="historyTo">To date</label><input id="historyTo" type="date" value="2026-10-31"><button id="loadHistory" type="button">Load Historical Data</button><p id="historyStatus" class="note">Data load karne ke liye button dabao.<div class="card" style="margin-top:16px">
-  <div class="card" style="margin-top:16px">
-  <h2>Advanced Technical Analysis</h2>
 
-  <div class="stats-grid">
-    <div class="stat">
-      <span>SMA 20</span>
-      <strong id="smaValue">—</strong>
+<!-- OVERVIEW -->
+<div id="overview" class="tab">
+
+  <section>
+    <h2>Market Overview</h2>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">NIFTY 50</div>
+        <div class="value">—</div>
+        <p>Live index feed not connected</p>
+      </div>
+
+      <div class="card">
+        <div class="label">SENSEX</div>
+        <div class="value">—</div>
+        <p>Live index feed not connected</p>
+      </div>
     </div>
+  </section>
 
-    <div class="stat">
-      <span>Bollinger Upper</span>
-      <strong id="bbUpper">—</strong>
-    </div>
+  <section class="card">
+    <h2>Market Intelligence</h2>
+    <p>Historical daily data se technical indicators aur educational analysis mil sakta hai.</p>
+    <p class="note">Live price, guaranteed prediction ya trading recommendation generate nahi hoti.</p>
+  </section>
 
-    <div class="stat">
-      <span>Bollinger Lower</span>
-      <strong id="bbLower">—</strong>
-    </div>
+  <section class="card">
+    <h2>Today's Research</h2>
+    <p>Watchlist banao, historical data load karo aur paper trading ko virtual balance ke saath practice karo.</p>
+  </section>
 
-    <div class="stat">
-      <span>MACD</span>
-      <strong id="macdValue">—</strong>
-    </div>
-
-    <div class="stat">
-      <span>MACD Signal</span>
-      <strong id="macdSignal">—</strong>
-    </div>
-
-    <div class="stat">
-      <span>ATR 14</span>
-      <strong id="atrValue">—</strong>
-    </div>
-  </div>
-<h3 style="margin-top:18px">Volume Analysis</h3>
-
-<div class="stats-grid">
-  <div class="stat">
-    <span>Latest Volume</span>
-    <strong id="latestVolume">—</strong>
-  </div>
-
-  <div class="stat">
-    <span>Average Volume (20D)</span>
-    <strong id="averageVolume">—</strong>
-  </div>
-
-  <div class="stat">
-    <span>Volume Ratio</span>
-    <strong id="volumeRatio">—</strong>
-  </div>
-
-  <div class="stat">
-    <span>Volume Signal</span>
-    <strong id="volumeSignal">—</strong>
-  </div>
-</div>
-    
-  <h3 style="margin-top:18px">Risk Management Plan</h3>
-  <p>Stop Loss: <strong id="riskStop">—</strong></p>
-  <p>Target: <strong id="riskTarget">—</strong></p>
-  <p>Risk: <strong id="riskPercent">—</strong></p>
-  </div>
-  <h2>Historical Price Chart</h2>
-  <p class="note">Daily closing price (₹)</p>
-  <div id="priceChart">
-    Chart data ka intezar hai.
-  </div>
-</div> </p><div class="table-wrap"><table><thead><tr><th>Date</th><th>High</th><th>Low</th><th>Close</th><th>Volume</th></tr></thead><tbody id="historyRows"><tr><td colspan="5">No data loaded.</td></tr></tbody></table></div></section>
-<section class="card" id="strategyEngine"><h2>MarketDesk Strategy Analysis</h2><p>EMA 20/50 + RSI 14 + MACD confirmation</p><div class="grid"><div class="card"><div class="label">Historical technical state</div><div class="value" id="strategySignal">—</div><p id="strategyReason">Historical data load karo</p></div><div class="card"><div class="label">Confirmation score</div><div class="value" id="strategyScore">—</div><p>Technical score; win probability nahi</p></div></div><h2>Indicator Confirmation</h2><p id="emaCheck">EMA 20/50: Waiting</p><p id="macdCheck">MACD: Waiting</p><p id="rsiCheck">RSI: Waiting</p><div class="divider"></div><h2>Historical Backtest</h2><p class="note">Illustrative rule: bullish condition ke agle session mein entry, 5 sessions baad exit. Brokerage, taxes, slippage aur market impact included nahi.</p><div class="grid"><div class="card"><div class="label">Tested trades</div><div class="value" id="btTrades">—</div></div><div class="card"><div class="label">Historical positive trades</div><div class="value" id="btWinRate">—</div></div><div class="card"><div class="label">Average return</div><div class="value" id="btAverage">—</div></div><div class="card"><div class="label">Buy & hold return</div><div class="value" id="btHold">—</div></div></div><p id="backtestStatus" class="note">Backtest ke liye historical data load karo.</p><div class="divider"></div>
-
-<h2>Equity Curve</h2>
-<p class="note">Simulated capital growth after each completed historical trade.</p>
-<div id="equityChart" class="card">
-  Backtest data ka intezar hai.
 </div>
 
-<div class="divider"></div>
+<!-- WATCHLIST -->
+<div id="watchlist" class="tab" hidden>
 
-<h2>Benchmark Comparison</h2>
-<div class="grid">
-  <div class="card">
-    <div class="label">Strategy Total Return</div>
-    <div class="value" id="strategyReturn">—</div>
-  </div>
-  <div class="card">
-    <div class="label">Buy & Hold Return</div>
-    <div class="value" id="benchmarkReturn">—</div>
-  </div>
-</div>
-<p id="benchmarkStatus" class="note">Comparison ke liye data load karo.</p>
+  <section class="card">
+    <h2>My Watchlist</h2>
+    <p>Stock symbols is device par save honge. Price field latest available historical close dikhata hai, live price nahi.</p>
 
-<div class="divider"></div>
+    <form id="watchForm">
+      <label for="symbol">NSE stock symbol</label>
+      <input id="symbol" placeholder="Example: RELIANCE" maxlength="20" required>
+      <button type="submit">Add Stock</button>
+    </form>
 
-<h2>Monthly Performance</h2>
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr><th>Month</th><th>Trades</th><th>Monthly Return</th></tr>
-    </thead>
-    <tbody id="monthlyRows">
-      <tr><td colspan="3">No data.</td></tr>
-    </tbody>
-  </table>
-</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Latest close</th>
+            <th>Data status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="watchRows"></tbody>
+      </table>
+    </div>
+  </section>
 
-<div class="divider"></div>
-
-<h2>Trade-by-Trade History</h2>
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr>
-        <th>Entry Date</th>
-        <th>Exit Date</th>
-        <th>Entry ₹</th>
-        <th>Exit ₹</th>
-        <th>Return</th>
-      </tr>
-    </thead>
-    <tbody id="backtestTradeRows">
-      <tr><td colspan="5">No trades.</td></tr>
-    </tbody>
-  </table>
 </div>
 
-<div class="divider"></div>
+<!-- PAPER TRADING -->
+<div id="paper" class="tab" hidden>
 
-<h2>Backtest Reliability</h2>
-<div class="grid">
-  <div class="card">
-    <div class="label">Sample Size</div>
-    <div class="value" id="reliabilityTrades">—</div>
-  </div>
-  <div class="card">
-    <div class="label">Assessment</div>
-    <div class="value" id="reliabilityStatus">—</div>
-  </div>
+  <section class="card">
+    <h2>Paper Trading</h2>
+
+    <p>Virtual balance: <strong id="balance">₹100,000.00</strong></p>
+    <p id="paperStatus">Virtual account ready. Yeh real trading nahi hai.</p>
+
+    <form id="tradeForm">
+      <label for="tradeSymbol">Stock symbol</label>
+      <input id="tradeSymbol" placeholder="Example: TCS" maxlength="20" required>
+
+      <label for="tradePrice">Simulated buy price (₹)</label>
+      <input id="tradePrice" type="number" min="0.01" step="0.01" placeholder="1000" required>
+
+      <label for="tradeQty">Quantity</label>
+      <input id="tradeQty" type="number" min="1" step="1" placeholder="1" required>
+
+      <button type="submit">Simulate Buy</button>
+    </form>
+
+    <h2>Virtual Positions</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th>Qty</th>
+            <th>Buy price</th>
+            <th>Sell price / action</th>
+          </tr>
+        </thead>
+        <tbody id="positions"></tbody>
+      </table>
+    </div>
+
+    <h2 style="margin-top:18px">Trade History</h2>
+    <p>Realized Profit/Loss: <strong id="realizedPL">₹0.00</strong></p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Stock</th>
+            <th>Action</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>P/L</th>
+          </tr>
+        </thead>
+        <tbody id="tradeHistoryRows"></tbody>
+      </table>
+    </div>
+
+    <p class="note">Prices manually enter kiye jaate hain. Yeh simulated trading hai; koi real order exchange par nahi jaata.</p>
+  </section>
+
 </div>
-<p id="reliabilityNote" class="note">
-  Reliability assessment ke liye historical data load karo.
-</p></section></div>
-<div id="scanner" class="tab" hidden><section class="card"><h2>Multi-Stock Scanner</h2><p>5 stocks ka historical trend aur technical score check karo.</p><button id="runScanner" type="button">Scan 5 Stocks</button><p id="scannerStatus" class="note">Scan shuru karne ke liye button dabao.</p><div class="table-wrap"><table><thead><th>Stock</th>
-<th>Latest Close</th>
-<th>Score</th>
-<th>Signal</th>
-<th>RSI</th>
-<th>Volume Ratio</th>
-<th>Breakout</th>
-<th>Trend</th><tr></tr></thead><tbody id="scannerRows"><tr><td colspan="8">Abhi scan nahi hua.</td></tr></tbody></table></div><p class="note">Historical educational analysis only; real-time signal ya investment advice nahi.</p></section></div>
-</main><footer>MarketDesk India · Personal research prototype · Not investment advice</footer>
+
+<!-- RESEARCH -->
+<div id="research" class="tab" hidden>
+
+  <section class="card">
+    <h2>Historical Stock Analysis</h2>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">RSI (14)</div>
+        <div class="value" id="rsiValue">—</div>
+        <p id="rsiStatus">Data ka intezar hai</p>
+      </div>
+
+      <div class="card">
+        <div class="label">Moving Average (20)</div>
+        <div class="value" id="maValue">—</div>
+        <p id="maStatus">Data ka intezar hai</p>
+      </div>
+    </div>
+
+    <p>Free historical daily data · NSE stocks · Historical data provider</p>
+
+    <label for="historySymbol">Stock symbol</label>
+    <select id="historySymbol">
+      <option>RELIANCE</option>
+      <option>TCS</option>
+      <option>SBIN</option>
+      <option>INFY</option>
+      <option>HDFCBANK</option>
+    </select>
+
+    <label for="historyFrom">From date</label>
+    <input id="historyFrom" type="date" value="2026-01-01">
+
+    <label for="historyTo">To date</label>
+    <input id="historyTo" type="date" value="2026-10-31">
+
+    <button id="loadHistory" type="button">Load Historical Data</button>
+    <p id="historyStatus" class="note">Data load karne ke liye button dabao.</p>
+
+    <div class="card">
+      <h2>Advanced Technical Analysis</h2>
+
+      <div class="stats-grid">
+        <div class="stat">
+          <span>SMA 20</span>
+          <strong id="smaValue">—</strong>
+        </div>
+
+        <div class="stat">
+          <span>Bollinger Upper</span>
+          <strong id="bbUpper">—</strong>
+        </div>
+
+        <div class="stat">
+          <span>Bollinger Lower</span>
+          <strong id="bbLower">—</strong>
+        </div>
+
+        <div class="stat">
+          <span>MACD</span>
+          <strong id="macdValue">—</strong>
+        </div>
+
+        <div class="stat">
+          <span>MACD Signal</span>
+          <strong id="macdSignal">—</strong>
+        </div>
+
+        <div class="stat">
+          <span>ATR 14</span>
+          <strong id="atrValue">—</strong>
+        </div>
+      </div>
+
+      <h3>Volume Analysis</h3>
+
+      <div class="stats-grid">
+        <div class="stat">
+          <span>Latest Volume</span>
+          <strong id="latestVolume">—</strong>
+        </div>
+
+        <div class="stat">
+          <span>Average Volume (20D)</span>
+          <strong id="averageVolume">—</strong>
+        </div>
+
+        <div class="stat">
+          <span>Volume Ratio</span>
+          <strong id="volumeRatio">—</strong>
+        </div>
+
+        <div class="stat">
+          <span>Volume Signal</span>
+          <strong id="volumeSignal">—</strong>
+        </div>
+      </div>
+
+      <h3>Risk Management Plan</h3>
+      <p>Stop Loss: <strong id="riskStop">—</strong></p>
+      <p>Target: <strong id="riskTarget">—</strong></p>
+      <p>Risk: <strong id="riskPercent">—</strong></p>
+    </div>
+
+    <h2>Historical Price Chart</h2>
+    <p class="note">Daily closing price (₹)</p>
+    <div id="priceChart">Chart data ka intezar hai.</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>High</th>
+            <th>Low</th>
+            <th>Close</th>
+            <th>Volume</th>
+          </tr>
+        </thead>
+        <tbody id="historyRows">
+          <tr><td colspan="5">No data loaded.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+    <!-- STRATEGY ANALYSIS -->
+  <section class="card" id="strategyEngine">
+    <h2>MarketDesk Strategy Analysis</h2>
+    <p>EMA 20/50 + RSI 14 + MACD confirmation</p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">Historical technical state</div>
+        <div class="value" id="strategySignal">—</div>
+        <p id="strategyReason">Historical data load karo</p>
+      </div>
+
+      <div class="card">
+        <div class="label">Confirmation score</div>
+        <div class="value" id="strategyScore">—</div>
+        <p>Technical score; win probability nahi</p>
+      </div>
+    </div>
+
+    <h2>Indicator Confirmation</h2>
+    <p id="emaCheck">EMA 20/50: Waiting</p>
+    <p id="macdCheck">MACD: Waiting</p>
+    <p id="rsiCheck">RSI: Waiting</p>
+
+    <div class="divider"></div>
+
+    <h2>Historical Backtest</h2>
+    <p class="note">
+      Illustrative rule: bullish condition ke agle session mein entry,
+      5 sessions baad exit. Brokerage, taxes, slippage aur market impact
+      included nahi.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">Tested trades</div>
+        <div class="value" id="btTrades">—</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Historical positive trades</div>
+        <div class="value" id="btWinRate">—</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Average return</div>
+        <div class="value" id="btAverage">—</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Buy & Hold return</div>
+        <div class="value" id="btHold">—</div>
+      </div>
+    </div>
+
+    <p id="backtestStatus" class="note">
+      Backtest ke liye historical data load karo.
+    </p>
+
+    <div class="divider"></div>
+
+    <h2>Equity Curve</h2>
+    <p class="note">
+      Simulated capital growth after each completed historical trade.
+    </p>
+    <div id="equityChart" class="card">
+      Backtest data ka intezar hai.
+    </div>
+
+    <div class="divider"></div>
+
+    <h2>Benchmark Comparison</h2>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">Strategy Total Return</div>
+        <div class="value" id="strategyReturn">—</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Buy & Hold Return</div>
+        <div class="value" id="benchmarkReturn">—</div>
+      </div>
+    </div>
+
+    <p id="benchmarkStatus" class="note">
+      Comparison ke liye data load karo.
+    </p>
+
+    <div class="divider"></div>
+
+    <h2>Monthly Performance</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Trades</th>
+            <th>Monthly Return</th>
+          </tr>
+        </thead>
+        <tbody id="monthlyRows">
+          <tr><td colspan="3">No data.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2>Trade-by-Trade History</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Entry Date</th>
+            <th>Exit Date</th>
+            <th>Entry ₹</th>
+            <th>Exit ₹</th>
+            <th>Return</th>
+          </tr>
+        </thead>
+        <tbody id="backtestTradeRows">
+          <tr><td colspan="5">No trades.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2>Backtest Reliability</h2>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">Sample Size</div>
+        <div class="value" id="reliabilityTrades">—</div>
+      </div>
+
+      <div class="card">
+        <div class="label">Assessment</div>
+        <div class="value" id="reliabilityStatus">—</div>
+      </div>
+    </div>
+
+    <p id="reliabilityNote" class="note">
+      Reliability assessment ke liye historical data load karo.
+    </p>
+  </section>
+
+</div>
+<!-- RESEARCH TAB CLOSED -->
+
+<!-- STOCK SCANNER -->
+<div id="scanner" class="tab" hidden>
+  <section class="card">
+    <h2>Multi-Stock Scanner</h2>
+    <p>5 stocks ka historical trend aur technical score check karo.</p>
+
+    <button id="runScanner" type="button">Scan 5 Stocks</button>
+
+    <p id="scannerStatus" class="note">
+      Scan shuru karne ke liye button dabao.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th>Latest Close</th>
+            <th>Score</th>
+            <th>Signal</th>
+            <th>RSI</th>
+            <th>Volume Ratio</th>
+            <th>Breakout</th>
+            <th>Trend</th>
+          </tr>
+        </thead>
+        <tbody id="scannerRows">
+          <tr><td colspan="8">Abhi scan nahi hua.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note">
+      Historical educational analysis only; real-time signal ya investment advice nahi.
+    </p>
+  </section>
+</div>
+
+</main>
+
+<footer>
+  MarketDesk India · Personal research prototype · Not investment advice
+</footer>
+
 <script>
 'use strict';
-const WATCH_KEY='marketdesk_watchlist_v2';
-const PAPER_KEY='marketdesk_paper_v2';
-const DATASET='tejhq/indian-markets';
-const CONFIG='nse';
-const SPLIT='train';
-const SCANNER_STOCKS=['RELIANCE','TCS','INFY','SBIN','HDFCBANK'];
-let watchlist=[];
-let balance=100000;
-let positions=[];
-let tradeHistory=[];
 
-function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function setStatus(message){document.getElementById('status').textContent=message;}
-function safeSymbol(value){return String(value||'').trim().toUpperCase();}
-function showTab(id,button){document.querySelectorAll('.tab').forEach(t=>t.hidden=true);document.getElementById(id).hidden=false;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b===button));}
-document.querySelectorAll('nav button[data-tab]').forEach(button=>button.addEventListener('click',()=>showTab(button.dataset.tab,button)));
+const WATCH_KEY = 'marketdesk_watchlist_v2';
+const PAPER_KEY = 'marketdesk_paper_v2';
 
-function saveWatchlist(){try{localStorage.setItem(WATCH_KEY,JSON.stringify(watchlist));}catch(e){setStatus('Watchlist save nahi hui: device storage unavailable.');}}
-function loadWatchlist(){try{const value=JSON.parse(localStorage.getItem(WATCH_KEY)||'[]');watchlist=Array.isArray(value)?value.filter(x=>typeof x==='string').map(safeSymbol):[];}catch(e){watchlist=[];}}
-function savePaperData(){try{localStorage.setItem(PAPER_KEY,JSON.stringify({balance,positions,tradeHistory}));}catch(e){document.getElementById('paperStatus').textContent='Device storage mein data save nahi ho saka.';}}
-function loadPaperData(){try{const data=JSON.parse(localStorage.getItem(PAPER_KEY)||'null');if(data&&Number.isFinite(data.balance)&&data.balance>=0&&Array.isArray(data.positions)&&Array.isArray(data.tradeHistory)){balance=data.balance;positions=data.positions;tradeHistory=data.tradeHistory;}}catch(e){console.warn('Paper data load failed',e);}}
+const SCANNER_STOCKS = [
+  'RELIANCE',
+  'TCS',
+  'INFY',
+  'SBIN',
+  'HDFCBANK'
+];
 
+let watchlist = [];
+let balance = 100000;
+let positions = [];
+let tradeHistory = [];
 
-async function fetchStockHistory(symbol, limit=500){
-  const clean=safeSymbol(symbol);
+function money(value) {
+  const number = Number(value);
 
-  if(!/^[A-Z0-9.&_-]{1,20}$/.test(clean)){
+  if (!Number.isFinite(number)) return '—';
+
+  return '₹' + number.toLocaleString('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function setStatus(message) {
+  document.getElementById('status').textContent = message;
+}
+
+function safeSymbol(value) {
+  return String(value || '').trim().toUpperCase();
+}
+
+function showTab(id, button) {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.hidden = true;
+  });
+
+  document.getElementById(id).hidden = false;
+
+  document.querySelectorAll('nav button').forEach(item => {
+    item.classList.toggle('active', item === button);
+  });
+}
+
+document.querySelectorAll('nav button[data-tab]').forEach(button => {
+  button.addEventListener('click', () => {
+    showTab(button.dataset.tab, button);
+  });
+});
+
+function saveWatchlist() {
+  try {
+    localStorage.setItem(WATCH_KEY, JSON.stringify(watchlist));
+  } catch (error) {
+    setStatus('Watchlist save nahi hui: device storage unavailable.');
+  }
+}
+
+function loadWatchlist() {
+  try {
+    const value = JSON.parse(
+      localStorage.getItem(WATCH_KEY) || '[]'
+    );
+
+    watchlist = Array.isArray(value)
+      ? value
+          .filter(item => typeof item === 'string')
+          .map(safeSymbol)
+      : [];
+  } catch (error) {
+    watchlist = [];
+  }
+}
+
+function savePaperData() {
+  try {
+    localStorage.setItem(
+      PAPER_KEY,
+      JSON.stringify({
+        balance,
+        positions,
+        tradeHistory
+      })
+    );
+  } catch (error) {
+    document.getElementById('paperStatus').textContent =
+      'Device storage mein data save nahi ho saka.';
+  }
+}
+
+function loadPaperData() {
+  try {
+    const data = JSON.parse(
+      localStorage.getItem(PAPER_KEY) || 'null'
+    );
+
+    if (
+      data &&
+      Number.isFinite(data.balance) &&
+      data.balance >= 0 &&
+      Array.isArray(data.positions) &&
+      Array.isArray(data.tradeHistory)
+    ) {
+      balance = data.balance;
+      positions = data.positions;
+      tradeHistory = data.tradeHistory;
+    }
+  } catch (error) {
+    console.warn('Paper data load failed', error);
+  }
+}
+
+/* Historical data provider */
+async function fetchStockHistory(symbol, limit = 500) {
+  const clean = safeSymbol(symbol);
+
+  if (!/^[A-Z0-9.&_-]{1,20}$/.test(clean)) {
     throw new Error('Invalid stock symbol');
   }
 
-  const today=new Date();
-  const to=[
+  const today = new Date();
+
+  const to = [
     today.getFullYear(),
-    String(today.getMonth()+1).padStart(2,'0'),
-    String(today.getDate()).padStart(2,'0')
+    String(today.getMonth() + 1).padStart(2, '0'),
+    String(today.getDate()).padStart(2, '0')
   ].join('-');
 
-  const url='https://api.tejhq.dev/v1/ohlcv/nse/'
-    +encodeURIComponent(clean)
-    +'?from=2010-01-04&to='+to;
+  const url =
+    'https://api.tejhq.dev/v1/ohlcv/nse/' +
+    encodeURIComponent(clean) +
+    '?from=2010-01-04&to=' + to;
 
-  const response=await fetch(url);
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
 
-  if(!response.ok){
-    throw new Error('Dataset API response '+response.status);
+  if (!response.ok) {
+    throw new Error('Historical API response ' + response.status);
   }
 
-  const payload=await response.json();
+  const payload = await response.json();
 
-  const rows=Array.isArray(payload)
+  const rows = Array.isArray(payload)
     ? payload
     : Array.isArray(payload.data)
       ? payload.data
@@ -231,78 +929,383 @@ async function fetchStockHistory(symbol, limit=500){
         ? payload.rows
         : [];
 
-  if(!rows.length){
+  if (!rows.length) {
     throw new Error('Is symbol ka historical data nahi mila');
   }
 
-  const normalized=rows.map(r=>({
-    date:r.date??r.timestamp??'',
-    open:Number(r.open??r.Open),
-    high:Number(r.high??r.High),
-    low:Number(r.low??r.Low),
-    close:Number(r.close??r.Close),
-    volume:Number(r.volume??r.Volume)
-  })).filter(r=>
-    r.date &&
-    Number.isFinite(r.close) &&
-    r.close>0
+  const normalized = rows.map(row => ({
+    date: row.date ?? row.timestamp ?? '',
+    open: Number(row.open ?? row.Open),
+    high: Number(row.high ?? row.High),
+    low: Number(row.low ?? row.Low),
+    close: Number(row.close ?? row.Close),
+    volume: Number(row.volume ?? row.Volume)
+  })).filter(row =>
+    row.date &&
+    Number.isFinite(row.close) &&
+    row.close > 0
   );
 
-  normalized.sort((a,b)=>
-    new Date(a.date)-new Date(b.date)
+  normalized.sort((a, b) =>
+    new Date(a.date) - new Date(b.date)
   );
 
-  if(!normalized.length){
+  if (!normalized.length) {
     throw new Error('Valid historical prices nahi mile');
   }
 
   return normalized.slice(-limit);
 }
-  
+ function drawWatchlist() {
+  const body = document.getElementById('watchRows');
+  body.replaceChildren();
 
-function drawWatchlist(){
-  const body=document.getElementById('watchRows');body.replaceChildren();
-  if(!watchlist.length){body.innerHTML='<tr><td colspan="4">Abhi koi stock add nahi hai.</td></tr>';return;}
-  watchlist.forEach(symbol=>{
-    const tr=document.createElement('tr');const name=document.createElement('td');name.textContent=symbol;
-    const price=document.createElement('td');price.textContent='Loading…';
-    const status=document.createElement('td');status.textContent='Historical data';
-    const action=document.createElement('td');const remove=document.createElement('button');remove.type='button';remove.className='small-btn';remove.textContent='Remove';
-    remove.addEventListener('click',()=>{watchlist=watchlist.filter(s=>s!==symbol);saveWatchlist();drawWatchlist();});action.appendChild(remove);tr.append(name,price,status,action);body.appendChild(tr);
-    fetchStockHistory(symbol,100).then(data=>{price.textContent=money(data[data.length-1].close);status.textContent='Latest available close';}).catch(()=>{price.textContent='—';status.textContent='Data unavailable';});
+  if (!watchlist.length) {
+    body.innerHTML =
+      '<tr><td colspan="4">Abhi koi stock add nahi hai.</td></tr>';
+    return;
+  }
+
+  watchlist.forEach(symbol => {
+    const tr = document.createElement('tr');
+
+    const name = document.createElement('td');
+    name.textContent = symbol;
+
+    const price = document.createElement('td');
+    price.textContent = 'Loading…';
+
+    const status = document.createElement('td');
+    status.textContent = 'Historical data';
+
+    const action = document.createElement('td');
+    const remove = document.createElement('button');
+
+    remove.type = 'button';
+    remove.className = 'small-btn';
+    remove.textContent = 'Remove';
+
+    remove.addEventListener('click', () => {
+      watchlist = watchlist.filter(item => item !== symbol);
+      saveWatchlist();
+      drawWatchlist();
+    });
+
+    action.appendChild(remove);
+    tr.append(name, price, status, action);
+    body.appendChild(tr);
+
+    fetchStockHistory(symbol, 100)
+      .then(data => {
+        const latest = data[data.length - 1];
+
+        price.textContent = money(latest.close);
+        status.textContent = 'Latest available close';
+      })
+      .catch(() => {
+        price.textContent = '—';
+        status.textContent = 'Data unavailable';
+      });
   });
 }
-document.getElementById('watchForm').addEventListener('submit',e=>{e.preventDefault();const symbol=safeSymbol(document.getElementById('symbol').value);if(!/^[A-Z0-9.&_-]{1,20}$/.test(symbol)){setStatus('Valid NSE symbol enter karo.');return;}if(watchlist.includes(symbol)){setStatus(symbol+' pehle se watchlist mein hai.');return;}watchlist.push(symbol);saveWatchlist();document.getElementById('symbol').value='';drawWatchlist();setStatus(symbol+' watchlist mein add ho gaya.');});
 
-function drawPositions(){
-  document.getElementById('balance').textContent=money(balance);const body=document.getElementById('positions');body.replaceChildren();
-  if(!positions.length){body.innerHTML='<tr><td colspan="4">Abhi koi virtual position nahi hai.</td></tr>';return;}
-  positions.forEach((p,index)=>{const tr=document.createElement('tr');[p.symbol,p.qty,money(p.price)].forEach(v=>{const td=document.createElement('td');td.textContent=String(v);tr.appendChild(td);});const action=document.createElement('td');const input=document.createElement('input');input.type='number';input.min='0.01';input.step='0.01';input.placeholder='Sell price ₹';input.style.width='115px';input.setAttribute('aria-label',p.symbol+' simulated sell price');const button=document.createElement('button');button.type='button';button.className='small-btn';button.textContent='Close';button.addEventListener('click',()=>{const exit=Number(input.value);if(!Number.isFinite(exit)||exit<=0){document.getElementById('paperStatus').textContent='Valid simulated sell price enter karo.';return;}const pnl=(exit-p.price)*p.qty;balance+=exit*p.qty;tradeHistory.push({date:new Date().toLocaleString('en-IN'),symbol:p.symbol,action:'SELL',qty:p.qty,price:exit,pnl});positions.splice(index,1);savePaperData();drawPositions();drawTradeHistory();document.getElementById('paperStatus').textContent='Virtual position closed. Realized P/L: '+money(pnl);});action.append(input,button);tr.appendChild(action);body.appendChild(tr);});
+document.getElementById('watchForm').addEventListener('submit', event => {
+  event.preventDefault();
+
+  const symbol = safeSymbol(
+    document.getElementById('symbol').value
+  );
+
+  if (!/^[A-Z0-9.&_-]{1,20}$/.test(symbol)) {
+    setStatus('Valid NSE symbol enter karo.');
+    return;
+  }
+
+  if (watchlist.includes(symbol)) {
+    setStatus(symbol + ' pehle se watchlist mein hai.');
+    return;
+  }
+
+  watchlist.push(symbol);
+  saveWatchlist();
+
+  document.getElementById('symbol').value = '';
+
+  drawWatchlist();
+  setStatus(symbol + ' watchlist mein add ho gaya.');
+});
+
+/* PAPER TRADING */
+
+function drawPositions() {
+  document.getElementById('balance').textContent = money(balance);
+
+  const body = document.getElementById('positions');
+  body.replaceChildren();
+
+  if (!positions.length) {
+    body.innerHTML =
+      '<tr><td colspan="4">Abhi koi virtual position nahi hai.</td></tr>';
+    return;
+  }
+
+  positions.forEach((position, index) => {
+    const tr = document.createElement('tr');
+
+    [
+      position.symbol,
+      position.qty,
+      money(position.price)
+    ].forEach(value => {
+      const td = document.createElement('td');
+      td.textContent = String(value);
+      tr.appendChild(td);
+    });
+
+    const action = document.createElement('td');
+
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = '0.01';
+    input.step = '0.01';
+    input.placeholder = 'Sell price ₹';
+    input.style.width = '115px';
+    input.setAttribute(
+      'aria-label',
+      position.symbol + ' simulated sell price'
+    );
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'small-btn';
+    button.textContent = 'Close';
+
+    button.addEventListener('click', () => {
+      const exit = Number(input.value);
+
+      if (!Number.isFinite(exit) || exit <= 0) {
+        document.getElementById('paperStatus').textContent =
+          'Valid simulated sell price enter karo.';
+        return;
+      }
+
+      const pnl = (exit - position.price) * position.qty;
+
+      balance += exit * position.qty;
+
+      tradeHistory.push({
+        date: new Date().toLocaleString('en-IN'),
+        symbol: position.symbol,
+        action: 'SELL',
+        qty: position.qty,
+        price: exit,
+        pnl
+      });
+
+      positions.splice(index, 1);
+
+      savePaperData();
+      drawPositions();
+      drawTradeHistory();
+
+      document.getElementById('paperStatus').textContent =
+        'Virtual position closed. Realized P/L: ' + money(pnl);
+    });
+
+    action.append(input, button);
+    tr.appendChild(action);
+    body.appendChild(tr);
+  });
 }
-function drawTradeHistory(){const body=document.getElementById('tradeHistoryRows');body.replaceChildren();const total=tradeHistory.reduce((sum,t)=>sum+(Number(t.pnl)||0),0);document.getElementById('realizedPL').textContent=money(total);if(!tradeHistory.length){body.innerHTML='<tr><td colspan="6">Abhi history nahi hai.</td></tr>';return;}[...tradeHistory].reverse().forEach(t=>{const tr=document.createElement('tr');[t.date||'—',t.symbol||'—',t.action||'—',t.qty??'—',money(t.price),money(t.pnl)].forEach(v=>{const td=document.createElement('td');td.textContent=String(v);tr.appendChild(td);});body.appendChild(tr);});}
-document.getElementById('tradeForm').addEventListener('submit',e=>{e.preventDefault();const symbol=safeSymbol(document.getElementById('tradeSymbol').value);const price=Number(document.getElementById('tradePrice').value);const qty=Number(document.getElementById('tradeQty').value);const cost=price*qty;if(!/^[A-Z0-9.&_-]{1,20}$/.test(symbol)||!Number.isFinite(cost)||price<=0||!Number.isInteger(qty)||qty<1||cost>balance){document.getElementById('paperStatus').textContent='Details check karo: valid symbol, price, quantity aur virtual balance.';return;}balance-=cost;positions.push({symbol,price,qty});tradeHistory.push({date:new Date().toLocaleString('en-IN'),symbol,action:'BUY',qty,price,pnl:0});savePaperData();drawPositions();drawTradeHistory();e.target.reset();document.getElementById('paperStatus').textContent='Virtual buy recorded. Real order send nahi hua.';});
 
-function calculateEMA(values,period){const out=Array(values.length).fill(null);if(values.length<period)return out;const k=2/(period+1);let sum=0;for(let i=0;i<period;i++)sum+=values[i];let prev=sum/period;out[period-1]=prev;for(let i=period;i<values.length;i++){prev=(values[i]-prev)*k+prev;out[i]=prev;}return out;}
-function calculateRSI(values,period=14){const out=Array(values.length).fill(null);if(values.length<=period)return out;let gains=0,losses=0;for(let i=1;i<=period;i++){const d=values[i]-values[i-1];if(d>0)gains+=d;else losses-=d;}let avgG=gains/period,avgL=losses/period;out[period]=avgL===0?(avgG===0?50:100):100-100/(1+avgG/avgL);for(let i=period+1;i<values.length;i++){const d=values[i]-values[i-1];avgG=(avgG*(period-1)+Math.max(d,0))/period;avgL=(avgL*(period-1)+Math.max(-d,0))/period;out[i]=avgL===0?(avgG===0?50:100):100-100/(1+avgG/avgL);}return out;}// ===== ADVANCED TECHNICAL ANALYSIS =====
+function drawTradeHistory() {
+  const body = document.getElementById('tradeHistoryRows');
+  body.replaceChildren();
+
+  const total = tradeHistory.reduce(
+    (sum, trade) => sum + (Number(trade.pnl) || 0),
+    0
+  );
+
+  document.getElementById('realizedPL').textContent = money(total);
+
+  if (!tradeHistory.length) {
+    body.innerHTML =
+      '<tr><td colspan="6">Abhi history nahi hai.</td></tr>';
+    return;
+  }
+
+  [...tradeHistory].reverse().forEach(trade => {
+    const tr = document.createElement('tr');
+
+    [
+      trade.date || '—',
+      trade.symbol || '—',
+      trade.action || '—',
+      trade.qty ?? '—',
+      money(trade.price),
+      money(trade.pnl)
+    ].forEach(value => {
+      const td = document.createElement('td');
+      td.textContent = String(value);
+      tr.appendChild(td);
+    });
+
+    body.appendChild(tr);
+  });
+}
+
+document.getElementById('tradeForm').addEventListener('submit', event => {
+  event.preventDefault();
+
+  const symbol = safeSymbol(
+    document.getElementById('tradeSymbol').value
+  );
+
+  const price = Number(
+    document.getElementById('tradePrice').value
+  );
+
+  const qty = Number(
+    document.getElementById('tradeQty').value
+  );
+
+  const cost = price * qty;
+
+  if (
+    !/^[A-Z0-9.&_-]{1,20}$/.test(symbol) ||
+    !Number.isFinite(cost) ||
+    price <= 0 ||
+    !Number.isInteger(qty) ||
+    qty < 1 ||
+    cost > balance
+  ) {
+    document.getElementById('paperStatus').textContent =
+      'Details check karo: valid symbol, price, quantity aur virtual balance.';
+    return;
+  }
+
+  balance -= cost;
+
+  positions.push({
+    symbol,
+    price,
+    qty
+  });
+
+  tradeHistory.push({
+    date: new Date().toLocaleString('en-IN'),
+    symbol,
+    action: 'BUY',
+    qty,
+    price,
+    pnl: 0
+  });
+
+  savePaperData();
+  drawPositions();
+  drawTradeHistory();
+
+  event.target.reset();
+
+  document.getElementById('paperStatus').textContent =
+    'Virtual buy recorded. Real order send nahi hua.';
+});
+
+/* TECHNICAL INDICATORS */
+
+function calculateEMA(values, period) {
+  const output = Array(values.length).fill(null);
+
+  if (values.length < period) return output;
+
+  const multiplier = 2 / (period + 1);
+
+  let sum = 0;
+
+  for (let i = 0; i < period; i++) {
+    sum += values[i];
+  }
+
+  let previous = sum / period;
+  output[period - 1] = previous;
+
+  for (let i = period; i < values.length; i++) {
+    previous =
+      (values[i] - previous) * multiplier + previous;
+
+    output[i] = previous;
+  }
+
+  return output;
+}
+
+function calculateRSI(values, period = 14) {
+  const output = Array(values.length).fill(null);
+
+  if (values.length <= period) return output;
+
+  let gains = 0;
+  let losses = 0;
+
+  for (let i = 1; i <= period; i++) {
+    const difference = values[i] - values[i - 1];
+
+    if (difference > 0) {
+      gains += difference;
+    } else {
+      losses -= difference;
+    }
+  }
+
+  let averageGain = gains / period;
+  let averageLoss = losses / period;
+
+  output[period] = averageLoss === 0
+    ? (averageGain === 0 ? 50 : 100)
+    : 100 - (100 / (1 + averageGain / averageLoss));
+
+  for (let i = period + 1; i < values.length; i++) {
+    const difference = values[i] - values[i - 1];
+
+    averageGain =
+      (averageGain * (period - 1) + Math.max(difference, 0)) /
+      period;
+
+    averageLoss =
+      (averageLoss * (period - 1) + Math.max(-difference, 0)) /
+      period;
+
+    output[i] = averageLoss === 0
+      ? (averageGain === 0 ? 50 : 100)
+      : 100 - (100 / (1 + averageGain / averageLoss));
+  }
+
+  return output;
+}
 
 function calculateSMA(values, period = 20) {
-  return values.map((_, i) => {
-    if (i + 1 < period) return null;
+  return values.map((value, index) => {
+    if (index + 1 < period) return null;
 
-    const slice = values.slice(i - period + 1, i + 1);
+    const slice = values.slice(index - period + 1, index + 1);
+
     return slice.reduce((a, b) => a + b, 0) / period;
   });
 }
 
 function calculateBollingerBands(values, period = 20, multiplier = 2) {
-  return values.map((_, i) => {
-    if (i + 1 < period) return null;
+  return values.map((value, index) => {
+    if (index + 1 < period) return null;
 
-    const slice = values.slice(i - period + 1, i + 1);
-    const mean = slice.reduce((a, b) => a + b, 0) / period;
+    const slice = values.slice(index - period + 1, index + 1);
+
+    const mean =
+      slice.reduce((a, b) => a + b, 0) / period;
 
     const variance = slice.reduce(
-      (sum, value) => sum + Math.pow(value - mean, 2), 0
+      (sum, item) => sum + Math.pow(item - mean, 2),
+      0
     ) / period;
 
     const deviation = Math.sqrt(variance);
@@ -319,36 +1322,39 @@ function calculateMACD(values) {
   const ema12 = calculateEMA(values, 12);
   const ema26 = calculateEMA(values, 26);
 
-  const macd = values.map((_, i) =>
-    ema12[i] == null || ema26[i] == null
+  const macd = values.map((value, index) =>
+    ema12[index] === null || ema26[index] === null
       ? null
-      : ema12[i] - ema26[i]
+      : ema12[index] - ema26[index]
   );
 
-  const valid = macd.filter(v => v !== null);
+  const valid = macd.filter(value => value !== null);
   const signalValues = calculateEMA(valid, 9);
+
   let index = 0;
 
-  const signal = macd.map(v =>
-    v === null ? null : signalValues[index++]
+  const signal = macd.map(value =>
+    value === null ? null : signalValues[index++]
   );
 
   return {
     macd,
     signal,
-    histogram: macd.map((v, i) =>
-      v === null || signal[i] === null
+    histogram: macd.map((value, i) =>
+      value === null || signal[i] === null
         ? null
-        : v - signal[i]
+        : value - signal[i]
     )
   };
 }
 
 function calculateATR(data, period = 14) {
-  const trueRanges = data.map((item, i) => {
-    if (i === 0) return item.high - item.low;
+  const trueRanges = data.map((item, index) => {
+    if (index === 0) {
+      return item.high - item.low;
+    }
 
-    const previousClose = data[i - 1].close;
+    const previousClose = data[index - 1].close;
 
     return Math.max(
       item.high - item.low,
@@ -366,7 +1372,9 @@ function calculateRiskPlan(entry, atr, riskReward = 2) {
     !Number.isFinite(atr) ||
     entry <= 0 ||
     atr <= 0
-  ) return null;
+  ) {
+    return null;
+  }
 
   const stopLoss = entry - (atr * 2);
   const risk = entry - stopLoss;
@@ -379,12 +1387,13 @@ function calculateRiskPlan(entry, atr, riskReward = 2) {
     riskPercent: (risk / entry) * 100
   };
 }
-  // ===== ADVANCED INDICATORS DISPLAY =====
+
+/* ADVANCED INDICATORS DISPLAY */
 
 function renderAdvancedIndicators(data) {
   if (!data || data.length < 30) return;
 
-  const closes = data.map(x => x.close);
+  const closes = data.map(item => item.close);
   const last = closes.length - 1;
 
   const sma = calculateSMA(closes, 20);
@@ -398,23 +1407,24 @@ function renderAdvancedIndicators(data) {
   const latestSignal = macd.signal[last];
   const entry = closes[last];
 
-  const money = value =>
-    Number.isFinite(value) ? '₹' + value.toFixed(2) : '—';
-
   document.getElementById('smaValue').textContent =
     money(sma[last]);
 
   document.getElementById('bbUpper').textContent =
-    money(latestBand?.upper);
+    money(latestBand ? latestBand.upper : NaN);
 
   document.getElementById('bbLower').textContent =
-    money(latestBand?.lower);
+    money(latestBand ? latestBand.lower : NaN);
 
   document.getElementById('macdValue').textContent =
-    Number.isFinite(latestMACD) ? latestMACD.toFixed(2) : '—';
+    Number.isFinite(latestMACD)
+      ? latestMACD.toFixed(2)
+      : '—';
 
   document.getElementById('macdSignal').textContent =
-    Number.isFinite(latestSignal) ? latestSignal.toFixed(2) : '—';
+    Number.isFinite(latestSignal)
+      ? latestSignal.toFixed(2)
+      : '—';
 
   document.getElementById('atrValue').textContent =
     money(latestATR);
@@ -430,7 +1440,8 @@ function renderAdvancedIndicators(data) {
   document.getElementById('riskPercent').textContent =
     plan ? plan.riskPercent.toFixed(2) + '%' : '—';
 }
- // ===== VOLUME ANALYSIS =====
+
+/* VOLUME ANALYSIS */
 
 function renderVolumeAnalysis(data) {
   if (!data || data.length < 20) return;
@@ -439,13 +1450,16 @@ function renderVolumeAnalysis(data) {
 
   const volumes = data
     .slice(-21, -1)
-    .map(x => Number(x.volume) || 0);
+    .map(item => Number(item.volume) || 0);
 
   const average =
     volumes.reduce((a, b) => a + b, 0) / volumes.length;
 
   const current = Number(latest.volume) || 0;
-  const ratio = average > 0 ? current / average : 0;
+
+  const ratio = average > 0
+    ? current / average
+    : 0;
 
   document.getElementById('latestVolume').textContent =
     current.toLocaleString('en-IN');
@@ -464,45 +1478,48 @@ function renderVolumeAnalysis(data) {
     'Normal Volume';
 
   document.getElementById('volumeSignal').textContent = signal;
-} 
+}
+
+/* STRATEGY SIGNAL BUILDER */
 
 function buildStrategy(closes) {
-  const e20 = calculateEMA(closes, 20);
-  const e50 = calculateEMA(closes, 50);
-  const e12 = calculateEMA(closes, 12);
-  const e26 = calculateEMA(closes, 26);
+  const ema20 = calculateEMA(closes, 20);
+  const ema50 = calculateEMA(closes, 50);
+  const ema12 = calculateEMA(closes, 12);
+  const ema26 = calculateEMA(closes, 26);
   const rsi = calculateRSI(closes, 14);
 
-  const macd = closes.map((_, i) =>
-    e12[i] !== null && e26[i] !== null
-      ? e12[i] - e26[i]
+  const macd = closes.map((value, index) =>
+    ema12[index] !== null && ema26[index] !== null
+      ? ema12[index] - ema26[index]
       : null
   );
 
-  // Signal EMA ko sirf valid MACD values par calculate karo
-  const firstValid = macd.findIndex(v => v !== null);
+  const firstValid = macd.findIndex(value => value !== null);
   const validMacd = macd.slice(firstValid);
   const validSignal = calculateEMA(validMacd, 9);
 
   const macdSignal = Array(closes.length).fill(null);
 
-  validSignal.forEach((value, i) => {
-    macdSignal[firstValid + i] = value;
+  validSignal.forEach((value, index) => {
+    macdSignal[firstValid + index] = value;
   });
 
-  return closes.map((close, i) => {
+  return closes.map((close, index) => {
     if (
-      e20[i] === null ||
-      e50[i] === null ||
-      rsi[i] === null ||
-      macd[i] === null ||
-      macdSignal[i] === null
-    ) return null;
+      ema20[index] === null ||
+      ema50[index] === null ||
+      rsi[index] === null ||
+      macd[index] === null ||
+      macdSignal[index] === null
+    ) {
+      return null;
+    }
 
     let score = 0;
     const checks = [];
 
-    if (e20[i] > e50[i]) {
+    if (ema20[index] > ema50[index]) {
       score += 2;
       checks.push('EMA trend positive');
     } else {
@@ -510,7 +1527,7 @@ function buildStrategy(closes) {
       checks.push('EMA trend negative');
     }
 
-    if (close > e20[i]) {
+    if (close > ema20[index]) {
       score++;
       checks.push('Price above EMA20');
     } else {
@@ -518,7 +1535,7 @@ function buildStrategy(closes) {
       checks.push('Price below EMA20');
     }
 
-    if (macd[i] > macdSignal[i]) {
+    if (macd[index] > macdSignal[index]) {
       score += 2;
       checks.push('MACD positive');
     } else {
@@ -526,9 +1543,9 @@ function buildStrategy(closes) {
       checks.push('MACD negative');
     }
 
-    if (rsi[i] >= 50 && rsi[i] < 70) {
+    if (rsi[index] >= 50 && rsi[index] < 70) {
       score++;
-    } else if (rsi[i] >= 30 && rsi[i] < 50) {
+    } else if (rsi[index] >= 30 && rsi[index] < 50) {
       score--;
     }
 
@@ -539,21 +1556,23 @@ function buildStrategy(closes) {
 
     return {
       close,
-      ema20: e20[i],
-      ema50: e50[i],
-      rsi: rsi[i],
-      macd: macd[i],
-      macdSignal: macdSignal[i],
+      ema20: ema20[index],
+      ema50: ema50[index],
+      rsi: rsi[index],
+      macd: macd[index],
+      macdSignal: macdSignal[index],
       score,
       signal,
       checks
     };
   });
 }
-  
+
+/* HISTORICAL BACKTEST */
 
 function runBacktest(data, signals) {
   const initialCapital = 100000;
+
   let equity = initialCapital;
   let peak = initialCapital;
   let maxDrawdown = 0;
@@ -561,10 +1580,10 @@ function runBacktest(data, signals) {
   const trades = [];
   const monthly = {};
 
-  const closes = data.map(x => x.close);
+  const closes = data.map(item => item.close);
 
   const hold = closes.length > 1
-    ? ((closes.at(-1) - closes[0]) / closes[0]) * 100
+    ? ((closes[closes.length - 1] - closes[0]) / closes[0]) * 100
     : null;
 
   for (let i = 0; i < signals.length - 6; i++) {
@@ -597,8 +1616,11 @@ function runBacktest(data, signals) {
 
     maxDrawdown = Math.max(maxDrawdown, drawdown);
 
-    const entryDate = String(data[entryIndex].date || '').slice(0, 10);
-    const exitDate = String(data[exitIndex].date || '').slice(0, 10);
+    const entryDate =
+      String(data[entryIndex].date || '').slice(0, 10);
+
+    const exitDate =
+      String(data[exitIndex].date || '').slice(0, 10);
 
     trades.push({
       entryDate,
@@ -626,12 +1648,16 @@ function runBacktest(data, signals) {
     i += 5;
   }
 
-  const returns = trades.map(t => t.return);
-  const wins = returns.filter(x => x > 0);
-  const losses = returns.filter(x => x <= 0);
+  const returns = trades.map(trade => trade.return);
+  const wins = returns.filter(value => value > 0);
+  const losses = returns.filter(value => value <= 0);
 
-  const grossProfit = wins.reduce((a, b) => a + b, 0);
-  const grossLoss = Math.abs(losses.reduce((a, b) => a + b, 0));
+  const grossProfit =
+    wins.reduce((a, b) => a + b, 0);
+
+  const grossLoss = Math.abs(
+    losses.reduce((a, b) => a + b, 0)
+  );
 
   const average = returns.length
     ? returns.reduce((a, b) => a + b, 0) / returns.length
@@ -661,7 +1687,7 @@ function runBacktest(data, signals) {
     wins: wins.length,
     losses: losses.length,
     winRate: returns.length
-      ? wins.length / returns.length * 100
+      ? (wins.length / returns.length) * 100
       : null,
     average,
     averageWin,
@@ -672,35 +1698,51 @@ function runBacktest(data, signals) {
     maxDrawdown,
     profitFactor: grossLoss > 0
       ? grossProfit / grossLoss
-      : grossProfit > 0 ? Infinity : null,
+      : grossProfit > 0
+        ? Infinity
+        : null,
     expectancy: average,
-    bestTrade: returns.length ? Math.max(...returns) : null,
-    worstTrade: returns.length ? Math.min(...returns) : null,
+    bestTrade: returns.length
+      ? Math.max(...returns)
+      : null,
+    worstTrade: returns.length
+      ? Math.min(...returns)
+      : null,
     monthlyRows
   };
-}
+  } 
+  /* STRATEGY DISPLAY */
+
 function renderStrategy(data) {
-  const closes = data.map(x => x.close);
+  const closes = data.map(item => item.close);
   const signals = buildStrategy(closes);
 
-  let i = signals.length - 1;
+  let index = signals.length - 1;
 
-  while (i >= 0 && !signals[i]) i--;
+  while (index >= 0 && !signals[index]) {
+    index--;
+  }
 
-  const latest = signals[i];
+  const latest = index >= 0 ? signals[index] : null;
+  const backtest = runBacktest(data, signals);
 
-  const bt = runBacktest(data, signals);
-
-  const signal = document.getElementById('strategySignal');
+  const signalElement =
+    document.getElementById('strategySignal');
 
   if (!latest) {
-    signal.textContent = '—';
+    signalElement.textContent = '—';
+
     document.getElementById('strategyReason').textContent =
       'Indicators ke liye kam se kam 50+ historical sessions chahiye.';
-  } else {
-    signal.textContent = latest.signal;
 
-    signal.style.color =
+    document.getElementById('strategyScore').textContent = '—';
+    document.getElementById('emaCheck').textContent = 'EMA 20/50: Waiting';
+    document.getElementById('macdCheck').textContent = 'MACD: Waiting';
+    document.getElementById('rsiCheck').textContent = 'RSI: Waiting';
+  } else {
+    signalElement.textContent = latest.signal;
+
+    signalElement.style.color =
       latest.signal === 'BULLISH' ? 'var(--green)' :
       latest.signal === 'BEARISH' ? 'var(--red)' :
       'var(--yellow)';
@@ -724,62 +1766,81 @@ function renderStrategy(data) {
       'RSI 14: ' + latest.rsi.toFixed(2);
   }
 
-  document.getElementById('btTrades').textContent = bt.trades.length;
+  document.getElementById('btTrades').textContent =
+    backtest.trades.length;
 
   document.getElementById('btWinRate').textContent =
-    bt.winRate === null ? 'Not enough trades' :
-    bt.winRate.toFixed(1) + '%';
+    backtest.winRate === null
+      ? 'Not enough trades'
+      : backtest.winRate.toFixed(1) + '%';
 
   document.getElementById('btAverage').textContent =
-    bt.average === null ? '—' :
-    (bt.average > 0 ? '+' : '') + bt.average.toFixed(2) + '%';
+    backtest.average === null
+      ? '—'
+      : (backtest.average > 0 ? '+' : '') +
+        backtest.average.toFixed(2) + '%';
 
   document.getElementById('btHold').textContent =
-    bt.hold === null ? '—' :
-    (bt.hold > 0 ? '+' : '') + bt.hold.toFixed(2) + '%';
+    backtest.hold === null
+      ? '—'
+      : (backtest.hold > 0 ? '+' : '') +
+        backtest.hold.toFixed(2) + '%';
 
   document.getElementById('backtestStatus').textContent =
-    bt.trades.length
-      ? 'Trades: ' + bt.trades.length +
-        ' | Wins: ' + bt.wins +
-        ' | Losses: ' + bt.losses +
-        ' | Return: ' + bt.totalReturn.toFixed(2) +
-        '% | Drawdown: ' + bt.maxDrawdown.toFixed(2) +
+    backtest.trades.length
+      ? 'Trades: ' + backtest.trades.length +
+        ' | Wins: ' + backtest.wins +
+        ' | Losses: ' + backtest.losses +
+        ' | Return: ' + backtest.totalReturn.toFixed(2) +
+        '% | Drawdown: ' + backtest.maxDrawdown.toFixed(2) +
         '% | Profit Factor: ' +
-        (Number.isFinite(bt.profitFactor)
-          ? bt.profitFactor.toFixed(2) : 'N/A') +
+        (Number.isFinite(backtest.profitFactor)
+          ? backtest.profitFactor.toFixed(2)
+          : 'N/A') +
         ' | Costs and slippage excluded.'
       : 'No qualifying historical trades found.';
 
   document.getElementById('strategyReturn').textContent =
-    bt.totalReturn.toFixed(2) + '%';
+    backtest.totalReturn.toFixed(2) + '%';
 
   document.getElementById('benchmarkReturn').textContent =
-    bt.hold === null ? '—' : bt.hold.toFixed(2) + '%';
+    backtest.hold === null
+      ? '—'
+      : backtest.hold.toFixed(2) + '%';
 
   document.getElementById('benchmarkStatus').textContent =
-    bt.hold === null ? 'Benchmark unavailable.' :
-    'Strategy aur Buy & Hold returns same historical date range par calculate hue hain.';
+    backtest.hold === null
+      ? 'Benchmark unavailable.'
+      : 'Strategy aur Buy & Hold returns same historical date range par calculate hue hain.';
 
-  // Equity curve
+  /* Equity curve */
+
   const chart = document.getElementById('equityChart');
 
-  if (!bt.trades.length) {
-    chart.textContent = 'Equity curve ke liye qualifying trades nahi mile.';
+  if (!backtest.trades.length) {
+    chart.textContent =
+      'Equity curve ke liye qualifying trades nahi mile.';
   } else {
-    const values = [100000, ...bt.trades.map(t => t.equity)];
+    const values = [
+      100000,
+      ...backtest.trades.map(trade => trade.equity)
+    ];
+
     const width = 600;
     const height = 220;
-    const pad = 35;
+    const padding = 35;
 
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-    const range = max - min || 1;
+    const minimum = Math.min(...values);
+    const maximum = Math.max(...values);
+    const range = maximum - minimum || 1;
 
-    const points = values.map((value, index) => {
-      const x = pad + index * (width - 2 * pad) / (values.length - 1);
-      const y = height - pad -
-        ((value - min) / range) * (height - 2 * pad);
+    const points = values.map((value, i) => {
+      const x = padding +
+        i * (width - 2 * padding) / (values.length - 1);
+
+      const y = height - padding -
+        ((value - minimum) / range) *
+        (height - 2 * padding);
 
       return x + ',' + y;
     }).join(' ');
@@ -787,38 +1848,47 @@ function renderStrategy(data) {
     chart.innerHTML = `
       <svg viewBox="0 0 ${width} ${height}"
            style="width:100%;height:auto">
-        <polyline points="${points}"
+        <polyline
+          points="${points}"
           fill="none"
           stroke="#7ca8ff"
           stroke-width="3"
           stroke-linecap="round"
           stroke-linejoin="round"/>
-        <text x="${pad}" y="18" fill="currentColor" font-size="12">
-          ₹${max.toFixed(0)}
+        <text x="${padding}" y="18"
+              fill="currentColor" font-size="12">
+          ₹${maximum.toFixed(0)}
         </text>
-        <text x="${pad}" y="${height - 5}" fill="currentColor" font-size="12">
-          ₹${min.toFixed(0)}
+        <text x="${padding}" y="${height - 5}"
+              fill="currentColor" font-size="12">
+          ₹${minimum.toFixed(0)}
         </text>
       </svg>
-      <p class="note">Starting capital: ₹1,00,000 · Ending capital: ${money(bt.equity)}</p>
+      <p class="note">
+        Starting capital: ₹1,00,000 · Ending capital: ${money(backtest.equity)}
+      </p>
     `;
   }
 
-  // Monthly performance
-  const monthlyBody = document.getElementById('monthlyRows');
+  /* Monthly performance */
+
+  const monthlyBody =
+    document.getElementById('monthlyRows');
+
   monthlyBody.replaceChildren();
 
-  if (!bt.monthlyRows.length) {
+  if (!backtest.monthlyRows.length) {
     monthlyBody.innerHTML =
       '<tr><td colspan="3">No monthly data.</td></tr>';
   } else {
-    bt.monthlyRows.forEach(item => {
+    backtest.monthlyRows.forEach(item => {
       const tr = document.createElement('tr');
 
       [
         item.month,
         item.trades,
-        (item.return > 0 ? '+' : '') + item.return.toFixed(2) + '%'
+        (item.return > 0 ? '+' : '') +
+          item.return.toFixed(2) + '%'
       ].forEach(value => {
         const td = document.createElement('td');
         td.textContent = String(value);
@@ -829,15 +1899,18 @@ function renderStrategy(data) {
     });
   }
 
-  // Trade history
-  const tradeBody = document.getElementById('backtestTradeRows');
+  /* Trade-by-trade history */
+
+  const tradeBody =
+    document.getElementById('backtestTradeRows');
+
   tradeBody.replaceChildren();
 
-  if (!bt.trades.length) {
+  if (!backtest.trades.length) {
     tradeBody.innerHTML =
       '<tr><td colspan="5">No qualifying trades.</td></tr>';
   } else {
-    bt.trades.forEach(trade => {
+    backtest.trades.forEach(trade => {
       const tr = document.createElement('tr');
 
       [
@@ -845,7 +1918,8 @@ function renderStrategy(data) {
         trade.exitDate || '—',
         money(trade.entry),
         money(trade.exit),
-        (trade.return > 0 ? '+' : '') + trade.return.toFixed(2) + '%'
+        (trade.return > 0 ? '+' : '') +
+          trade.return.toFixed(2) + '%'
       ].forEach(value => {
         const td = document.createElement('td');
         td.textContent = String(value);
@@ -856,23 +1930,28 @@ function renderStrategy(data) {
     });
   }
 
-  // Reliability assessment
-  const count = bt.trades.length;
+  /* Reliability assessment */
 
-  document.getElementById('reliabilityTrades').textContent = count;
+  const count = backtest.trades.length;
+
+  document.getElementById('reliabilityTrades').textContent =
+    count;
 
   let assessment;
   let note;
 
   if (count < 30) {
     assessment = 'Low';
-    note = '30 se kam trades hain. Sample bahut chhota hai; result par bharosa nahi kiya ja sakta.';
+    note =
+      '30 se kam trades hain. Sample bahut chhota hai; result par bharosa nahi kiya ja sakta.';
   } else if (count < 100) {
     assessment = 'Limited';
-    note = 'Sample size abhi limited hai. Alag market conditions mein aur testing zaroori hai.';
+    note =
+      'Sample size abhi limited hai. Alag market conditions mein aur testing zaroori hai.';
   } else {
     assessment = 'Larger Sample';
-    note = 'Sample bada hai, lekin yeh future performance ya reliability ki guarantee nahi hai.';
+    note =
+      'Sample bada hai, lekin yeh future performance ya reliability ki guarantee nahi hai.';
   }
 
   document.getElementById('reliabilityStatus').textContent =
@@ -881,206 +1960,392 @@ function renderStrategy(data) {
   document.getElementById('reliabilityNote').textContent =
     note + ' Fees, taxes, slippage aur execution costs excluded hain.';
 }
-function renderHistory(data){const rows=document.getElementById('historyRows');rows.replaceChildren();data.slice().reverse().forEach(item=>{const tr=document.createElement('tr');[item.date,Number.isFinite(item.high)?item.high.toFixed(2):'—',Number.isFinite(item.low)?item.low.toFixed(2):'—',item.close.toFixed(2),Number.isFinite(item.volume)?item.volume.toLocaleString('en-IN'):'—'].forEach(v=>{const td=document.createElement('td');td.textContent=String(v);tr.appendChild(td);});rows.appendChild(tr);});const closes=data.map(x=>x.close);const last20=closes.slice(-20);const ma=last20.length===20?last20.reduce((a,b)=>a+b,0)/20:null;document.getElementById('maValue').textContent=ma===null?'Not enough data':money(ma);document.getElementById('maStatus').textContent=ma===null?'20 valid closing prices chahiye':closes.at(-1)>=ma?'Latest close MA20 ke upar hai':'Latest close MA20 ke neeche hai';const rsiArr=calculateRSI(closes,14);const rsi=rsiArr.at(-1);document.getElementById('rsiValue').textContent=rsi===null?'Not enough data':rsi.toFixed(2);document.getElementById('rsiStatus').textContent=rsi===null?'14 price changes chahiye':rsi>=70?'Momentum high — overbought zone':rsi<=30?'Momentum low — oversold zone':'RSI 30–70 range mein';renderStrategy(data);renderAdvancedIndicators(data);renderVolumeAnalysis(data);
-drawPriceChart(data);
-                            }
-document.getElementById('loadHistory').addEventListener('click',async()=>{const button=document.getElementById('loadHistory'),symbol=document.getElementById('historySymbol').value,from=document.getElementById('historyFrom').value,to=document.getElementById('historyTo').value,status=document.getElementById('historyStatus');if(!from||!to||from>to){status.textContent='Sahi From aur To dates select karo.';return;}button.disabled=true;status.textContent='Historical dataset se data load ho raha hai…';try{const all=await fetchStockHistory(symbol,1000);const filtered=all.filter(x=>{const d=String(x.date).slice(0,10);return d>=from&&d<=to;});if(!filtered.length)throw new Error('Selected date range mein records nahi mile.');renderHistory(filtered);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        drawPriceChart(filtered);status.textContent=filtered.length+' historical records load hue. Last available date: '+String(filtered.at(-1).date).slice(0,10)+'.';}catch(error){status.textContent='Data load nahi hua: '+error.message+'. Dataset service ya internet baad mein try karo.';}finally{button.disabled=false;}});
 
-// ===== ADVANCED SMART STOCK SCANNER =====
+/* PRICE CHART */
 
-document.getElementById('runScanner').addEventListener('click', async function() {
-  const button = this;
-  const body = document.getElementById('scannerRows');
-  const status = document.getElementById('scannerStatus');
+function drawPriceChart(data) {
+  const box = document.getElementById('priceChart');
 
-  button.disabled = true;
-  body.replaceChildren();
-
-  let done = 0;
-
-  status.textContent = 'Advanced historical scan running...';
-
-  for (const symbol of SCANNER_STOCKS) {
-    const tr = document.createElement('tr');
-    const cells = [];
-
-    for (let i = 0; i < 8; i++) {
-      const td = document.createElement('td');
-      td.textContent = i === 0 ? symbol : 'Loading...';
-      tr.appendChild(td);
-      cells.push(td);
-    }
-
-    body.appendChild(tr);
-
-    try {
-      const data = await fetchStockHistory(symbol, 150);
-
-      if (!data || data.length < 50) {
-        throw new Error('Insufficient historical data');
-      }
-
-      const closes = data.map(x => x.close);
-      const latest = data[data.length - 1];
-
-      const signals = buildStrategy(closes);
-
-      let signal = null;
-
-      for (let i = signals.length - 1; i >= 0; i--) {
-        if (signals[i]) {
-          signal = signals[i];
-          break;
-        }
-      }
-
-      if (!signal) throw new Error('Signal unavailable');
-
-      // RSI
-      const rsiValues = calculateRSI(closes, 14);
-      const rsi = rsiValues[rsiValues.length - 1];
-
-      // Volume ratio: current vs previous 20 sessions
-      const previousVolumes = data
-        .slice(-21, -1)
-        .map(x => Number(x.volume) || 0);
-
-      const averageVolume =
-        previousVolumes.reduce((a, b) => a + b, 0) /
-        previousVolumes.length;
-
-      const currentVolume = Number(latest.volume) || 0;
-
-      const volumeRatio = averageVolume > 0
-        ? currentVolume / averageVolume
-        : null;
-
-      // Previous 20-session high breakout
-      const previousHighs = data
-        .slice(-21, -1)
-        .map(x => Number(x.high))
-        .filter(x => Number.isFinite(x));
-
-      const previousHigh = previousHighs.length
-        ? Math.max(...previousHighs)
-        : null;
-
-      const breakout = previousHigh === null
-        ? 'Unavailable'
-        : latest.close > previousHigh
-          ? 'Breakout'
-          : 'No Breakout';
-
-      // EMA trend
-      const ema20 = calculateEMA(closes, 20);
-      const ema50 = calculateEMA(closes, 50);
-
-      const last = closes.length - 1;
-
-      const trend =
-        closes[last] > ema20[last] && ema20[last] > ema50[last]
-          ? 'Strong Uptrend'
-          : closes[last] > ema20[last]
-            ? 'Uptrend'
-            : closes[last] < ema20[last] && ema20[last] < ema50[last]
-              ? 'Downtrend'
-              : 'Sideways';
-
-      cells[1].textContent = money(latest.close);
-
-      cells[2].textContent =
-        (signal.score > 0 ? '+' : '') + signal.score + ' / 6';
-
-      cells[3].textContent = signal.signal;
-
-      cells[4].textContent =
-        Number.isFinite(rsi) ? rsi.toFixed(2) : '—';
-
-      cells[5].textContent =
-        volumeRatio === null ? '—' : volumeRatio.toFixed(2) + 'x';
-
-      cells[6].textContent = breakout;
-
-      cells[7].textContent = trend;
-
-      cells[3].style.color =
-        signal.signal === 'BULLISH' ? 'var(--green)' :
-        signal.signal === 'BEARISH' ? 'var(--red)' :
-        'var(--yellow)';
-
-      cells[6].style.color =
-        breakout === 'Breakout' ? 'var(--green)' : 'var(--yellow)';
-
-      cells[7].style.color =
-        trend.includes('Uptrend') ? 'var(--green)' :
-        trend === 'Downtrend' ? 'var(--red)' :
-        'var(--yellow)';
-
-    } catch (error) {
-      cells[1].textContent = '—';
-      cells[2].textContent = '—';
-
-      for (let i = 3; i < 8; i++) {
-        cells[i].textContent = 'Unavailable';
-      }
-    }
-
-    done++;
-
-    status.textContent =
-      done + ' / ' + SCANNER_STOCKS.length + ' stocks scanned.';
-  }
-
-  status.textContent =
-    'Advanced scan complete. Historical analysis only; live prices unavailable.';
-
-  button.disabled = false;
-});
-
-loadWatchlist();loadPaperData();drawWatchlist();drawPositions();drawTradeHistory();
-  function drawPriceChart(data){
-  const box=document.getElementById('priceChart');
-
-  if(!data || data.length<2){
-    box.textContent='Chart ke liye paryapt data nahi hai.';
+  if (!data || data.length < 2) {
+    box.textContent =
+      'Chart ke liye paryapt data nahi hai.';
     return;
   }
 
-  const width=600;
-  const height=240;
-  const pad=35;
+  const width = 600;
+  const height = 240;
+  const padding = 35;
 
-  const prices=data.map(x=>Number(x.close));
-  const min=Math.min(...prices);
-  const max=Math.max(...prices);
-  const range=max-min || 1;
+  const prices = data.map(item => Number(item.close));
 
-  const points=prices.map((price,i)=>{
-    const x=pad+i*(width-2*pad)/(prices.length-1);
-    const y=height-pad-(price-min)*(height-2*pad)/range;
-    return x+','+y;
+  const minimum = Math.min(...prices);
+  const maximum = Math.max(...prices);
+  const range = maximum - minimum || 1;
+
+  const points = prices.map((price, index) => {
+    const x = padding +
+      index * (width - 2 * padding) / (prices.length - 1);
+
+    const y = height - padding -
+      (price - minimum) *
+      (height - 2 * padding) / range;
+
+    return x + ',' + y;
   }).join(' ');
 
-  box.innerHTML=`
+  box.innerHTML = `
     <svg viewBox="0 0 ${width} ${height}"
          style="width:100%;height:auto">
       <polyline
         points="${points}"
         fill="none"
-        stroke="#a855f7"
+        stroke="#7ca8ff"
         stroke-width="3"
         stroke-linejoin="round"
         stroke-linecap="round"/>
-      <text x="${pad}" y="18" fill="currentColor" font-size="12">
-        ₹${max.toFixed(2)}
+      <text x="${padding}" y="18"
+            fill="currentColor" font-size="12">
+        ₹${maximum.toFixed(2)}
       </text>
-      <text x="${pad}" y="${height-5}" fill="currentColor" font-size="12">
-        ₹${min.toFixed(2)}
+      <text x="${padding}" y="${height - 5}"
+            fill="currentColor" font-size="12">
+        ₹${minimum.toFixed(2)}
       </text>
     </svg>
   `;
+}
+
+/* HISTORICAL DATA TABLE */
+
+function renderHistory(data) {
+  const rows = document.getElementById('historyRows');
+  rows.replaceChildren();
+
+  data.slice().reverse().forEach(item => {
+    const tr = document.createElement('tr');
+
+    [
+      String(item.date).slice(0, 10),
+      Number.isFinite(item.high) ? item.high.toFixed(2) : '—',
+      Number.isFinite(item.low) ? item.low.toFixed(2) : '—',
+      item.close.toFixed(2),
+      Number.isFinite(item.volume)
+        ? item.volume.toLocaleString('en-IN')
+        : '—'
+    ].forEach(value => {
+      const td = document.createElement('td');
+      td.textContent = String(value);
+      tr.appendChild(td);
+    });
+
+    rows.appendChild(tr);
+  });
+
+  const closes = data.map(item => item.close);
+  const last20 = closes.slice(-20);
+
+  const average = last20.length === 20
+    ? last20.reduce((a, b) => a + b, 0) / 20
+    : null;
+
+  document.getElementById('maValue').textContent =
+    average === null ? 'Not enough data' : money(average);
+
+  document.getElementById('maStatus').textContent =
+    average === null
+      ? '20 valid closing prices chahiye'
+      : closes[closes.length - 1] >= average
+        ? 'Latest close MA20 ke upar hai'
+        : 'Latest close MA20 ke neeche hai';
+
+  const rsiValues = calculateRSI(closes, 14);
+  const rsi = rsiValues[rsiValues.length - 1];
+
+  document.getElementById('rsiValue').textContent =
+    rsi === null ? 'Not enough data' : rsi.toFixed(2);
+
+  document.getElementById('rsiStatus').textContent =
+    rsi === null
+      ? '14 price changes chahiye'
+      : rsi >= 70
+        ? 'Momentum high — overbought zone'
+        : rsi <= 30
+          ? 'Momentum low — oversold zone'
+          : 'RSI 30–70 range mein';
+
+  renderStrategy(data);
+  renderAdvancedIndicators(data);
+  renderVolumeAnalysis(data);
+  drawPriceChart(data);
+}
+
+/* LOAD HISTORICAL DATA BUTTON */
+
+document.getElementById('loadHistory').addEventListener(
+  'click',
+  async () => {
+    const button = document.getElementById('loadHistory');
+
+    const symbol =
+      document.getElementById('historySymbol').value;
+
+    const from =
+      document.getElementById('historyFrom').value;
+
+    const to =
+      document.getElementById('historyTo').value;
+
+    const status =
+      document.getElementById('historyStatus');
+
+    if (!from || !to || from > to) {
+      status.textContent =
+        'Sahi From aur To dates select karo.';
+      return;
+    }
+
+    button.disabled = true;
+    status.textContent =
+      'Historical data provider se data load ho raha hai…';
+
+    try {
+      const all = await fetchStockHistory(symbol, 5000);
+
+      const filtered = all.filter(item => {
+        const date = String(item.date).slice(0, 10);
+        return date >= from && date <= to;
+      });
+
+      if (!filtered.length) {
+        throw new Error(
+          'Selected date range mein records nahi mile.'
+        );
+      }
+
+      renderHistory(filtered);
+
+      status.textContent =
+        filtered.length +
+        ' historical records load hue. Last available date: ' +
+        String(filtered[filtered.length - 1].date).slice(0, 10) +
+        '.';
+    } catch (error) {
+      status.textContent =
+        'Data load nahi hua: ' + error.message +
+        '. Internet ya data service baad mein try karo.';
+    } finally {
+      button.disabled = false;
+    }
   }
+);
+
+/* STOCK SCANNER */
+
+document.getElementById('runScanner').addEventListener(
+  'click',
+  async function() {
+    const button = this;
+
+    const body =
+      document.getElementById('scannerRows');
+
+    const status =
+      document.getElementById('scannerStatus');
+
+    button.disabled = true;
+    body.replaceChildren();
+
+    let completed = 0;
+
+    status.textContent =
+      'Historical scan running...';
+
+    for (const symbol of SCANNER_STOCKS) {
+      const tr = document.createElement('tr');
+      const cells = [];
+
+      for (let i = 0; i < 8; i++) {
+        const td = document.createElement('td');
+
+        td.textContent =
+          i === 0 ? symbol : 'Loading...';
+
+        tr.appendChild(td);
+        cells.push(td);
+      }
+
+      body.appendChild(tr);
+
+      try {
+        const data = await fetchStockHistory(symbol, 150);
+
+        if (!data || data.length < 50) {
+          throw new Error('Insufficient historical data');
+        }
+
+        const closes = data.map(item => item.close);
+        const latest = data[data.length - 1];
+
+        const signals = buildStrategy(closes);
+
+        let signal = null;
+
+        for (let i = signals.length - 1; i >= 0; i--) {
+          if (signals[i]) {
+            signal = signals[i];
+            break;
+          }
+        }
+
+        if (!signal) {
+          throw new Error('Signal unavailable');
+        }
+
+        const rsiValues = calculateRSI(closes, 14);
+        const rsi = rsiValues[rsiValues.length - 1];
+
+        const previousVolumes = data
+          .slice(-21, -1)
+          .map(item => Number(item.volume) || 0);
+
+        const averageVolume =
+          previousVolumes.reduce((a, b) => a + b, 0) /
+          previousVolumes.length;
+
+        const currentVolume =
+          Number(latest.volume) || 0;
+
+        const volumeRatio = averageVolume > 0
+          ? currentVolume / averageVolume
+          : null;
+
+        const previousHighs = data
+          .slice(-21, -1)
+          .map(item => Number(item.high))
+          .filter(value => Number.isFinite(value));
+
+        const previousHigh = previousHighs.length
+          ? Math.max(...previousHighs)
+          : null;
+
+        const breakout = previousHigh === null
+          ? 'Unavailable'
+          : latest.close > previousHigh
+            ? 'Breakout'
+            : 'No Breakout';
+
+        const ema20 = calculateEMA(closes, 20);
+        const ema50 = calculateEMA(closes, 50);
+
+        const last = closes.length - 1;
+
+        const trend =
+          closes[last] > ema20[last] &&
+          ema20[last] > ema50[last]
+            ? 'Strong Uptrend'
+            : closes[last] > ema20[last]
+              ? 'Uptrend'
+              : closes[last] < ema20[last] &&
+                ema20[last] < ema50[last]
+                ? 'Downtrend'
+                : 'Sideways';
+
+        cells[1].textContent = money(latest.close);
+
+        cells[2].textContent =
+          (signal.score > 0 ? '+' : '') +
+          signal.score + ' / 6';
+
+        cells[3].textContent = signal.signal;
+
+        cells[4].textContent =
+          Number.isFinite(rsi) ? rsi.toFixed(2) : '—';
+
+        cells[5].textContent =
+          volumeRatio === null
+            ? '—'
+            : volumeRatio.toFixed(2) + 'x';
+
+        cells[6].textContent = breakout;
+        cells[7].textContent = trend;
+
+        cells[3].style.color =
+          signal.signal === 'BULLISH'
+            ? 'var(--green)'
+            : signal.signal === 'BEARISH'
+              ? 'var(--red)'
+              : 'var(--yellow)';
+
+        cells[6].style.color =
+          breakout === 'Breakout'
+            ? 'var(--green)'
+            : 'var(--yellow)';
+
+        cells[7].style.color =
+          trend.includes('Uptrend')
+            ? 'var(--green)'
+            : trend === 'Downtrend'
+              ? 'var(--red)'
+              : 'var(--yellow)';
+
+      } catch (error) {
+        cells[1].textContent = '—';
+        cells[2].textContent = '—';
+
+        for (let i = 3; i < 8; i++) {
+          cells[i].textContent = 'Unavailable';
+        }
+      }
+
+      completed++;
+
+      status.textContent =
+        completed + ' / ' +
+        SCANNER_STOCKS.length +
+        ' stocks scanned.';
+    }
+
+    status.textContent =
+      'Scan complete. Historical analysis only; live prices unavailable.';
+
+    button.disabled = false;
+  }
+);
+
+/* DEFAULT DATE RANGE */
+
+function setDefaultDates() {
+  const today = new Date();
+
+  const dateText = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, '0'),
+    String(today.getDate()).padStart(2, '0')
+  ].join('-');
+
+  const fromInput = document.getElementById('historyFrom');
+  const toInput = document.getElementById('historyTo');
+
+  if (!fromInput.value) {
+    fromInput.value = today.getFullYear() + '-01-01';
+  }
+
+  toInput.value = dateText;
+  fromInput.max = dateText;
+  toInput.max = dateText;
+}
+
+/* APP STARTUP */
+
+setDefaultDates();
+
+loadWatchlist();
+loadPaperData();
+
+drawWatchlist();
+drawPositions();
+drawTradeHistory();
+
 </script>
 </body>
 </html>
