@@ -440,10 +440,25 @@ footer{
     <p>Stock symbols is device par save honge. Price field provider quote dikhata hai; provider timestamp available ho to check karo.</p>
 
     <form id="watchForm">
-      <label for="symbol">NSE stock symbol</label>
-      <input id="symbol" placeholder="Example: RELIANCE" maxlength="20" required>
+      <label for="symbol">Stock symbol (NSE/BSE)</label>
+      <input id="symbol" placeholder="Example: RELIANCE" maxlength="30" required>
       <button type="submit">Add Stock</button>
     </form>
+
+    <section class="card" style="margin-top:16px">
+      <h3>All NSE + BSE Stocks</h3>
+      <p class="note">Angel One public instrument directory. Search company name or symbol, then add selected stocks to your Watchlist. Directory prices are not live quotes.</p>
+      <button id="loadInstrumentDirectory" type="button">Load Stock Directory</button>
+      <p id="directoryStatus" class="note" aria-live="polite">Directory abhi load nahi hui.</p>
+      <label for="directorySearch">Search company / symbol</label>
+      <input id="directorySearch" placeholder="Example: TATA, INFOSYS, 500325" maxlength="60" disabled>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Company / Symbol</th><th>Exchange</th><th>Action</th></tr></thead>
+          <tbody id="directoryRows"><tr><td colspan="3">Load Stock Directory dabao.</td></tr></tbody>
+        </table>
+      </div>
+    </section>
 
     <div class="table-wrap">
       <table>
@@ -1006,6 +1021,109 @@ function keyStatusSafe(message) {
 function quoteFor(symbol) {
   return marketQuotes[safeSymbol(symbol)] || null;
 }
+
+/* Public NSE/BSE cash-equity directory; no broker login or order access. */
+const INSTRUMENT_MASTER_URL = 'https://margincalculator.angelone.in/OpenAPI_File/files/OpenAPIScripMaster.json';
+let instrumentDirectory = [];
+
+function isCashEquityInstrument(item) {
+  const exchange = String(item.exch_seg || '').toLowerCase();
+  const type = String(item.instrumenttype || '').trim();
+  const expiry = String(item.expiry || '').trim();
+  const symbol = String(item.symbol || '').trim();
+  const name = String(item.name || '').trim();
+  const strike = Number(item.strike);
+  if (!['nse_cm', 'bse_cm'].includes(exchange)) return false;
+  if (!symbol || type || expiry) return false;
+  if (Number.isFinite(strike) && strike !== -1) return false;
+  if (/^(NIFTY|BANKNIFTY|FINNIFTY|MIDCPNIFTY|SENSEX|BANKEX|INDIA VIX)/i.test(symbol)) return false;
+  if (/INDEX|INDICES/i.test(name)) return false;
+  return true;
+}
+
+function renderInstrumentDirectory(query = '') {
+  const body = document.getElementById('directoryRows');
+  const term = String(query || '').trim().toLowerCase();
+  body.replaceChildren();
+  if (!instrumentDirectory.length) {
+    body.innerHTML = '<tr><td colspan="3">Directory load karo.</td></tr>';
+    return;
+  }
+  const matches = instrumentDirectory.filter(item => {
+    const symbol = String(item.symbol || '').toLowerCase();
+    const name = String(item.name || '').toLowerCase();
+    const shortSymbol = symbol.replace(/-eq$/i, '');
+    return !term || symbol.includes(term) || shortSymbol.includes(term) || name.includes(term);
+  }).slice(0, 40);
+  if (!matches.length) {
+    body.innerHTML = '<tr><td colspan="3">Koi matching stock nahi mila.</td></tr>';
+    return;
+  }
+  matches.forEach(item => {
+    const tr = document.createElement('tr');
+    const company = document.createElement('td');
+    company.textContent = (item.name || 'Company') + ' · ' + item.symbol;
+    const exchange = document.createElement('td');
+    exchange.textContent = String(item.exch_seg).toUpperCase() === 'NSE_CM' ? 'NSE' : 'BSE';
+    const action = document.createElement('td');
+    const add = document.createElement('button');
+    add.type = 'button';
+    add.className = 'small-btn';
+    add.textContent = watchlist.includes(safeSymbol(item.symbol).replace(/-EQ$/i, '')) ? 'Added' : 'Add';
+    add.disabled = add.textContent === 'Added';
+    add.addEventListener('click', () => {
+      const symbol = safeSymbol(item.symbol).replace(/-EQ$/i, '');
+      if (!symbol || watchlist.includes(symbol)) return;
+      watchlist.push(symbol);
+      saveWatchlist();
+      drawWatchlist();
+      add.textContent = 'Added';
+      add.disabled = true;
+      document.getElementById('directoryStatus').textContent = symbol + ' Watchlist mein add ho gaya.';
+    });
+    action.appendChild(add);
+    tr.append(company, exchange, action);
+    body.appendChild(tr);
+  });
+  document.getElementById('directoryStatus').textContent =
+    matches.length + ' matching result(s) shown (maximum 40). Search aur specific karo.';
+}
+
+document.getElementById('loadInstrumentDirectory').addEventListener('click', async () => {
+  const button = document.getElementById('loadInstrumentDirectory');
+  const status = document.getElementById('directoryStatus');
+  const search = document.getElementById('directorySearch');
+  button.disabled = true;
+  status.textContent = 'Angel One instrument directory load ho rahi hai…';
+  try {
+    const response = await fetch(INSTRUMENT_MASTER_URL, { cache: 'no-store' });
+    if (!response.ok) throw new Error('Directory response ' + response.status);
+    const payload = await response.json();
+    if (!Array.isArray(payload)) throw new Error('Directory format unexpected');
+    const unique = new Map();
+    payload.filter(isCashEquityInstrument).forEach(item => {
+      const key = String(item.exch_seg) + ':' + String(item.symbol);
+      if (!unique.has(key)) unique.set(key, item);
+    });
+    instrumentDirectory = Array.from(unique.values()).sort((a,b) =>
+      String(a.name || a.symbol).localeCompare(String(b.name || b.symbol))
+    );
+    if (!instrumentDirectory.length) throw new Error('Cash equity stocks nahi mile');
+    search.disabled = false;
+    search.value = '';
+    renderInstrumentDirectory('');
+    status.textContent = instrumentDirectory.length.toLocaleString('en-IN') + ' NSE/BSE cash-equity entries loaded. Search karke add karo.';
+  } catch (error) {
+    status.textContent = 'Directory load nahi hui: ' + error.message + '. Network/CORS restriction ho sakti hai.';
+    document.getElementById('directoryRows').innerHTML = '<tr><td colspan="3">Directory unavailable. Internet connection check karo.</td></tr>';
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.getElementById('directorySearch').addEventListener('input', event => {
+  renderInstrumentDirectory(event.target.value);
+});
 
 function showTab(id, button) {
   document.querySelectorAll('.tab').forEach(tab => {
