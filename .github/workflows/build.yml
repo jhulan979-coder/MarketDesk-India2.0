@@ -94,6 +94,10 @@ jobs:
           EOF
 
       - name: Build signed release APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.MARKETDESK_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.MARKETDESK_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.MARKETDESK_KEY_PASSWORD }}
         run: |
           cd app/android
           chmod +x gradlew
