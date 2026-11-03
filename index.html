@@ -1022,8 +1022,9 @@ function quoteFor(symbol) {
   return marketQuotes[safeSymbol(symbol)] || null;
 }
 
-/* Public NSE/BSE cash-equity directory; no broker login or order access. */
-const INSTRUMENT_MASTER_URL = 'https://margincalculator.angelone.in/OpenAPI_File/files/OpenAPIScripMaster.json';
+/* Public NSE/BSE cash-equity directory; no broker login or order access.
+   The GitHub Actions build downloads this file and packages it in the APK. */
+const INSTRUMENT_MASTER_URL = 'data/instruments.json';
 let instrumentDirectory = [];
 
 function isCashEquityInstrument(item) {
@@ -1094,7 +1095,7 @@ document.getElementById('loadInstrumentDirectory').addEventListener('click', asy
   const status = document.getElementById('directoryStatus');
   const search = document.getElementById('directorySearch');
   button.disabled = true;
-  status.textContent = 'Angel One instrument directory load ho rahi hai…';
+  status.textContent = 'Packaged NSE/BSE stock directory load ho rahi hai…';
   try {
     const response = await fetch(INSTRUMENT_MASTER_URL, { cache: 'no-store' });
     if (!response.ok) throw new Error('Directory response ' + response.status);
@@ -1112,9 +1113,9 @@ document.getElementById('loadInstrumentDirectory').addEventListener('click', asy
     search.disabled = false;
     search.value = '';
     renderInstrumentDirectory('');
-    status.textContent = instrumentDirectory.length.toLocaleString('en-IN') + ' NSE/BSE cash-equity entries loaded. Search karke add karo.';
+    status.textContent = instrumentDirectory.length.toLocaleString('en-IN') + ' NSE/BSE cash-equity entries loaded from APK data. Search karke add karo.';
   } catch (error) {
-    status.textContent = 'Directory load nahi hui: ' + error.message + '. Network/CORS restriction ho sakti hai.';
+    status.textContent = 'Packaged directory load nahi hui: ' + error.message + '. Naya APK build karo aur internet/storage check karo.';
     document.getElementById('directoryRows').innerHTML = '<tr><td colspan="3">Directory unavailable. Internet connection check karo.</td></tr>';
   } finally {
     button.disabled = false;
