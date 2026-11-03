@@ -38,7 +38,26 @@ jobs:
           curl --fail --location --retry 3 --retry-delay 2 \
             'https://margincalculator.angelone.in/OpenAPI_File/files/OpenAPIScripMaster.json' \
             --output app/www/data/instruments.json
-          node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('app/www/data/instruments.json','utf8')); if(!Array.isArray(p)||p.length<1000) process.exit(1); console.log('Instrument master rows:',p.length);"
+          node - <<'NODE'
+          const fs = require('fs');
+          const file = 'app/www/data/instruments.json';
+          const rows = JSON.parse(fs.readFileSync(file, 'utf8'));
+          if (!Array.isArray(rows) || rows.length < 1000) {
+            throw new Error('Instrument master is empty or has an unexpected format');
+          }
+          const cash = rows.filter(item => {
+            const exchange = String(item.exch_seg || '').toLowerCase();
+            return ['nse_cm', 'bse_cm', 'nse', 'bse'].includes(exchange)
+              && !String(item.instrumenttype || '').trim()
+              && !String(item.expiry || '').trim()
+              && String(item.symbol || '').trim();
+          });
+          if (cash.length < 1000) {
+            throw new Error('Expected cash-equity rows were not found in instrument master');
+          }
+          console.log('Instrument master rows:', rows.length);
+          console.log('Cash-equity directory rows:', cash.length);
+          NODE
 
       - name: Install Capacitor
         working-directory: app
