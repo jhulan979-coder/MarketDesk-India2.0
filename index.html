@@ -405,13 +405,13 @@ footer{
     <div class="grid">
       <div class="card">
         <div class="label">NIFTY 50</div>
-        <div class="value" id="niftyValue">—</div>
+        <div class="value" id="niftyValue">NO DATA</div>
         <p id="niftyMeta">API data not loaded</p>
       </div>
 
       <div class="card">
         <div class="label">SENSEX</div>
-        <div class="value" id="sensexValue">—</div>
+        <div class="value" id="sensexValue">NO DATA</div>
         <p id="sensexMeta">API data not loaded</p>
       </div>
     </div>
@@ -585,10 +585,10 @@ footer{
     </select>
 
     <label for="historyFrom">From date</label>
-    <input id="historyFrom" type="date" value="2026-01-01">
+    <input id="historyFrom" type="date">
 
     <label for="historyTo">To date</label>
-    <input id="historyTo" type="date" value="2026-10-31">
+    <input id="historyTo" type="date">
 
     <button id="loadHistory" type="button">Load Historical Data</button>
     <p id="historyStatus" class="note">Data load karne ke liye button dabao.</p>
@@ -856,16 +856,18 @@ footer{
             <th>Volume Ratio</th>
             <th>Breakout</th>
             <th>Trend</th>
+            <th>Data Date</th>
           </tr>
         </thead>
         <tbody id="scannerRows">
-          <tr><td colspan="8">Abhi scan nahi hua.</td></tr>
+          <tr><td colspan="9">Abhi scan nahi hua.</td></tr>
         </tbody>
       </table>
     </div>
 
     <p class="note">
-      Historical educational analysis only; real-time signal ya investment advice nahi.
+      Five configured stocks scan hote hain; sirf top 2 recent qualifying technical states dikhte hain.
+      Recent/valid setup na mile to NO TRADE. Historical analysis only; investment advice nahi.
     </p>
   </section>
 </div>
@@ -961,9 +963,9 @@ async function indianApiFetch(path, options = {}) {
 }
 
 function renderIndexQuote(name, value, meta) {
-  document.getElementById(value).textContent = '—';
+  document.getElementById(value).textContent = 'NO DATA';
   document.getElementById(meta).textContent =
-    name + ' feed is not listed in the current IndianAPI Free API reference.';
+    name + ' feed is not listed in the configured IndianAPI Free API reference.';
 }
 
 function renderMarketOverview() {
@@ -1070,7 +1072,9 @@ function isCashEquityInstrument(item) {
   const name = String(item.name || '').trim();
   const strike = Number(item.strike);
   if (!['nse_cm', 'bse_cm', 'nse', 'bse'].includes(exchange)) return false;
-  if (!symbol || type || expiry) return false;
+  // Angel One instrument master may mark cash equities as EQ.
+  // Accept blank/EQ only; exclude futures, options and expiring contracts.
+  if (!symbol || !['', 'EQ'].includes(type) || expiry) return false;
   if (Number.isFinite(strike) && strike !== -1) return false;
   if (/^(NIFTY|BANKNIFTY|FINNIFTY|MIDCPNIFTY|SENSEX|BANKEX|INDIA VIX)/i.test(symbol)) return false;
   if (/INDEX|INDICES/i.test(name)) return false;
@@ -2602,6 +2606,21 @@ document.getElementById('loadHistory').addEventListener(
 
 /* STOCK SCANNER */
 
+function isRecentHistoricalDate(value, maxAgeDays = 7) {
+  const text = String(value || '').slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return false;
+  const parts = text.split('-').map(Number);
+  const dataDate = new Date(parts[0], parts[1] - 1, parts[2]);
+  if (!Number.isFinite(dataDate.getTime()) ||
+      dataDate.getFullYear() !== parts[0] ||
+      dataDate.getMonth() !== parts[1] - 1 ||
+      dataDate.getDate() !== parts[2]) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const ageDays = Math.floor((today.getTime() - dataDate.getTime()) / 86400000);
+  return ageDays >= 0 && ageDays <= maxAgeDays;
+}
+
 document.getElementById('runScanner').addEventListener(
   'click',
   async function() {
@@ -2626,7 +2645,7 @@ document.getElementById('runScanner').addEventListener(
       const tr = document.createElement('tr');
       const cells = [];
 
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 9; i++) {
         const td = document.createElement('td');
 
         td.textContent =
@@ -2647,6 +2666,10 @@ document.getElementById('runScanner').addEventListener(
 
         const closes = data.map(item => item.close);
         const latest = data[data.length - 1];
+        const dataDate = String(latest.date || '').slice(0, 10);
+        if (!isRecentHistoricalDate(dataDate, 7)) {
+          throw new Error('Stale or invalid historical data date: ' + (dataDate || 'unavailable'));
+        }
 
         const signals = buildStrategy(closes);
 
@@ -2664,8 +2687,12 @@ document.getElementById('runScanner').addEventListener(
         }
         dailyCandidates.push({
           symbol, signal: signal.signal, score: signal.score,
-          dataDate: String(latest.date || '').slice(0, 10)
+          dataDate
         });
+        tr.dataset.score = String(Math.abs(signal.score));
+        tr.dataset.qualified =
+          signal.signal === 'BULLISH' || signal.signal === 'BEARISH'
+            ? 'true' : 'false';
 
         const rsiValues = calculateRSI(closes, 14);
         const rsi = rsiValues[rsiValues.length - 1];
@@ -2731,6 +2758,7 @@ document.getElementById('runScanner').addEventListener(
 
         cells[6].textContent = breakout;
         cells[7].textContent = trend;
+        cells[8].textContent = dataDate;
 
         cells[3].style.color =
           signal.signal === 'BULLISH'
@@ -2755,7 +2783,7 @@ document.getElementById('runScanner').addEventListener(
         cells[1].textContent = '—';
         cells[2].textContent = '—';
 
-        for (let i = 3; i < 8; i++) {
+        for (let i = 3; i < 9; i++) {
           cells[i].textContent = 'Unavailable';
         }
       }
@@ -2768,9 +2796,27 @@ document.getElementById('runScanner').addEventListener(
         ' stocks scanned.';
     }
 
+    const topRows = Array.from(body.querySelectorAll('tr'))
+      .filter(row => row.dataset.qualified === 'true')
+      .sort((a, b) => Number(b.dataset.score) - Number(a.dataset.score))
+      .slice(0, 2);
+    body.replaceChildren();
+    if (topRows.length) {
+      topRows.forEach(row => body.appendChild(row));
+    } else {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 9;
+      cell.textContent = 'NO TRADE · No recent qualifying historical setup. Data may be stale, incomplete or neutral.';
+      row.appendChild(cell);
+      body.appendChild(row);
+    }
+
     addDailyResearchAlerts(dailyCandidates);
     status.textContent =
-      'Scan complete. Historical technical states only; in-app alerts are capped at 2 total per device-local day. No index data is available.';
+      'Scan complete. ' + SCANNER_STOCKS.length +
+      ' stocks checked; top ' + topRows.length +
+      ' qualifying recent technical state(s) shown. Maximum 2 in-app alerts per device-local day. NIFTY/SENSEX: NO DATA.';
 
     button.disabled = false;
   }
@@ -2790,10 +2836,9 @@ function setDefaultDates() {
   const fromInput = document.getElementById('historyFrom');
   const toInput = document.getElementById('historyTo');
 
-  if (!fromInput.value) {
-    fromInput.value = today.getFullYear() + '-01-01';
-  }
-
+  // Always use the current calendar year; the old hard-coded HTML value
+  // must not keep the app stuck on a previous year's date range.
+  fromInput.value = today.getFullYear() + '-01-01';
   toInput.value = dateText;
   fromInput.max = dateText;
   toInput.max = dateText;
