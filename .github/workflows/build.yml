@@ -1,3 +1,4 @@
+
 name: Build MarketDesk India APK
 
 on:
@@ -35,16 +36,20 @@ jobs:
           set -euo pipefail
           mkdir -p app/www/data
           cp index.html app/www/index.html
+
           curl --fail --location --retry 3 --retry-delay 2 \
             'https://margincalculator.angelone.in/OpenAPI_File/files/OpenAPIScripMaster.json' \
             --output app/www/data/instruments.json
+
           node - <<'NODE'
           const fs = require('fs');
           const file = 'app/www/data/instruments.json';
           const rows = JSON.parse(fs.readFileSync(file, 'utf8'));
+
           if (!Array.isArray(rows) || rows.length < 1000) {
-            throw new Error('Instrument master is empty or has an unexpected format');
+            throw new Error('Instrument master is empty or invalid');
           }
+
           const cash = rows.filter(item => {
             const exchange = String(item.exch_seg || '').toLowerCase();
             return ['nse_cm', 'bse_cm', 'nse', 'bse'].includes(exchange)
@@ -52,11 +57,13 @@ jobs:
               && !String(item.expiry || '').trim()
               && String(item.symbol || '').trim();
           });
+
           if (cash.length < 1000) {
-            throw new Error('Expected cash-equity rows were not found in instrument master');
+            throw new Error('Cash-equity directory validation failed');
           }
-          console.log('Instrument master rows:', rows.length);
-          console.log('Cash-equity directory rows:', cash.length);
+
+          console.log('Instrument rows:', rows.length);
+          console.log('Cash-equity rows:', cash.length);
           NODE
 
       - name: Install Capacitor
@@ -76,13 +83,37 @@ jobs:
       - name: Build debug APK
         working-directory: app/android
         run: |
+          set -euo pipefail
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew clean assembleDebug --no-daemon
+
+      - name: Verify APK
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          APK="app/android/app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+
+          BUILD_TOOLS="$(find "$ANDROID_HOME/build-tools" \
+            -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
+
+          unzip -t "$APK"
+
+          "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
+
+          "$BUILD_TOOLS/aapt" dump badging "$APK" \
+            | grep -F "package: name='com.marketdesk.india'"
+
+          ls -lh "$APK"
+          sha256sum "$APK"
 
       - name: Prepare APK for release
         run: |
+          set -euo pipefail
           mkdir -p release-files
-          cp app/android/app/build/outputs/apk/debug/app-debug.apk release-files/MarketDesk-India.apk
+          cp app/android/app/build/outputs/apk/debug/app-debug.apk \
+            release-files/MarketDesk-India.apk
 
       - name: Publish APK to GitHub Release
         uses: softprops/action-gh-release@v2
@@ -96,5 +127,6 @@ jobs:
           files: release-files/MarketDesk-India.apk
           overwrite_files: true
           make_latest: true
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
