@@ -1034,7 +1034,7 @@ function isCashEquityInstrument(item) {
   const symbol = String(item.symbol || '').trim();
   const name = String(item.name || '').trim();
   const strike = Number(item.strike);
-  if (!['nse_cm', 'bse_cm'].includes(exchange)) return false;
+  if (!['nse_cm', 'bse_cm', 'nse', 'bse'].includes(exchange)) return false;
   if (!symbol || type || expiry) return false;
   if (Number.isFinite(strike) && strike !== -1) return false;
   if (/^(NIFTY|BANKNIFTY|FINNIFTY|MIDCPNIFTY|SENSEX|BANKEX|INDIA VIX)/i.test(symbol)) return false;
@@ -1065,7 +1065,7 @@ function renderInstrumentDirectory(query = '') {
     const company = document.createElement('td');
     company.textContent = (item.name || 'Company') + ' · ' + item.symbol;
     const exchange = document.createElement('td');
-    exchange.textContent = String(item.exch_seg).toUpperCase() === 'NSE_CM' ? 'NSE' : 'BSE';
+    exchange.textContent = ['NSE_CM', 'NSE'].includes(String(item.exch_seg || '').toUpperCase()) ? 'NSE' : 'BSE';
     const action = document.createElement('td');
     const add = document.createElement('button');
     add.type = 'button';
