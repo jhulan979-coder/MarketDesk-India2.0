@@ -908,6 +908,18 @@ function safeSymbol(value) {
   return String(value || '').trim().toUpperCase();
 }
 
+// Local device time when this app successfully received a quote.
+// This is NOT the exchange/provider timestamp.
+function formatFetchedTime(value) {
+  if (!value) return '—';
+  const date = value instanceof Date ? value : new Date(value);
+  if (!Number.isFinite(date.getTime())) return '—';
+  return date.toLocaleTimeString('en-IN', {
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: true
+  });
+}
+
 function getIndianApiKey() {
   try { return localStorage.getItem(INDIANAPI_KEY) || ''; }
   catch (error) { return ''; }
@@ -943,7 +955,8 @@ function renderMarketOverview() {
   renderIndexQuote('NIFTY 50', 'niftyValue', 'niftyMeta');
   renderIndexQuote('SENSEX', 'sensexValue', 'sensexMeta');
   document.getElementById('marketUpdatedAt').textContent =
-    'App checked: ' + (lastMarketFetch ? lastMarketFetch.toLocaleString('en-IN') : '—');
+    'Last fetched: ' + formatFetchedTime(lastMarketFetch) +
+    ' · Device time (IST/local)';
 }
 
 const COMPANY_NAMES = {
@@ -983,6 +996,7 @@ async function fetchStockQuote(symbol) {
   const company = COMPANY_NAMES[clean] || clean;
   const payload = await indianApiFetch('/stock?name=' + encodeURIComponent(company));
   const quote = extractStockQuote(payload, clean);
+  quote.fetchedAt = new Date();
   marketQuotes[clean] = quote;
   return quote;
 }
@@ -1003,13 +1017,19 @@ async function refreshMarketData() {
       results.push({ symbol, ok: false, error: error.message });
     }
   }
-  lastMarketFetch = new Date();
+  const successfulFetchTimes = results
+    .filter(item => item.ok)
+    .map(item => marketQuotes[item.symbol]?.fetchedAt)
+    .filter(Boolean);
+  lastMarketFetch = successfulFetchTimes.length
+    ? new Date(Math.max(...successfulFetchTimes.map(date => date.getTime())))
+    : null;
   renderMarketOverview();
   drawWatchlist();
   const succeeded = results.filter(item => item.ok).length;
   const failed = results.filter(item => !item.ok);
   if (!succeeded) throw new Error(failed[0]?.error || 'Provider se quote nahi mila.');
-  setStatus(succeeded + '/' + results.length + ' stock quote(s) loaded. Provider timestamp agar available ho to quote ke saath check karo.');
+  setStatus(succeeded + '/' + results.length + ' stock quote(s) loaded. Last fetched: ' + formatFetchedTime(lastMarketFetch) + '. Provider time: ' + (marketQuotes[results.find(item => item.ok)?.symbol]?.timestamp || 'unavailable') + '.');
   if (failed.length) keyStatusSafe('Some stocks unavailable: ' + failed.map(item => item.symbol).join(', '));
 }
 
@@ -1281,7 +1301,9 @@ async function fetchStockHistory(symbol, limit = 500) {
     const liveQuote = quoteFor(symbol);
     if (liveQuote && Number.isFinite(Number(liveQuote.ltp))) {
       price.textContent = money(liveQuote.ltp);
-      status.textContent = 'Provider: ' + (liveQuote.timestamp || 'time unavailable');
+      status.textContent =
+        'Provider: ' + (liveQuote.timestamp || 'time unavailable') +
+        ' · Last fetched: ' + formatFetchedTime(liveQuote.fetchedAt);
     } else {
       fetchStockHistory(symbol, 100)
         .then(data => {
@@ -1378,7 +1400,9 @@ function drawPositions() {
       }
       input.value = latestPrice.toFixed(2);
       document.getElementById('paperStatus').textContent =
-        'Provider quote filled (' + (quote.timestamp || 'timestamp unavailable') + '). Virtual close only.';
+        'Provider time: ' + (quote.timestamp || 'unavailable') +
+        ' · Last fetched: ' + formatFetchedTime(quote.fetchedAt) +
+        '. Virtual close only.';
     });
 
     const button = document.createElement('button');
@@ -1572,7 +1596,9 @@ document.getElementById('fillTradePrice').addEventListener('click', async () => 
     const quote = quoteFor(symbol) || await fetchStockQuote(symbol);
     document.getElementById('tradePrice').value = quote.ltp.toFixed(2);
     document.getElementById('paperStatus').textContent =
-      'Provider quote filled (' + (quote.timestamp || 'provider timestamp unavailable') + '). Virtual simulation only.';
+      'Provider time: ' + (quote.timestamp || 'unavailable') +
+      ' · Last fetched: ' + formatFetchedTime(quote.fetchedAt) +
+      '. Virtual simulation only.';
   } catch (error) {
     document.getElementById('paperStatus').textContent = 'Quote load failed: ' + error.message;
   }
