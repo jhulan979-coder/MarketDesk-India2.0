@@ -425,6 +425,19 @@ footer{
     <button id="refreshMarket" type="button">Refresh Market Data</button>
   </section>
 
+  <section class="card" id="dailyMonitor">
+    <h2>Daily Research Monitor</h2>
+    <p class="note">Historical educational states only. Current scanner checks 5 configured sample stocks, not all 50 NIFTY constituents. Maximum 2 in-app alerts per device-local calendar day across all scanned stocks. No buy/sell instructions.</p>
+    <div class="stats-grid">
+      <div class="stat"><span>NIFTY 50 index</span><strong id="monitorNiftyState">NO DATA</strong></div>
+      <div class="stat"><span>In-app alerts today</span><strong id="dailyAlertCount">0 / 2</strong></div>
+    </div>
+    <p id="monitorNiftyNote" class="note">NIFTY 50 index feed is not available from the configured data endpoint. No index value or index alert will be invented.</p>
+    <div id="dailyAlerts" class="note" aria-live="polite">No scan has been run today.</div>
+    <button id="runDailyMonitor" type="button">Run Daily Historical Monitor</button>
+    <p class="note">Alerts are shown inside this app only; Android push notifications are not enabled. Each alert displays the latest historical data date, not a live market timestamp.</p>
+  </section>
+
   <section class="card">
     <h2>Today's Research</h2>
     <p>Watchlist banao, historical data load karo aur paper trading ko virtual balance ke saath practice karo.</p>
@@ -869,6 +882,8 @@ footer{
 const WATCH_KEY = 'marketdesk_watchlist_v2';
 const PAPER_KEY = 'marketdesk_paper_v2';
 const INDIANAPI_KEY = 'marketdesk_indianapi_key_v1';
+const DAILY_ALERT_KEY = 'marketdesk_daily_research_alerts_v1';
+const MAX_DAILY_ALERTS = 2;
 const INDIANAPI_BASE = 'https://stock.indianapi.in';
 // Manual refresh only: protects the free-plan request allowance.
 let marketQuotes = {};
@@ -1144,6 +1159,68 @@ document.getElementById('loadInstrumentDirectory').addEventListener('click', asy
 
 document.getElementById('directorySearch').addEventListener('input', event => {
   renderInstrumentDirectory(event.target.value);
+});
+
+function localDayKey() {
+  const now = new Date();
+  return [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
+}
+
+function loadDailyAlertState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(DAILY_ALERT_KEY) || 'null');
+    if (saved && saved.day === localDayKey() && Array.isArray(saved.items) && Array.isArray(saved.seenSymbols)) return saved;
+  } catch (error) {}
+  return { day: localDayKey(), items: [], seenSymbols: [] };
+}
+
+function saveDailyAlertState(state) {
+  try { localStorage.setItem(DAILY_ALERT_KEY, JSON.stringify(state)); }
+  catch (error) { setStatus('Daily monitor state device par save nahi ho saka.'); }
+}
+
+function renderDailyAlertState() {
+  const state = loadDailyAlertState();
+  const count = Math.min(MAX_DAILY_ALERTS, state.items.length);
+  document.getElementById('monitorNiftyState').textContent = 'NO DATA';
+  document.getElementById('dailyAlertCount').textContent = count + ' / ' + MAX_DAILY_ALERTS;
+  const box = document.getElementById('dailyAlerts');
+  box.replaceChildren();
+  if (!count) {
+    box.textContent = 'NO SIGNAL · Aaj tak koi qualifying historical state alert create nahi hua.';
+    return;
+  }
+  state.items.slice(0, MAX_DAILY_ALERTS).forEach(item => {
+    const line = document.createElement('p');
+    const stateLabel = item.state === 'BULLISH' ? 'UPWARD TREND STATE' : 'DOWNWARD TREND STATE';
+    line.textContent = item.symbol + ' · ' + stateLabel + ' · Score ' + (item.score > 0 ? '+' : '') + item.score + '/6 · Historical data date: ' + item.dataDate;
+    box.appendChild(line);
+  });
+}
+
+function addDailyResearchAlerts(candidates) {
+  const state = loadDailyAlertState();
+  const ranked = candidates
+    .filter(item => item && (item.signal === 'BULLISH' || item.signal === 'BEARISH') && Number.isFinite(item.score))
+    .sort((a, b) => Math.abs(b.score) - Math.abs(a.score));
+  for (const item of ranked) {
+    if (state.items.length >= MAX_DAILY_ALERTS) break;
+    if (state.seenSymbols.includes(item.symbol)) continue;
+    state.items.push({
+      symbol: item.symbol,
+      state: item.signal,
+      score: item.score,
+      dataDate: item.dataDate || 'unavailable',
+      createdAt: new Date().toISOString()
+    });
+    state.seenSymbols.push(item.symbol);
+  }
+  saveDailyAlertState(state);
+  renderDailyAlertState();
+}
+
+document.getElementById('runDailyMonitor').addEventListener('click', () => {
+  document.getElementById('runScanner').click();
 });
 
 function showTab(id, button) {
@@ -1741,20 +1818,23 @@ function calculateMACD(values) {
 }
 
 function calculateATR(data, period = 14) {
+  // The configured historical endpoint currently supplies close-only rows.
+  // Do not manufacture High/Low values from Close.
+  const hasFullOHLC = data.every(item =>
+    Number.isFinite(item.high) && Number.isFinite(item.low) &&
+    Number.isFinite(item.close) && item.high >= item.low
+  );
+  if (!hasFullOHLC) return Array(data.length).fill(null);
+
   const trueRanges = data.map((item, index) => {
-    if (index === 0) {
-      return item.high - item.low;
-    }
-
+    if (index === 0) return item.high - item.low;
     const previousClose = data[index - 1].close;
-
     return Math.max(
       item.high - item.low,
       Math.abs(item.high - previousClose),
       Math.abs(item.low - previousClose)
     );
   });
-
   return calculateSMA(trueRanges, period);
 }
 
@@ -1783,7 +1863,11 @@ function calculateRiskPlan(entry, atr, riskReward = 2) {
 /* ADVANCED INDICATORS DISPLAY */
 
 function renderAdvancedIndicators(data) {
-  if (!data || data.length < 30) return;
+  if (!data || data.length < 30) {
+    ['smaValue','bbUpper','bbLower','macdValue','macdSignal','atrValue','riskStop','riskTarget','riskPercent']
+      .forEach(id => { document.getElementById(id).textContent = '—'; });
+    return;
+  }
 
   const closes = data.map(item => item.close);
   const last = closes.length - 1;
@@ -1836,39 +1920,24 @@ function renderAdvancedIndicators(data) {
 /* VOLUME ANALYSIS */
 
 function renderVolumeAnalysis(data) {
-  if (!data || data.length < 20) return;
-
+  const ids = ['latestVolume', 'averageVolume', 'volumeRatio', 'volumeSignal'];
+  if (!data || data.length < 21) {
+    ids.forEach(id => { document.getElementById(id).textContent = '—'; });
+    return;
+  }
   const latest = data[data.length - 1];
-
-  const volumes = data
-    .slice(-21, -1)
-    .map(item => Number(item.volume) || 0);
-
-  const average =
-    volumes.reduce((a, b) => a + b, 0) / volumes.length;
-
-  const current = Number(latest.volume) || 0;
-
-  const ratio = average > 0
-    ? current / average
-    : 0;
-
-  document.getElementById('latestVolume').textContent =
-    current.toLocaleString('en-IN');
-
-  document.getElementById('averageVolume').textContent =
-    Math.round(average).toLocaleString('en-IN');
-
-  document.getElementById('volumeRatio').textContent =
-    average > 0 ? ratio.toFixed(2) + 'x' : '—';
-
-  const signal =
-    average <= 0 ? 'Unavailable' :
-    ratio >= 2 ? 'High Volume Spike' :
-    ratio >= 1.3 ? 'Above Average' :
-    ratio <= 0.7 ? 'Low Volume' :
-    'Normal Volume';
-
+  const current = Number(latest.volume);
+  const volumes = data.slice(-21, -1).map(item => Number(item.volume));
+  if (!Number.isFinite(current) || current < 0 || volumes.length !== 20 || volumes.some(v => !Number.isFinite(v) || v < 0)) {
+    ids.forEach(id => { document.getElementById(id).textContent = 'Unavailable'; });
+    return;
+  }
+  const average = volumes.reduce((a, b) => a + b, 0) / volumes.length;
+  const ratio = average > 0 ? current / average : NaN;
+  document.getElementById('latestVolume').textContent = current.toLocaleString('en-IN');
+  document.getElementById('averageVolume').textContent = Math.round(average).toLocaleString('en-IN');
+  document.getElementById('volumeRatio').textContent = Number.isFinite(ratio) ? ratio.toFixed(2) + 'x' : '—';
+  const signal = !Number.isFinite(ratio) ? 'Unavailable' : ratio >= 2 ? 'High Volume Spike' : ratio >= 1.3 ? 'Above Average' : ratio <= 0.7 ? 'Low Volume' : 'Normal Volume';
   document.getElementById('volumeSignal').textContent = signal;
 }
 
@@ -2548,6 +2617,7 @@ document.getElementById('runScanner').addEventListener(
     body.replaceChildren();
 
     let completed = 0;
+    const dailyCandidates = [];
 
     status.textContent =
       'Historical scan running...';
@@ -2592,22 +2662,23 @@ document.getElementById('runScanner').addEventListener(
         if (!signal) {
           throw new Error('Signal unavailable');
         }
+        dailyCandidates.push({
+          symbol, signal: signal.signal, score: signal.score,
+          dataDate: String(latest.date || '').slice(0, 10)
+        });
 
         const rsiValues = calculateRSI(closes, 14);
         const rsi = rsiValues[rsiValues.length - 1];
 
-        const previousVolumes = data
-          .slice(-21, -1)
-          .map(item => Number(item.volume) || 0);
-
-        const averageVolume =
-          previousVolumes.reduce((a, b) => a + b, 0) /
-          previousVolumes.length;
-
-        const currentVolume =
-          Number(latest.volume) || 0;
-
-        const volumeRatio = averageVolume > 0
+        const previousVolumes = data.slice(-21, -1).map(item => Number(item.volume));
+        const currentVolume = Number(latest.volume);
+        const volumeDataValid = previousVolumes.length === 20 &&
+          previousVolumes.every(value => Number.isFinite(value) && value >= 0) &&
+          Number.isFinite(currentVolume) && currentVolume >= 0;
+        const averageVolume = volumeDataValid
+          ? previousVolumes.reduce((a, b) => a + b, 0) / previousVolumes.length
+          : NaN;
+        const volumeRatio = volumeDataValid && averageVolume > 0
           ? currentVolume / averageVolume
           : null;
 
@@ -2697,8 +2768,9 @@ document.getElementById('runScanner').addEventListener(
         ' stocks scanned.';
     }
 
+    addDailyResearchAlerts(dailyCandidates);
     status.textContent =
-      'Scan complete. Historical technical states only; BUY/SELL orders ya recommendations nahi.';
+      'Scan complete. Historical technical states only; in-app alerts are capped at 2 total per device-local day. No index data is available.';
 
     button.disabled = false;
   }
@@ -2738,6 +2810,7 @@ drawWatchlist();
 drawPositions();
 drawTradeHistory();
 renderMarketOverview();
+renderDailyAlertState();
 // No background polling: user refreshes manually to conserve free API credits.
 if (getIndianApiKey()) {
   keyStatusSafe('API key saved on this device. Press Test API & Load Market when ready.');
