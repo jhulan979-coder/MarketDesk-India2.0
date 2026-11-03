@@ -1,4 +1,3 @@
-
 name: Build MarketDesk India APK
 
 on:
@@ -13,7 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
 
     steps:
       - name: Checkout repository
@@ -30,7 +29,16 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Prepare web app and stock directory
+      # Keep the same debug signing key across builds made by this workflow.
+      # First run creates the key; later runs restore it from the Actions cache.
+      - name: Restore stable Android debug signing key
+        id: signing-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: marketdesk-debug-signing-v1
+
+      - name: Prepare web app and public stock directory
         shell: bash
         run: |
           set -euo pipefail
@@ -45,23 +53,24 @@ jobs:
           const fs = require('fs');
           const file = 'app/www/data/instruments.json';
           const rows = JSON.parse(fs.readFileSync(file, 'utf8'));
-
           if (!Array.isArray(rows) || rows.length < 1000) {
-            throw new Error('Instrument master is empty or invalid');
+            throw new Error('Angel One public instrument master is empty or invalid');
           }
-
           const cash = rows.filter(item => {
-            const exchange = String(item.exch_seg || '').toLowerCase();
-            return ['nse_cm', 'bse_cm', 'nse', 'bse'].includes(exchange)
-              && !String(item.instrumenttype || '').trim()
-              && !String(item.expiry || '').trim()
-              && String(item.symbol || '').trim();
+            const exchange = String(item.exch_seg || '').toUpperCase();
+            const type = String(item.instrumenttype || '').trim().toUpperCase();
+            const expiry = String(item.expiry || '').trim();
+            const symbol = String(item.symbol || '').trim();
+            const strike = Number(item.strike);
+            return ['NSE_CM', 'BSE_CM', 'NSE', 'BSE'].includes(exchange)
+              && symbol
+              && (!type || type === 'EQ')
+              && !expiry
+              && (!Number.isFinite(strike) || strike === -1 || strike === 0);
           });
-
           if (cash.length < 1000) {
-            throw new Error('Cash-equity directory validation failed');
+            throw new Error(`Cash-equity directory validation failed: ${cash.length} rows`);
           }
-
           console.log('Instrument rows:', rows.length);
           console.log('Cash-equity rows:', cash.length);
           NODE
@@ -80,40 +89,57 @@ jobs:
           npx cap add android
           npx cap sync android
 
+      - name: Align Kotlin runtime dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat >> app/android/build.gradle <<'GRADLE'
+
+          // Kotlin 1.8+ merges the old jdk7/jdk8 runtime classes into stdlib.
+          // Exclude legacy split artifacts to prevent duplicate-class failures.
+          subprojects {
+            configurations.configureEach {
+              exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+              exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+              resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+            }
+          }
+          GRADLE
+
       - name: Build debug APK
         working-directory: app/android
         run: |
           set -euo pipefail
+          mkdir -p "$HOME/.android"
           chmod +x gradlew
           ./gradlew clean assembleDebug --no-daemon
+
+      - name: Save stable Android debug signing key
+        if: success() && steps.signing-cache.outputs.cache-hit != 'true' 
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: marketdesk-debug-signing-v1
 
       - name: Verify APK
         shell: bash
         run: |
           set -euo pipefail
-
           APK="app/android/app/build/outputs/apk/debug/app-debug.apk"
           test -s "$APK"
-
-          BUILD_TOOLS="$(find "$ANDROID_HOME/build-tools" \
-            -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
-
+          BUILD_TOOLS="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
           unzip -t "$APK"
-
           "$BUILD_TOOLS/apksigner" verify --verbose "$APK"
-
-          "$BUILD_TOOLS/aapt" dump badging "$APK" \
-            | grep -F "package: name='com.marketdesk.india'"
-
+          "$BUILD_TOOLS/aapt" dump badging "$APK" | grep -F "package: name='com.marketdesk.india'"
           ls -lh "$APK"
           sha256sum "$APK"
 
       - name: Prepare APK for release
+        shell: bash
         run: |
           set -euo pipefail
           mkdir -p release-files
-          cp app/android/app/build/outputs/apk/debug/app-debug.apk \
-            release-files/MarketDesk-India.apk
+          cp app/android/app/build/outputs/apk/debug/app-debug.apk release-files/MarketDesk-India.apk
 
       - name: Publish APK to GitHub Release
         uses: softprops/action-gh-release@v2
@@ -121,9 +147,12 @@ jobs:
           tag_name: marketdesk-latest
           name: MarketDesk India - Latest APK
           body: |
-            Educational research and virtual paper-trading app.
-            Stock directory data is packaged during this build.
-            No real-money trading is provided.
+            Educational historical research and virtual paper-trading app.
+            Angel One public instrument directory is packaged during build; it is not a price feed.
+            Stock quotes require a separately configured data provider key.
+            NIFTY 50 index feed is not connected and is shown as NO DATA.
+            Daily in-app historical-state alerts are limited to 2 total per device-local day.
+            No real-money trading or exchange orders are provided.
           files: release-files/MarketDesk-India.apk
           overwrite_files: true
           make_latest: true
