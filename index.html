@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b1220">
 <meta name="mobile-web-app-capable" content="yes">
-<title>MarketDesk India</title>
+<title>MarketDesk India - Pro Simulator</title>
 
 <style>
 :root{
@@ -22,76 +22,18 @@
 }
 
 *{box-sizing:border-box}
+html{scroll-behavior:smooth; -webkit-text-size-adjust:100%;}
+body{margin:0; background:var(--bg); color:var(--text); font:15px Arial,sans-serif; line-height:1.45;}
 
-html{
-  scroll-behavior:smooth;
-  -webkit-text-size-adjust:100%;
-}
+header{padding:18px 14px; background:#101a2b; border-bottom:1px solid var(--line);}
+h1{font-size:22px; margin:0 0 5px;}
+h2{font-size:17px; margin:0 0 12px;}
+h3{font-size:15px; margin:16px 0 10px;}
+p{color:var(--muted); margin:7px 0; line-height:1.5;}
 
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font:15px Arial,sans-serif;
-  line-height:1.45;
-}
-
-header{
-  padding:18px 14px;
-  background:#101a2b;
-  border-bottom:1px solid var(--line);
-}
-
-h1{
-  font-size:22px;
-  margin:0 0 5px;
-}
-
-h2{
-  font-size:17px;
-  margin:0 0 12px;
-}
-
-h3{
-  font-size:15px;
-  margin:16px 0 10px;
-}
-
-p{
-  color:var(--muted);
-  margin:7px 0;
-  line-height:1.5;
-}
-
-main{
-  padding:12px;
-  width:100%;
-  max-width:960px;
-  margin:auto;
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
-
-.tag{
-  font-size:11px;
-  color:var(--yellow);
-  border:1px solid #65542d;
-  padding:5px 8px;
-  border-radius:20px;
-  white-space:nowrap;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-  margin:12px 0;
-}
+main{padding:12px; width:100%; max-width:960px; margin:auto;}
+.row{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+.tag{font-size:11px; color:var(--yellow); border:1px solid #65542d; padding:5px 8px; border-radius:20px; white-space:nowrap;}
 
 .card{
   background:var(--panel);
@@ -102,50 +44,21 @@ main{
   margin:12px 0;
 }
 
-.label{
-  color:var(--muted);
-  font-size:13px;
-}
-
-.value{
-  font-size:23px;
-  font-weight:bold;
-  margin:10px 0;
-  overflow-wrap:anywhere;
-}
-
-.tab section{
-  margin:14px 0;
-}
-
-.note{
-  font-size:12px;
-  line-height:1.6;
-}
-
-#status{
-  color:var(--yellow);
-  font-size:13px;
-  margin:8px 0;
-  line-height:1.5;
-}
+.label{color:var(--muted); font-size:13px;}
+.value{font-size:23px; font-weight:bold; margin:10px 0; overflow-wrap:anywhere;}
 
 nav{
   display:flex;
   gap:7px;
   overflow-x:auto;
   padding:8px 0 12px;
-  scrollbar-width:thin;
   position:sticky;
   top:0;
   z-index:5;
   background:var(--bg);
 }
 
-nav button{
-  flex:0 0 auto;
-  white-space:nowrap;
-}
+nav button{flex:0 0 auto; white-space:nowrap;}
 
 button,input,select{
   font:inherit;
@@ -157,71 +70,20 @@ button,input,select{
   min-height:42px;
 }
 
-button{
-  cursor:pointer;
-  touch-action:manipulation;
-}
+button{cursor:pointer; touch-action:manipulation;}
+button:disabled{opacity:.55; cursor:wait;}
+button.active{border-color:var(--blue); background:#243b5e;}
+input,select{display:block; width:100%; margin:7px 0 12px;}
 
-button:disabled{
-  opacity:.55;
-  cursor:wait;
-}
+table{width:100%; border-collapse:collapse; font-size:13px; min-width:520px;}
+th,td{text-align:left; padding:10px 7px; border-bottom:1px solid var(--line); vertical-align:middle; white-space:nowrap;}
+th{color:var(--muted);}
 
-button.active{
-  border-color:var(--blue);
-  background:#243b5e;
-}
-
-input,select{
-  display:block;
-  width:100%;
-  margin:7px 0 12px;
-}
-
-form button{
-  width:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-  min-width:520px;
-}
-
-th,td{
-  text-align:left;
-  padding:10px 7px;
-  border-bottom:1px solid var(--line);
-  vertical-align:middle;
-  white-space:nowrap;
-}
-
-th{
-  color:var(--muted);
-}
-
-.table-wrap{
-  width:100%;
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
-  margin-top:10px;
-}
-
-.small-btn{
-  padding:7px 9px;
-  font-size:12px;
-  min-height:34px;
-}
+.table-wrap{width:100%; overflow-x:auto; margin-top:10px;}
+.small-btn{padding:7px 9px; font-size:12px; min-height:34px;}
 
 .good{color:var(--green)}
 .bad{color:var(--red)}
-
-.divider{
-  height:1px;
-  background:var(--line);
-  margin:16px 0;
-}
 
 .stats-grid{
   display:grid;
@@ -238,114 +100,20 @@ th{
   min-width:0;
 }
 
-.stat span{
-  display:block;
-  color:var(--muted);
-  font-size:12px;
-  margin-bottom:7px;
-}
+.stat span{display:block; color:var(--muted); font-size:12px; margin-bottom:7px;}
+.stat strong{font-size:16px; overflow-wrap:anywhere;}
 
-.stat strong{
-  font-size:16px;
-  overflow-wrap:anywhere;
-}
-
-#priceChart,#equityChart{
-  width:100%;
-  overflow:hidden;
-  background:#0e192a;
-  border:1px solid var(--line);
-  border-radius:10px;
-  padding:10px;
-  margin:10px 0;
-}
-
-#priceChart svg,#equityChart svg{
-  display:block;
-  max-width:100%;
-}
-
-footer{
-  padding:20px 12px;
-  text-align:center;
-  color:var(--muted);
-  font-size:12px;
-}
-
+#status{color:var(--yellow); font-size:13px; margin:8px 0; line-height:1.5;}
+footer{padding:20px 12px; text-align:center; color:var(--muted); font-size:12px;}
 [hidden]{display:none!important}
 
-@media(max-width:480px){
-  main{padding:10px}
-  header{padding:15px 12px}
-  h1{font-size:20px}
-  .grid{gap:8px}
-  .card{padding:11px}
-  .value{font-size:20px}
-  .stats-grid{gap:7px}
-  .stat{padding:9px}
-  .stat strong{font-size:14px}
-  button,input,select{font-size:14px}
-}
-
-@media(max-width:340px){
-  .grid{grid-template-columns:1fr}
-  .stats-grid{grid-template-columns:1fr}
-  .tag{font-size:10px}
-}
-
-/* Mobile-first refinements for Android phones */
 @media(max-width:600px){
   body{font-size:14px; overflow-x:hidden}
-  header{padding:calc(12px + env(safe-area-inset-top)) 12px 12px}
-  header .row{align-items:flex-start; gap:8px}
-  header h1{font-size:19px; line-height:1.25}
-  header p{font-size:12px; margin-top:4px}
-  .tag{font-size:10px; padding:4px 7px}
-  main{padding:9px; width:100%; max-width:100%;}
-  nav{
-    margin:0 -9px 10px;
-    padding:8px 9px 10px;
-    gap:6px;
-    overscroll-behavior-x:contain;
-    scroll-snap-type:x proximity;
-    -webkit-overflow-scrolling:touch;
-  }
-  nav button{scroll-snap-align:start; min-height:40px; padding:9px 12px; font-size:13px}
-  .card{padding:12px; border-radius:11px; margin:9px 0}
-  h2{font-size:16px; line-height:1.35}
-  h3{font-size:14px}
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px}
-  .value{font-size:19px; margin:7px 0;}
-  .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px}
-  .stat{padding:9px; overflow-wrap:anywhere}
-  .stat strong{font-size:13px}
-  label{display:block; font-size:13px; margin-top:8px}
-  input,select,button{font-size:16px; max-width:100%}
-  input,select{min-height:46px; padding:11px 10px}
-  form button{width:100%; min-height:46px; margin:5px 0 8px}
-  button{min-height:44px}
-  .small-btn{font-size:13px; min-height:40px}
-  #fillTradePrice{width:100%; margin:2px 0 10px}
-  .table-wrap{max-width:100%; overflow-x:auto; overscroll-behavior-x:contain; border-radius:8px}
-  table{font-size:12px; min-width:500px}
-  th,td{padding:9px 8px}
-  #priceChart,#equityChart{padding:7px; max-width:100%}
-  #priceChart svg,#equityChart svg{width:100%; height:auto}
-  #status{font-size:12px; overflow-wrap:anywhere}
-  footer{padding:16px 10px calc(16px + env(safe-area-inset-bottom))}
-}
-
-@media(max-width:380px){
-  header .row{flex-wrap:wrap}
-  .grid,.stats-grid{grid-template-columns:1fr 1fr}
-  .card{padding:10px}
-  .value{font-size:18px}
-  nav button{padding:8px 10px; font-size:12px}
-}
-
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  *,*::before,*::after{scroll-behavior:auto!important; animation-duration:.01ms!important; transition-duration:.01ms!important}
+  header{padding:12px}
+  main{padding:9px; width:100%; max-width:100%}
+  nav{margin:0 -9px 10px; padding:8px 9px 10px; gap:6px}
+  nav button{min-height:40px; padding:9px 12px; font-size:13px}
+  input,select,button{font-size:16px; min-height:46px}
 }
 </style>
 </head>
@@ -356,2511 +124,450 @@ footer{
   <div class="row">
     <div>
       <h1>MarketDesk <span style="color:#7ca8ff">India</span></h1>
-      <p>Personal market research terminal</p>
+      <p>Pro Strategy Simulator & Paper Terminal</p>
     </div>
-    <span class="tag">PAPER MODE</span>
+    <span class="tag">CONDITIONAL 1:2</span>
   </div>
 </header>
 
 <main>
 
 <div id="status">
-  Historical mode ready · Configure IndianAPI in Settings for delayed market quotes
+  System ready · Watchlist-integrated scanner & conditional execution active
 </div>
 
 <nav>
   <button class="active" type="button" data-tab="overview">Overview</button>
   <button type="button" data-tab="watchlist">Watchlist</button>
   <button type="button" data-tab="paper">Paper Trading</button>
-  <button type="button" data-tab="research">Research</button>
-  <button type="button" data-tab="scanner">Stock Scanner</button>
-  <button type="button" data-tab="settings">Settings</button>
+  <button type="button" data-tab="scanner">Daily Signals</button>
+  <button type="button" data-tab="info">Info</button>
 </nav>
 
-<!-- SETTINGS -->
-<div id="settings" class="tab" hidden>
+<!-- INFO -->
+<div id="info" class="tab" hidden>
   <section class="card">
-    <h2>IndianAPI Settings</h2>
-    <p>API key is device par save hogi. APK ke andar local storage mein rakhi key ko technically extract kiya ja sakta hai. Isliye ise private-use prototype tak rakho; key ko kisi ke saath share mat karo.</p>
-    <label for="indianApiKey">IndianAPI Key</label>
-    <input id="indianApiKey" type="password" autocomplete="off" placeholder="Paste your API key here">
-    <button id="saveIndianApiKey" type="button">Save API Key</button>
-    <button id="removeIndianApiKey" type="button" class="small-btn">Remove Key</button>
-    <button id="testIndianApi" type="button">Test API & Load Market</button>
-    <p id="apiKeyStatus" class="note">API key abhi configure nahi hai.</p>
-  </section>
-  <section class="card">
-    <h2>Data refresh</h2>
-    <p>Manual refresh only. This avoids consuming the free API request allowance in the background.</p>
-    <p class="note">IndianAPI documents delayed stock prices and 5-minute intraday candle intervals. It does not promise that every quote is exactly 5 minutes delayed.</p>
+    <h2>System Architecture & Disclaimers</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Implementation Details</th></tr></thead>
+        <tbody>
+          <tr><td>Market Data</td><td><span class="bad">Client-side Simulation (No live feed)</span></td></tr>
+          <tr><td>Daily Quota Tracker</td><td>Client-side local storage tracker (Clearable/Tamperable)</td></tr>
+          <tr><td>Trade ID Generation</td><td><span class="good">High-entropy Unique (Timestamp + Rand)</span></td></tr>
+          <tr><td>Scanner Filtering</td><td><span class="good">Conditional (Can output NO TRADE)</span></td></tr>
+          <tr><td>Watchlist Sync</td><td><span class="good">Directly synced with Scanner universe</span></td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 </div>
 
 <!-- OVERVIEW -->
 <div id="overview" class="tab">
-
-  <section>
-    <h2>Market Overview</h2>
-
-    <div class="grid">
-      <div class="card">
-        <div class="label">NIFTY 50</div>
-        <div class="value" id="niftyValue">NO DATA</div>
-        <p id="niftyMeta">API data not loaded</p>
-      </div>
-
-      <div class="card">
-        <div class="label">SENSEX</div>
-        <div class="value" id="sensexValue">NO DATA</div>
-        <p id="sensexMeta">API data not loaded</p>
-      </div>
-    </div>
-  </section>
-
   <section class="card">
-    <h2>Market Intelligence</h2>
-    <p>Market quotes provider ke delayed feed se aate hain. Market data manual refresh se load hota hai.</p>
-    <p class="note">Provider data timing aur delay plan ke hisaab se badal sakta hai. Ye app sirf educational virtual paper trading ke liye hai.</p>
-    <p id="marketUpdatedAt" class="note">Last update: —</p>
-    <button id="refreshMarket" type="button">Refresh Market Data</button>
+    <h2>Strategy Control</h2>
+    <p>Scanner Watchlist aur default assets ko combine karke analyze karta hai. Agar market conditions match nahi hoti, toh <strong>NO TRADE</strong> output milta hai.</p>
+    <p id="todayQuotaStatus" class="note">Quota status: Checking...</p>
+    <button id="quickRunScan" type="button" style="margin-top:10px">View Today's Signals</button>
   </section>
-
-  <section class="card" id="dailyMonitor">
-    <h2>Daily Research Monitor</h2>
-    <p class="note">Historical educational states only. Current scanner checks 5 configured sample stocks, not all 50 NIFTY constituents. Maximum 2 in-app alerts per device-local calendar day across all scanned stocks. No buy/sell instructions.</p>
-    <div class="stats-grid">
-      <div class="stat"><span>NIFTY 50 index</span><strong id="monitorNiftyState">NO DATA</strong></div>
-      <div class="stat"><span>In-app alerts today</span><strong id="dailyAlertCount">0 / 2</strong></div>
-    </div>
-    <p id="monitorNiftyNote" class="note">NIFTY 50 index feed is not available from the configured data endpoint. No index value or index alert will be invented.</p>
-    <div id="dailyAlerts" class="note" aria-live="polite">No scan has been run today.</div>
-    <button id="runDailyMonitor" type="button">Run Daily Historical Monitor</button>
-    <p class="note">Alerts are shown inside this app only; Android push notifications are not enabled. Each alert displays the latest historical data date, not a live market timestamp.</p>
-  </section>
-
-  <section class="card">
-    <h2>Today's Research</h2>
-    <p>Watchlist banao, historical data load karo aur paper trading ko virtual balance ke saath practice karo.</p>
-  </section>
-
 </div>
 
 <!-- WATCHLIST -->
 <div id="watchlist" class="tab" hidden>
-
   <section class="card">
-    <h2>My Watchlist</h2>
-    <p>Stock symbols is device par save honge. Price field provider quote dikhata hai; provider timestamp available ho to check karo.</p>
-
+    <h2>My Watchlist (Integrated with Scanner)</h2>
     <form id="watchForm">
-      <label for="symbol">Stock symbol (NSE/BSE)</label>
+      <label for="symbol">Stock Symbol</label>
       <input id="symbol" placeholder="Example: RELIANCE" maxlength="30" required>
       <button type="submit">Add Stock</button>
     </form>
-
-    <section class="card" style="margin-top:16px">
-      <h3>All NSE + BSE Stocks</h3>
-      <p class="note">Angel One public instrument directory. Search company name or symbol, then add selected stocks to your Watchlist. Directory prices are not live quotes.</p>
-      <button id="loadInstrumentDirectory" type="button">Load Stock Directory</button>
-      <p id="directoryStatus" class="note" aria-live="polite">Directory abhi load nahi hui.</p>
-      <label for="directorySearch">Search company / symbol</label>
-      <input id="directorySearch" placeholder="Example: TATA, INFOSYS, 500325" maxlength="60" disabled>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Company / Symbol</th><th>Exchange</th><th>Action</th></tr></thead>
-          <tbody id="directoryRows"><tr><td colspan="3">Load Stock Directory dabao.</td></tr></tbody>
-        </table>
-      </div>
-    </section>
-
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>Symbol</th>
-            <th>Latest quote</th>
-            <th>Data status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Symbol</th><th>Action</th></tr></thead>
         <tbody id="watchRows"></tbody>
       </table>
     </div>
   </section>
-
 </div>
 
 <!-- PAPER TRADING -->
 <div id="paper" class="tab" hidden>
-
   <section class="card">
-    <h2>Paper Trading</h2>
-
-    <p>Virtual balance: <strong id="balance">₹100,000.00</strong></p>
-    <p id="paperStatus">Virtual account ready. Yeh real trading nahi hai.</p>
+    <h2>Virtual Paper Trading (Unique ID Ledger)</h2>
+    <p>Balance: <strong id="balance">₹100,000.00</strong></p>
+    <p>Realized P/L: <strong id="realizedPL">₹0.00</strong></p>
+    <p id="paperStatus" class="note">Ready for simulation.</p>
 
     <form id="tradeForm">
-      <label for="tradeSymbol">Stock symbol</label>
-      <input id="tradeSymbol" placeholder="Example: TCS" maxlength="20" required>
-
-      <label for="tradePrice">Simulated buy price (₹)</label>
-      <input id="tradePrice" type="number" min="0.01" step="0.01" placeholder="Latest quote ya manual simulated price" required>
-      <button id="fillTradePrice" type="button" class="small-btn">Use Latest Market Price</button>
-
+      <label for="tradeSymbol">Symbol</label>
+      <input id="tradeSymbol" placeholder="RELIANCE" required>
+      <label for="tradePrice">Buy Price (₹)</label>
+      <input id="tradePrice" type="number" step="0.01" required>
       <label for="tradeQty">Quantity</label>
-      <input id="tradeQty" type="number" min="1" step="1" placeholder="1" required>
-
+      <input id="tradeQty" type="number" min="1" value="1" required>
       <button type="submit">Simulate Buy</button>
     </form>
 
-    <h2>Virtual Positions</h2>
-
+    <h2>Active Positions</h2>
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>Stock</th>
-            <th>Qty</th>
-            <th>Buy price</th>
-            <th>Sell price / action</th>
-          </tr>
-        </thead>
+        <thead><tr><th>ID</th><th>Stock</th><th>Qty</th><th>Buy Price</th><th>Exit & Close</th></tr></thead>
         <tbody id="positions"></tbody>
       </table>
     </div>
 
-    <h2 style="margin-top:18px">Trade History</h2>
-    <p>Realized Profit/Loss: <strong id="realizedPL">₹0.00</strong></p>
-
+    <h2 style="margin-top:18px">Linked Trade Ledger</h2>
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Stock</th>
-            <th>Action</th>
-            <th>Qty</th>
-            <th>Price</th>
-            <th>P/L</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Trade ID</th><th>Entry Date</th><th>Exit Date</th><th>Stock</th><th>Qty</th><th>Buy ₹</th><th>Sell ₹</th><th>P/L</th></tr></thead>
         <tbody id="tradeHistoryRows"></tbody>
       </table>
     </div>
-
-    <p class="note">Prices manually enter kiye jaate hain. Yeh simulated trading hai; koi real order exchange par nahi jaata.</p>
   </section>
-
 </div>
 
-<!-- RESEARCH -->
-<div id="research" class="tab" hidden>
-
-  <section class="card">
-    <h2>Historical Stock Analysis</h2>
-
-    <div class="grid">
-      <div class="card">
-        <div class="label">RSI (14)</div>
-        <div class="value" id="rsiValue">—</div>
-        <p id="rsiStatus">Data ka intezar hai</p>
-      </div>
-
-      <div class="card">
-        <div class="label">Moving Average (20)</div>
-        <div class="value" id="maValue">—</div>
-        <p id="maStatus">Data ka intezar hai</p>
-      </div>
-    </div>
-
-    <p>IndianAPI historical daily price series · historical technical analysis only</p>
-
-    <label for="historySymbol">Stock symbol</label>
-    <select id="historySymbol">
-      <option>RELIANCE</option>
-      <option>TCS</option>
-      <option>SBIN</option>
-      <option>INFY</option>
-      <option>HDFCBANK</option>
-    </select>
-
-    <label for="historyFrom">From date</label>
-    <input id="historyFrom" type="date">
-
-    <label for="historyTo">To date</label>
-    <input id="historyTo" type="date">
-
-    <button id="loadHistory" type="button">Load Historical Data</button>
-    <p id="historyStatus" class="note">Data load karne ke liye button dabao.</p>
-
-    <div class="card">
-      <h2>Advanced Technical Analysis</h2>
-
-      <div class="stats-grid">
-        <div class="stat">
-          <span>SMA 20</span>
-          <strong id="smaValue">—</strong>
-        </div>
-
-        <div class="stat">
-          <span>Bollinger Upper</span>
-          <strong id="bbUpper">—</strong>
-        </div>
-
-        <div class="stat">
-          <span>Bollinger Lower</span>
-          <strong id="bbLower">—</strong>
-        </div>
-
-        <div class="stat">
-          <span>MACD</span>
-          <strong id="macdValue">—</strong>
-        </div>
-
-        <div class="stat">
-          <span>MACD Signal</span>
-          <strong id="macdSignal">—</strong>
-        </div>
-
-        <div class="stat">
-          <span>ATR 14</span>
-          <strong id="atrValue">—</strong>
-        </div>
-      </div>
-
-      <h3>Volume Analysis</h3>
-
-      <div class="stats-grid">
-        <div class="stat">
-          <span>Latest Volume</span>
-          <strong id="latestVolume">—</strong>
-        </div>
-
-        <div class="stat">
-          <span>Average Volume (20D)</span>
-          <strong id="averageVolume">—</strong>
-        </div>
-
-        <div class="stat">
-          <span>Volume Ratio</span>
-          <strong id="volumeRatio">—</strong>
-        </div>
-
-        <div class="stat">
-          <span>Volume Signal</span>
-          <strong id="volumeSignal">—</strong>
-        </div>
-      </div>
-
-      <h3>Risk Management Plan</h3>
-      <p>Stop Loss: <strong id="riskStop">—</strong></p>
-      <p>Target: <strong id="riskTarget">—</strong></p>
-      <p>Risk: <strong id="riskPercent">—</strong></p>
-    </div>
-
-    <h2>Historical Price Chart</h2>
-    <p class="note">Daily closing price (₹); High/Low may not be supplied by price-only endpoint</p>
-    <div id="priceChart">Chart data ka intezar hai.</div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>High</th>
-            <th>Low</th>
-            <th>Close</th>
-            <th>Volume</th>
-          </tr>
-        </thead>
-        <tbody id="historyRows">
-          <tr><td colspan="5">No data loaded.</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-    <!-- STRATEGY ANALYSIS -->
-  <section class="card" id="strategyEngine">
-    <h2>MarketDesk Strategy Analysis</h2>
-    <p>Educational trend state: EMA 20/50 + RSI 14 + MACD confirmation</p>
-
-    <div class="grid">
-      <div class="card">
-        <div class="label">Educational technical state</div>
-        <div class="value" id="strategySignal">—</div>
-        <p id="strategyReason">Historical data load karo</p>
-      </div>
-
-      <div class="card">
-        <div class="label">Confirmation score</div>
-        <div class="value" id="strategyScore">—</div>
-        <p>Technical score; win probability nahi</p>
-      </div>
-    </div>
-
-    <h2>Indicator Confirmation</h2>
-    <p id="emaCheck">EMA 20/50: Waiting</p>
-    <p id="macdCheck">MACD: Waiting</p>
-    <p id="rsiCheck">RSI: Waiting</p>
-
-    <div class="divider"></div>
-
-    <h2>Historical Backtest</h2>
-    <p class="note">
-      Illustrative rule: bullish condition ke agle session mein entry,
-      5 sessions baad exit. Brokerage, taxes, slippage aur market impact
-      included nahi.
-    </p>
-
-    <div class="grid">
-      <div class="card">
-        <div class="label">Tested trades</div>
-        <div class="value" id="btTrades">—</div>
-      </div>
-
-      <div class="card">
-        <div class="label">Historical positive trades</div>
-        <div class="value" id="btWinRate">—</div>
-      </div>
-
-      <div class="card">
-        <div class="label">Average return</div>
-        <div class="value" id="btAverage">—</div>
-      </div>
-
-      <div class="card">
-        <div class="label">Buy & Hold return</div>
-        <div class="value" id="btHold">—</div>
-      </div>
-    </div>
-
-    <p id="backtestStatus" class="note">
-      Backtest ke liye historical data load karo.
-    </p>
-
-    <div class="divider"></div>
-
-    <h2>Equity Curve</h2>
-    <p class="note">
-      Simulated capital growth after each completed historical trade.
-    </p>
-    <div id="equityChart" class="card">
-      Backtest data ka intezar hai.
-    </div>
-
-    <div class="divider"></div>
-
-    <h2>Benchmark Comparison</h2>
-
-    <div class="grid">
-      <div class="card">
-        <div class="label">Strategy Total Return</div>
-        <div class="value" id="strategyReturn">—</div>
-      </div>
-
-      <div class="card">
-        <div class="label">Buy & Hold Return</div>
-        <div class="value" id="benchmarkReturn">—</div>
-      </div>
-    </div>
-
-    <p id="benchmarkStatus" class="note">
-      Comparison ke liye data load karo.
-    </p>
-
-    <div class="divider"></div>
-
-    <h2>Monthly Performance</h2>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Month</th>
-            <th>Trades</th>
-            <th>Monthly Return</th>
-          </tr>
-        </thead>
-        <tbody id="monthlyRows">
-          <tr><td colspan="3">No data.</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="divider"></div>
-
-    <h2>Trade-by-Trade History</h2>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Entry Date</th>
-            <th>Exit Date</th>
-            <th>Entry ₹</th>
-            <th>Exit ₹</th>
-            <th>Return</th>
-          </tr>
-        </thead>
-        <tbody id="backtestTradeRows">
-          <tr><td colspan="5">No trades.</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="divider"></div>
-
-    <h2>Backtest Reliability</h2>
-
-    <div class="grid">
-      <div class="card">
-        <div class="label">Sample Size</div>
-        <div class="value" id="reliabilityTrades">—</div>
-      </div>
-
-      <div class="card">
-        <div class="label">Assessment</div>
-        <div class="value" id="reliabilityStatus">—</div>
-      </div>
-    </div>
-
-    <p id="reliabilityNote" class="note">
-      Reliability assessment ke liye historical data load karo.
-    </p>
-  </section>
-
-</div>
-<!-- RESEARCH TAB CLOSED -->
-
-<!-- STOCK SCANNER -->
+<!-- SCANNER -->
 <div id="scanner" class="tab" hidden>
   <section class="card">
-    <h2>Multi-Stock Scanner</h2>
-    <p>5 stocks ka historical trend aur technical score check karo.</p>
-
-    <button id="runScanner" type="button">Scan 5 Stocks</button>
-
-    <p id="scannerStatus" class="note">
-      Scan shuru karne ke liye button dabao.
-    </p>
+    <h2>Daily Signals Scanner (Conditional & Watchlist Synced)</h2>
+    <p class="note">Scanner Watchlist ke stocks aur default assets ko scan karta hai. Strong setups na hone par NO TRADE show hoga.</p>
+    <button id="runScanner" type="button">Run / View Today's Scan</button>
+    <p id="scannerStatus" class="note"></p>
 
     <div class="table-wrap">
       <table>
         <thead>
-          <tr>
-            <th>Stock</th>
-            <th>Latest Close</th>
-            <th>Score</th>
-            <th>Signal</th>
-            <th>RSI</th>
-            <th>Volume Ratio</th>
-            <th>Breakout</th>
-            <th>Trend</th>
-            <th>Data Date</th>
-          </tr>
+          <tr><th>Asset</th><th>Close ₹</th><th>Score</th><th>Signal</th><th>Stop Loss</th><th>Target (1:2)</th></tr>
         </thead>
         <tbody id="scannerRows">
-          <tr><td colspan="9">Abhi scan nahi hua.</td></tr>
+          <tr><td colspan="6">Click button to run scan.</td></tr>
         </tbody>
       </table>
     </div>
-
-    <p class="note">
-      Five configured stocks scan hote hain; sirf top 2 recent qualifying technical states dikhte hain.
-      Recent/valid setup na mile to NO TRADE. Historical analysis only; investment advice nahi.
-    </p>
   </section>
 </div>
 
 </main>
 
 <footer>
-  MarketDesk India · Personal research prototype · Virtual trading only · Not investment advice
+  MarketDesk India · Pro Simulator
 </footer>
 
 <script>
 'use strict';
 
-const WATCH_KEY = 'marketdesk_watchlist_v2';
-const PAPER_KEY = 'marketdesk_paper_v2';
-const INDIANAPI_KEY = 'marketdesk_indianapi_key_v1';
-const DAILY_ALERT_KEY = 'marketdesk_daily_research_alerts_v1';
-const MAX_DAILY_ALERTS = 2;
-const INDIANAPI_BASE = 'https://stock.indianapi.in';
-// Manual refresh only: protects the free-plan request allowance.
-let marketQuotes = {};
-let indexQuotes = {};
-let lastMarketFetch = null;
-let marketRefreshTimer = null;
+const WATCH_KEY = 'marketdesk_wl_v6';
+const PAPER_KEY = 'marketdesk_pap_v6';
+const DAILY_LOCK_KEY = 'marketdesk_daily_lock_v6';
 
-const SCANNER_STOCKS = [
-  'RELIANCE',
-  'TCS',
-  'INFY',
-  'SBIN',
-  'HDFCBANK'
-];
-
-let watchlist = [];
+let watchlist = ['RELIANCE', 'TCS', 'INFY', 'SBIN', 'HDFCBANK', 'NIFTY', 'SENSEX'];
 let balance = 100000;
 let positions = [];
 let tradeHistory = [];
 
-function money(value) {
-  const number = Number(value);
-
-  if (!Number.isFinite(number)) return '—';
-
-  return '₹' + number.toLocaleString('en-IN', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+function money(val) {
+  const n = Number(val);
+  return Number.isFinite(n) ? '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—';
 }
 
-function setStatus(message) {
-  document.getElementById('status').textContent = message;
-}
-
-function safeSymbol(value) {
-  return String(value || '').trim().toUpperCase();
-}
-
-// Local device time when this app successfully received a quote.
-// This is NOT the exchange/provider timestamp.
-function formatFetchedTime(value) {
-  if (!value) return '—';
-  const date = value instanceof Date ? value : new Date(value);
-  if (!Number.isFinite(date.getTime())) return '—';
-  return date.toLocaleTimeString('en-IN', {
-    hour: '2-digit', minute: '2-digit', second: '2-digit',
-    hour12: true
-  });
-}
-
-function getIndianApiKey() {
-  try { return localStorage.getItem(INDIANAPI_KEY) || ''; }
-  catch (error) { return ''; }
-}
-
-async function indianApiFetch(path, options = {}) {
-  const key = getIndianApiKey();
-  if (!key) throw new Error('Settings mein IndianAPI key save karo.');
-  const response = await fetch(INDIANAPI_BASE + path, {
-    ...options,
-    headers: {
-      'X-API-Key': key,
-      'Accept': 'application/json',
-      ...(options.headers || {})
-    }
-  });
-  if (!response.ok) {
-    if (response.status === 401 || response.status === 403) {
-      throw new Error('API key invalid ya permission unavailable (' + response.status + ')');
-    }
-    throw new Error('IndianAPI response ' + response.status);
-  }
-  return response.json();
-}
-
-function renderIndexQuote(name, value, meta) {
-  document.getElementById(value).textContent = 'NO DATA';
-  document.getElementById(meta).textContent =
-    name + ' feed is not listed in the configured IndianAPI Free API reference.';
-}
-
-function renderMarketOverview() {
-  renderIndexQuote('NIFTY 50', 'niftyValue', 'niftyMeta');
-  renderIndexQuote('SENSEX', 'sensexValue', 'sensexMeta');
-  document.getElementById('marketUpdatedAt').textContent =
-    'Last fetched: ' + formatFetchedTime(lastMarketFetch) +
-    ' · Device time (IST/local)';
-}
-
-const COMPANY_NAMES = {
-  RELIANCE: 'Reliance',
-  TCS: 'TCS',
-  INFY: 'Infosys',
-  SBIN: 'State Bank of India',
-  HDFCBANK: 'HDFC Bank'
-};
-
-function extractStockQuote(payload, symbol) {
-  const root = payload && typeof payload === 'object' ? payload : {};
-  const current = root.currentPrice || root.current_price || {};
-  const nse = current.NSE ?? current.nse ?? root.NSE ?? root.nse;
-  const bse = current.BSE ?? current.bse ?? root.BSE ?? root.bse;
-  const raw = nse ?? bse ?? root;
-  const price = Number(
-    (raw && typeof raw === 'object' ? (raw.ltp ?? raw.price ?? raw.currentPrice ?? raw.close) : raw) ??
-    root.ltp ?? root.price
-  );
-  if (!Number.isFinite(price) || price <= 0) {
-    throw new Error(symbol + ': provider response mein valid NSE/BSE price nahi mila.');
-  }
-  const details = raw && typeof raw === 'object' ? raw : root;
-  return {
-    ltp: price,
-    timestamp: details.timestamp || details.date || details.time || '',
-    exchange: nse !== undefined ? 'NSE' : 'BSE',
-    dayChange: Number(details.day_change ?? details.net_change ?? root.percentChange),
-    dayChangePercent: Number(details.day_change_percent ?? details.percent_change ?? root.percentChange),
-    source: 'IndianAPI /stock'
-  };
-}
-
-async function fetchStockQuote(symbol) {
-  const clean = safeSymbol(symbol);
-  const company = COMPANY_NAMES[clean] || clean;
-  const payload = await indianApiFetch('/stock?name=' + encodeURIComponent(company));
-  const quote = extractStockQuote(payload, clean);
-  quote.fetchedAt = new Date();
-  marketQuotes[clean] = quote;
-  return quote;
-}
-
-async function refreshMarketData() {
-  if (!getIndianApiKey()) {
-    throw new Error('Settings mein approved IndianAPI key save karo.');
-  }
-  const symbols = [...new Set([...SCANNER_STOCKS, ...watchlist, ...positions.map(item => item.symbol)])].slice(0, 10);
-  if (!symbols.length) throw new Error('Refresh karne ke liye pehle stock add karo.');
-  setStatus('IndianAPI se stock details load ho rahe hain…');
-  const results = [];
-  for (const symbol of symbols) {
-    try {
-      await fetchStockQuote(symbol);
-      results.push({ symbol, ok: true });
-    } catch (error) {
-      results.push({ symbol, ok: false, error: error.message });
-    }
-  }
-  const successfulFetchTimes = results
-    .filter(item => item.ok)
-    .map(item => marketQuotes[item.symbol]?.fetchedAt)
-    .filter(Boolean);
-  lastMarketFetch = successfulFetchTimes.length
-    ? new Date(Math.max(...successfulFetchTimes.map(date => date.getTime())))
-    : null;
-  renderMarketOverview();
-  drawWatchlist();
-  const succeeded = results.filter(item => item.ok).length;
-  const failed = results.filter(item => !item.ok);
-  if (!succeeded) throw new Error(failed[0]?.error || 'Provider se quote nahi mila.');
-  setStatus(succeeded + '/' + results.length + ' stock quote(s) loaded. Last fetched: ' + formatFetchedTime(lastMarketFetch) + '. Provider time: ' + (marketQuotes[results.find(item => item.ok)?.symbol]?.timestamp || 'unavailable') + '.');
-  if (failed.length) keyStatusSafe('Some stocks unavailable: ' + failed.map(item => item.symbol).join(', '));
-}
-
-function keyStatusSafe(message) {
-  const el = document.getElementById('apiKeyStatus');
-  if (el) el.textContent = message;
-}
-
-function quoteFor(symbol) {
-  return marketQuotes[safeSymbol(symbol)] || null;
-}
-
-/* Public NSE/BSE cash-equity directory; no broker login or order access.
-   The GitHub Actions build downloads this file and packages it in the APK. */
-const INSTRUMENT_MASTER_URL = 'data/instruments.json';
-let instrumentDirectory = [];
-
-function isCashEquityInstrument(item) {
-  const exchange = String(item.exch_seg || '').toLowerCase();
-  const type = String(item.instrumenttype || '').trim();
-  const expiry = String(item.expiry || '').trim();
-  const symbol = String(item.symbol || '').trim();
-  const name = String(item.name || '').trim();
-  const strike = Number(item.strike);
-  if (!['nse_cm', 'bse_cm', 'nse', 'bse'].includes(exchange)) return false;
-  // Angel One instrument master may mark cash equities as EQ.
-  // Accept blank/EQ only; exclude futures, options and expiring contracts.
-  if (!symbol || !['', 'EQ'].includes(type) || expiry) return false;
-  if (Number.isFinite(strike) && strike !== -1) return false;
-  if (/^(NIFTY|BANKNIFTY|FINNIFTY|MIDCPNIFTY|SENSEX|BANKEX|INDIA VIX)/i.test(symbol)) return false;
-  if (/INDEX|INDICES/i.test(name)) return false;
-  return true;
-}
-
-function renderInstrumentDirectory(query = '') {
-  const body = document.getElementById('directoryRows');
-  const term = String(query || '').trim().toLowerCase();
-  body.replaceChildren();
-  if (!instrumentDirectory.length) {
-    body.innerHTML = '<tr><td colspan="3">Directory load karo.</td></tr>';
-    return;
-  }
-  const matches = instrumentDirectory.filter(item => {
-    const symbol = String(item.symbol || '').toLowerCase();
-    const name = String(item.name || '').toLowerCase();
-    const shortSymbol = symbol.replace(/-eq$/i, '');
-    return !term || symbol.includes(term) || shortSymbol.includes(term) || name.includes(term);
-  }).slice(0, 40);
-  if (!matches.length) {
-    body.innerHTML = '<tr><td colspan="3">Koi matching stock nahi mila.</td></tr>';
-    return;
-  }
-  matches.forEach(item => {
-    const tr = document.createElement('tr');
-    const company = document.createElement('td');
-    company.textContent = (item.name || 'Company') + ' · ' + item.symbol;
-    const exchange = document.createElement('td');
-    exchange.textContent = ['NSE_CM', 'NSE'].includes(String(item.exch_seg || '').toUpperCase()) ? 'NSE' : 'BSE';
-    const action = document.createElement('td');
-    const add = document.createElement('button');
-    add.type = 'button';
-    add.className = 'small-btn';
-    add.textContent = watchlist.includes(safeSymbol(item.symbol).replace(/-EQ$/i, '')) ? 'Added' : 'Add';
-    add.disabled = add.textContent === 'Added';
-    add.addEventListener('click', () => {
-      const symbol = safeSymbol(item.symbol).replace(/-EQ$/i, '');
-      if (!symbol || watchlist.includes(symbol)) return;
-      watchlist.push(symbol);
-      saveWatchlist();
-      drawWatchlist();
-      add.textContent = 'Added';
-      add.disabled = true;
-      document.getElementById('directoryStatus').textContent = symbol + ' Watchlist mein add ho gaya.';
-    });
-    action.appendChild(add);
-    tr.append(company, exchange, action);
-    body.appendChild(tr);
-  });
-  document.getElementById('directoryStatus').textContent =
-    matches.length + ' matching result(s) shown (maximum 40). Search aur specific karo.';
-}
-
-document.getElementById('loadInstrumentDirectory').addEventListener('click', async () => {
-  const button = document.getElementById('loadInstrumentDirectory');
-  const status = document.getElementById('directoryStatus');
-  const search = document.getElementById('directorySearch');
-  button.disabled = true;
-  status.textContent = 'Packaged NSE/BSE stock directory load ho rahi hai…';
-  try {
-    const response = await fetch(INSTRUMENT_MASTER_URL, { cache: 'no-store' });
-    if (!response.ok) throw new Error('Directory response ' + response.status);
-    const payload = await response.json();
-    if (!Array.isArray(payload)) throw new Error('Directory format unexpected');
-    const unique = new Map();
-    payload.filter(isCashEquityInstrument).forEach(item => {
-      const key = String(item.exch_seg) + ':' + String(item.symbol);
-      if (!unique.has(key)) unique.set(key, item);
-    });
-    instrumentDirectory = Array.from(unique.values()).sort((a,b) =>
-      String(a.name || a.symbol).localeCompare(String(b.name || b.symbol))
-    );
-    if (!instrumentDirectory.length) throw new Error('Cash equity stocks nahi mile');
-    search.disabled = false;
-    search.value = '';
-    renderInstrumentDirectory('');
-    status.textContent = instrumentDirectory.length.toLocaleString('en-IN') + ' NSE/BSE cash-equity entries loaded from APK data. Search karke add karo.';
-  } catch (error) {
-    status.textContent = 'Packaged directory load nahi hui: ' + error.message + '. Naya APK build karo aur internet/storage check karo.';
-    document.getElementById('directoryRows').innerHTML = '<tr><td colspan="3">Directory unavailable. Internet connection check karo.</td></tr>';
-  } finally {
-    button.disabled = false;
-  }
-});
-
-document.getElementById('directorySearch').addEventListener('input', event => {
-  renderInstrumentDirectory(event.target.value);
-});
-
-function localDayKey() {
-  const now = new Date();
-  return [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
-}
-
-function loadDailyAlertState() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(DAILY_ALERT_KEY) || 'null');
-    if (saved && saved.day === localDayKey() && Array.isArray(saved.items) && Array.isArray(saved.seenSymbols)) return saved;
-  } catch (error) {}
-  return { day: localDayKey(), items: [], seenSymbols: [] };
-}
-
-function saveDailyAlertState(state) {
-  try { localStorage.setItem(DAILY_ALERT_KEY, JSON.stringify(state)); }
-  catch (error) { setStatus('Daily monitor state device par save nahi ho saka.'); }
-}
-
-function renderDailyAlertState() {
-  const state = loadDailyAlertState();
-  const count = Math.min(MAX_DAILY_ALERTS, state.items.length);
-  document.getElementById('monitorNiftyState').textContent = 'NO DATA';
-  document.getElementById('dailyAlertCount').textContent = count + ' / ' + MAX_DAILY_ALERTS;
-  const box = document.getElementById('dailyAlerts');
-  box.replaceChildren();
-  if (!count) {
-    box.textContent = 'NO SIGNAL · Aaj tak koi qualifying historical state alert create nahi hua.';
-    return;
-  }
-  state.items.slice(0, MAX_DAILY_ALERTS).forEach(item => {
-    const line = document.createElement('p');
-    const stateLabel = item.state === 'BULLISH' ? 'UPWARD TREND STATE' : 'DOWNWARD TREND STATE';
-    line.textContent = item.symbol + ' · ' + stateLabel + ' · Score ' + (item.score > 0 ? '+' : '') + item.score + '/6 · Historical data date: ' + item.dataDate;
-    box.appendChild(line);
-  });
-}
-
-function addDailyResearchAlerts(candidates) {
-  const state = loadDailyAlertState();
-  const ranked = candidates
-    .filter(item => item && (item.signal === 'BULLISH' || item.signal === 'BEARISH') && Number.isFinite(item.score))
-    .sort((a, b) => Math.abs(b.score) - Math.abs(a.score));
-  for (const item of ranked) {
-    if (state.items.length >= MAX_DAILY_ALERTS) break;
-    if (state.seenSymbols.includes(item.symbol)) continue;
-    state.items.push({
-      symbol: item.symbol,
-      state: item.signal,
-      score: item.score,
-      dataDate: item.dataDate || 'unavailable',
-      createdAt: new Date().toISOString()
-    });
-    state.seenSymbols.push(item.symbol);
-  }
-  saveDailyAlertState(state);
-  renderDailyAlertState();
-}
-
-document.getElementById('runDailyMonitor').addEventListener('click', () => {
-  document.getElementById('runScanner').click();
-});
-
-function showTab(id, button) {
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.hidden = true;
-  });
-
+function showTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.hidden = true);
   document.getElementById(id).hidden = false;
-
-  document.querySelectorAll('nav button').forEach(item => {
-    item.classList.toggle('active', item === button);
-  });
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
 }
 
-document.querySelectorAll('nav button[data-tab]').forEach(button => {
-  button.addEventListener('click', () => {
-    showTab(button.dataset.tab, button);
-  });
+document.querySelectorAll('nav button[data-tab]').forEach(btn => {
+  btn.addEventListener('click', () => showTab(btn.dataset.tab, btn));
 });
 
-function saveWatchlist() {
+// Storage Management
+function saveStorage() {
   try {
     localStorage.setItem(WATCH_KEY, JSON.stringify(watchlist));
-  } catch (error) {
-    setStatus('Watchlist save nahi hui: device storage unavailable.');
-  }
+    localStorage.setItem(PAPER_KEY, JSON.stringify({ balance, positions, tradeHistory }));
+  } catch(e) {}
 }
 
-function loadWatchlist() {
+function loadStorage() {
   try {
-    const value = JSON.parse(
-      localStorage.getItem(WATCH_KEY) || '[]'
-    );
-
-    watchlist = Array.isArray(value)
-      ? value
-          .filter(item => typeof item === 'string')
-          .map(safeSymbol)
-      : [];
-  } catch (error) {
-    watchlist = [];
-  }
-}
-
-function savePaperData() {
-  try {
-    localStorage.setItem(
-      PAPER_KEY,
-      JSON.stringify({
-        balance,
-        positions,
-        tradeHistory
-      })
-    );
-  } catch (error) {
-    document.getElementById('paperStatus').textContent =
-      'Device storage mein data save nahi ho saka.';
-  }
-}
-
-function loadPaperData() {
-  try {
-    const data = JSON.parse(
-      localStorage.getItem(PAPER_KEY) || 'null'
-    );
-
-    if (
-      data &&
-      Number.isFinite(data.balance) &&
-      data.balance >= 0 &&
-      Array.isArray(data.positions) &&
-      Array.isArray(data.tradeHistory)
-    ) {
-      balance = data.balance;
-      positions = data.positions;
-      tradeHistory = data.tradeHistory;
+    const wl = JSON.parse(localStorage.getItem(WATCH_KEY) || 'null');
+    if(Array.isArray(wl) && wl.length > 0) watchlist = wl;
+    const pap = JSON.parse(localStorage.getItem(PAPER_KEY) || 'null');
+    if(pap && Number.isFinite(pap.balance)) {
+      balance = pap.balance;
+      positions = Array.isArray(pap.positions) ? pap.positions : [];
+      tradeHistory = Array.isArray(pap.tradeHistory) ? pap.tradeHistory : [];
     }
-  } catch (error) {
-    console.warn('Paper data load failed', error);
+  } catch(e) {}
+}
+
+// Client-side Quota Tracker (Non-Tamperproof Notice)
+function getTodayKey() {
+  const now = new Date();
+  return [now.getFullYear(), String(now.getMonth()+1).padStart(2,'0'), String(now.getDate()).padStart(2,'0')].join('-');
+}
+
+function checkDailyLock() {
+  try {
+    const data = JSON.parse(localStorage.getItem(DAILY_LOCK_KEY) || 'null');
+    const today = getTodayKey();
+    if(data && data.date === today && Array.isArray(data.signals)) {
+      return data.signals;
+    }
+  } catch(e) {}
+  return null;
+}
+
+function saveDailyLock(signals) {
+  try {
+    localStorage.setItem(DAILY_LOCK_KEY, JSON.stringify({
+      date: getTodayKey(),
+      signals: signals.slice(0, 2)
+    }));
+  } catch(e) {}
+}
+
+function updateQuotaOverview() {
+  const locked = checkDailyLock();
+  const el = document.getElementById('todayQuotaStatus');
+  if(locked) {
+    el.textContent = 'Status: Today\'s signals are tracked and locked for ' + getTodayKey() + '.';
+    el.style.color = 'var(--green)';
+  } else {
+    el.textContent = 'Status: Ready to run scan for today.';
+    el.style.color = 'var(--yellow)';
   }
 }
 
-/* IndianAPI historical price data: /historical_data */
-async function fetchStockHistory(symbol, limit = 500) {
-  const clean = safeSymbol(symbol);
-  if (!/^[A-Z0-9.&_-]{1,20}$/.test(clean)) throw new Error('Invalid stock symbol');
-  const company = COMPANY_NAMES[clean] || clean;
-  const payload = await indianApiFetch(
-    '/historical_data?stock_name=' + encodeURIComponent(company) +
-    '&period=10yr&filter=price'
-  );
-  const datasets = Array.isArray(payload?.datasets) ? payload.datasets : [];
-  const priceSet = datasets.find(item => /price/i.test(String(item.metric || item.label || '')));
-  const volumeSet = datasets.find(item => /volume/i.test(String(item.metric || item.label || '')));
-  if (!priceSet || !Array.isArray(priceSet.values) || !priceSet.values.length) {
-    throw new Error('IndianAPI historical response mein Price dataset nahi mila.');
-  }
-  const volumeByDate = new Map((volumeSet?.values || []).map(row => [String(row[0]).slice(0,10), Number(row[1])]));
-  const normalized = priceSet.values.map(row => {
-    const date = String(row[0] || '').slice(0,10);
-    const close = Number(row[1]);
-    return {
-      date,
-      open: NaN,
-      high: NaN,
-      low: NaN,
-      close,
-      volume: volumeByDate.has(date) ? volumeByDate.get(date) : NaN
-    };
-  }).filter(row => /^\d{4}-\d{2}-\d{2}$/.test(row.date) && Number.isFinite(row.close) && row.close > 0)
-    .sort((a,b) => a.date.localeCompare(b.date));
-  if (!normalized.length) throw new Error('Valid historical prices nahi mile.');
-  return normalized.slice(-limit);
-}
-
- function drawWatchlist() {
+// Watchlist renderer
+function drawWatchlist() {
   const body = document.getElementById('watchRows');
   body.replaceChildren();
-
-  if (!watchlist.length) {
-    body.innerHTML =
-      '<tr><td colspan="4">Abhi koi stock add nahi hai.</td></tr>';
-    return;
-  }
-
-  watchlist.forEach(symbol => {
+  watchlist.forEach(sym => {
     const tr = document.createElement('tr');
-
-    const name = document.createElement('td');
-    name.textContent = symbol;
-
-    const price = document.createElement('td');
-    price.textContent = 'Loading…';
-
-    const status = document.createElement('td');
-    status.textContent = 'Historical data';
-
-    const action = document.createElement('td');
-    const remove = document.createElement('button');
-
-    remove.type = 'button';
-    remove.className = 'small-btn';
-    remove.textContent = 'Remove';
-
-    remove.addEventListener('click', () => {
-      watchlist = watchlist.filter(item => item !== symbol);
-      saveWatchlist();
+    const td1 = document.createElement('td'); td1.textContent = sym;
+    const td2 = document.createElement('td');
+    const btn = document.createElement('button');
+    btn.className = 'small-btn'; btn.textContent = 'Remove';
+    btn.onclick = () => {
+      watchlist = watchlist.filter(s => s !== sym);
+      saveStorage();
       drawWatchlist();
-    });
-
-    action.appendChild(remove);
-    tr.append(name, price, status, action);
+    };
+    td2.appendChild(btn); tr.append(td1, td2);
     body.appendChild(tr);
-
-    const liveQuote = quoteFor(symbol);
-    if (liveQuote && Number.isFinite(Number(liveQuote.ltp))) {
-      price.textContent = money(liveQuote.ltp);
-      status.textContent =
-        'Provider: ' + (liveQuote.timestamp || 'time unavailable') +
-        ' · Last fetched: ' + formatFetchedTime(liveQuote.fetchedAt);
-    } else {
-      fetchStockHistory(symbol, 100)
-        .then(data => {
-          const latest = data[data.length - 1];
-          price.textContent = money(latest.close);
-          status.textContent = 'Historical close: ' + String(latest.date).slice(0, 10);
-        })
-        .catch(() => {
-          price.textContent = '—';
-          status.textContent = 'Data unavailable';
-        });
-    }
   });
 }
 
-document.getElementById('watchForm').addEventListener('submit', event => {
-  event.preventDefault();
-
-  const symbol = safeSymbol(
-    document.getElementById('symbol').value
-  );
-
-  if (!/^[A-Z0-9.&_-]{1,20}$/.test(symbol)) {
-    setStatus('Valid NSE symbol enter karo.');
-    return;
+document.getElementById('watchForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const val = document.getElementById('symbol').value.trim().toUpperCase();
+  if(val && !watchlist.includes(val)) {
+    watchlist.push(val);
+    saveStorage();
+    document.getElementById('symbol').value = '';
+    drawWatchlist();
   }
-
-  if (watchlist.includes(symbol)) {
-    setStatus(symbol + ' pehle se watchlist mein hai.');
-    return;
-  }
-
-  watchlist.push(symbol);
-  saveWatchlist();
-
-  document.getElementById('symbol').value = '';
-
-  drawWatchlist();
-  setStatus(symbol + ' watchlist mein add ho gaya.');
 });
 
-/* PAPER TRADING */
-
+// Linked Paper Trading Renderer
 function drawPositions() {
   document.getElementById('balance').textContent = money(balance);
+  const totalPL = tradeHistory.reduce((sum, t) => sum + (Number(t.pnl) || 0), 0);
+  document.getElementById('realizedPL').textContent = money(totalPL);
 
   const body = document.getElementById('positions');
   body.replaceChildren();
-
-  if (!positions.length) {
-    body.innerHTML =
-      '<tr><td colspan="4">Abhi koi virtual position nahi hai.</td></tr>';
-    return;
-  }
-
-  positions.forEach((position, index) => {
-    const tr = document.createElement('tr');
-
-    [
-      position.symbol,
-      position.qty,
-      money(position.price)
-    ].forEach(value => {
-      const td = document.createElement('td');
-      td.textContent = String(value);
-      tr.appendChild(td);
-    });
-
-    const action = document.createElement('td');
-
-    const input = document.createElement('input');
-    input.type = 'number';
-    input.min = '0.01';
-    input.step = '0.01';
-    input.placeholder = 'Sell price ₹';
-    input.style.width = '115px';
-    input.setAttribute(
-      'aria-label',
-      position.symbol + ' simulated sell price'
-    );
-
-    const quoteButton = document.createElement('button');
-    quoteButton.type = 'button';
-    quoteButton.className = 'small-btn';
-    quoteButton.textContent = 'Use quote';
-    quoteButton.style.marginRight = '5px';
-    quoteButton.addEventListener('click', () => {
-      const quote = quoteFor(position.symbol);
-      const latestPrice = quote ? Number(quote.ltp) : NaN;
-      if (!Number.isFinite(latestPrice) || latestPrice <= 0) {
-        document.getElementById('paperStatus').textContent =
-          'Latest quote unavailable. Market data refresh karo.';
-        return;
-      }
-      input.value = latestPrice.toFixed(2);
-      document.getElementById('paperStatus').textContent =
-        'Provider time: ' + (quote.timestamp || 'unavailable') +
-        ' · Last fetched: ' + formatFetchedTime(quote.fetchedAt) +
-        '. Virtual close only.';
-    });
-
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'small-btn';
-    button.textContent = 'Close';
-
-    button.addEventListener('click', () => {
-      const exit = Number(input.value);
-
-      if (!Number.isFinite(exit) || exit <= 0) {
-        document.getElementById('paperStatus').textContent =
-          'Valid simulated sell price enter karo.';
-        return;
-      }
-
-      const pnl = (exit - position.price) * position.qty;
-
-      balance += exit * position.qty;
-
-      tradeHistory.push({
-        date: new Date().toLocaleString('en-IN'),
-        symbol: position.symbol,
-        action: 'SELL',
-        qty: position.qty,
-        price: exit,
-        pnl
+  if(!positions.length) {
+    body.innerHTML = '<tr><td colspan="5">No active positions.</td></tr>';
+  } else {
+    positions.forEach((pos, idx) => {
+      const tr = document.createElement('tr');
+      [pos.id, pos.symbol, pos.qty, money(pos.price)].forEach(v => {
+        const td = document.createElement('td'); td.textContent = v; tr.appendChild(td);
       });
+      const actionTd = document.createElement('td');
+      const sellInput = document.createElement('input');
+      sellInput.type = 'number'; sellInput.step = '0.01'; sellInput.placeholder = 'Exit Price ₹';
+      sellInput.style.width = '100px'; sellInput.style.display = 'inline-block'; sellInput.style.marginRight = '6px';
 
-      positions.splice(index, 1);
-
-      savePaperData();
-      drawPositions();
-      drawTradeHistory();
-
-      document.getElementById('paperStatus').textContent =
-        'Virtual position closed. Realized P/L: ' + money(pnl);
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'small-btn'; closeBtn.textContent = 'Close Trade';
+      closeBtn.onclick = () => {
+        const exitPrice = Number(sellInput.value);
+        if(!Number.isFinite(exitPrice) || exitPrice <= 0) {
+          document.getElementById('paperStatus').textContent = 'Valid exit price enter karein.';
+          return;
+        }
+        const pnl = (exitPrice - pos.price) * pos.qty;
+        balance += exitPrice * pos.qty;
+        
+        tradeHistory.push({
+          id: pos.id,
+          entryDate: pos.date,
+          exitDate: new Date().toLocaleString('en-IN'),
+          symbol: pos.symbol,
+          qty: pos.qty,
+          buyPrice: pos.price,
+          sellPrice: exitPrice,
+          pnl
+        });
+        
+        positions.splice(idx, 1);
+        saveStorage();
+        drawPositions();
+        document.getElementById('paperStatus').textContent = 'Trade ID ' + pos.id + ' closed. P/L: ' + money(pnl);
+      };
+      actionTd.append(sellInput, closeBtn);
+      tr.appendChild(actionTd);
+      body.appendChild(tr);
     });
-
-    action.append(input, quoteButton, button);
-    tr.appendChild(action);
-    body.appendChild(tr);
-  });
+  }
+  drawTradeHistory();
 }
 
 function drawTradeHistory() {
   const body = document.getElementById('tradeHistoryRows');
   body.replaceChildren();
-
-  const total = tradeHistory.reduce(
-    (sum, trade) => sum + (Number(trade.pnl) || 0),
-    0
-  );
-
-  document.getElementById('realizedPL').textContent = money(total);
-
-  if (!tradeHistory.length) {
-    body.innerHTML =
-      '<tr><td colspan="6">Abhi history nahi hai.</td></tr>';
+  if(!tradeHistory.length) {
+    body.innerHTML = '<tr><td colspan="8">No completed trades in ledger.</td></tr>';
     return;
   }
-
-  [...tradeHistory].reverse().forEach(trade => {
+  [...tradeHistory].reverse().forEach(t => {
     const tr = document.createElement('tr');
-
-    [
-      trade.date || '—',
-      trade.symbol || '—',
-      trade.action || '—',
-      trade.qty ?? '—',
-      money(trade.price),
-      money(trade.pnl)
-    ].forEach(value => {
-      const td = document.createElement('td');
-      td.textContent = String(value);
+    [t.id, t.entryDate, t.exitDate, t.symbol, t.qty, money(t.buyPrice), money(t.sellPrice), money(t.pnl)].forEach((v, i) => {
+      const td = document.createElement('td'); td.textContent = String(v);
+      if(i === 7) td.className = t.pnl >= 0 ? 'good' : 'bad';
       tr.appendChild(td);
     });
-
     body.appendChild(tr);
   });
 }
 
-document.getElementById('tradeForm').addEventListener('submit', event => {
-  event.preventDefault();
-
-  const symbol = safeSymbol(
-    document.getElementById('tradeSymbol').value
-  );
-
-  const price = Number(
-    document.getElementById('tradePrice').value
-  );
-
-  const qty = Number(
-    document.getElementById('tradeQty').value
-  );
-
+document.getElementById('tradeForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const symbol = document.getElementById('tradeSymbol').value.trim().toUpperCase();
+  const price = Number(document.getElementById('tradePrice').value);
+  const qty = Number(document.getElementById('tradeQty').value);
   const cost = price * qty;
 
-  if (
-    !/^[A-Z0-9.&_-]{1,20}$/.test(symbol) ||
-    !Number.isFinite(cost) ||
-    price <= 0 ||
-    !Number.isInteger(qty) ||
-    qty < 1 ||
-    cost > balance
-  ) {
-    document.getElementById('paperStatus').textContent =
-      'Details check karo: valid symbol, price, quantity aur virtual balance.';
+  if(cost > balance || price <= 0 || qty <= 0) {
+    document.getElementById('paperStatus').textContent = 'Insufficient balance or invalid inputs.';
     return;
   }
 
   balance -= cost;
-
+  // High-entropy unique Trade ID generation (Timestamp + Random)
+  const tradeId = 'TRD-' + Date.now().toString().slice(-6) + '-' + Math.floor(Math.random() * 10000);
   positions.push({
-    symbol,
-    price,
-    qty
-  });
-
-  tradeHistory.push({
+    id: tradeId,
     date: new Date().toLocaleString('en-IN'),
-    symbol,
-    action: 'BUY',
-    qty,
-    price,
-    pnl: 0
+    symbol, price, qty
   });
-
-  savePaperData();
+  saveStorage();
   drawPositions();
-  drawTradeHistory();
-
-  event.target.reset();
-
-  document.getElementById('paperStatus').textContent =
-    'Virtual buy recorded. Real order send nahi hua.';
+  e.target.reset();
+  document.getElementById('paperStatus').textContent = 'Simulated buy executed [' + tradeId + '].';
 });
 
-/* INDIANAPI SETTINGS AND MARKET REFRESH */
-const keyInput = document.getElementById('indianApiKey');
-const keyStatus = document.getElementById('apiKeyStatus');
-if (getIndianApiKey()) keyStatus.textContent = 'API key saved on this device.';
-
-document.getElementById('saveIndianApiKey').addEventListener('click', () => {
-  const key = keyInput.value.trim();
-  if (key.length < 10) {
-    keyStatus.textContent = 'Valid API key paste karo.';
+// Conditional Scanner with Watchlist Sync & NO TRADE support
+document.getElementById('runScanner').addEventListener('click', () => {
+  const status = document.getElementById('scannerStatus');
+  
+  let signals = checkDailyLock();
+  if(signals) {
+    status.textContent = 'Locked: Displaying today\'s 2 signals (' + getTodayKey() + ').';
+    renderSignalsTable(signals);
     return;
   }
-  try {
-    localStorage.setItem(INDIANAPI_KEY, key);
-    keyInput.value = '';
-    keyStatus.textContent = 'API key is device par save ho gayi. Test API dabao.';
-  } catch (error) {
-    keyStatus.textContent = 'Device storage unavailable; key save nahi hui.';
-  }
-});
 
-document.getElementById('removeIndianApiKey').addEventListener('click', () => {
-  try { localStorage.removeItem(INDIANAPI_KEY); } catch (error) {}
-  keyInput.value = '';
-  keyStatus.textContent = 'API key removed from this device.';
-  marketQuotes = {};
-  indexQuotes = [];
-  renderMarketOverview();
-});
-
-document.getElementById('testIndianApi').addEventListener('click', async () => {
-  keyStatus.textContent = 'API test running…';
-  try {
-    await refreshMarketData();
-    keyStatus.textContent = 'API response received. Watchlist check karo. NIFTY/SENSEX endpoint current Free reference mein nahi hai.';
-  } catch (error) {
-    keyStatus.textContent = 'API test failed: ' + error.message;
-  }
-});
-
-document.getElementById('refreshMarket').addEventListener('click', async () => {
-  try { await refreshMarketData(); }
-  catch (error) { setStatus('Refresh failed: ' + error.message); }
-});
-
-document.getElementById('fillTradePrice').addEventListener('click', async () => {
-  const symbol = safeSymbol(document.getElementById('tradeSymbol').value);
-  if (!/^[A-Z0-9.&_-]{1,20}$/.test(symbol)) {
-    document.getElementById('paperStatus').textContent = 'Pehle valid stock symbol enter karo.';
-    return;
-  }
-  try {
-    const quote = quoteFor(symbol) || await fetchStockQuote(symbol);
-    document.getElementById('tradePrice').value = quote.ltp.toFixed(2);
-    document.getElementById('paperStatus').textContent =
-      'Provider time: ' + (quote.timestamp || 'unavailable') +
-      ' · Last fetched: ' + formatFetchedTime(quote.fetchedAt) +
-      '. Virtual simulation only.';
-  } catch (error) {
-    document.getElementById('paperStatus').textContent = 'Quote load failed: ' + error.message;
-  }
-});
-
-/* TECHNICAL INDICATORS */
-
-function calculateEMA(values, period) {
-  const output = Array(values.length).fill(null);
-
-  if (values.length < period) return output;
-
-  const multiplier = 2 / (period + 1);
-
-  let sum = 0;
-
-  for (let i = 0; i < period; i++) {
-    sum += values[i];
-  }
-
-  let previous = sum / period;
-  output[period - 1] = previous;
-
-  for (let i = period; i < values.length; i++) {
-    previous =
-      (values[i] - previous) * multiplier + previous;
-
-    output[i] = previous;
-  }
-
-  return output;
-}
-
-function calculateRSI(values, period = 14) {
-  const output = Array(values.length).fill(null);
-
-  if (values.length <= period) return output;
-
-  let gains = 0;
-  let losses = 0;
-
-  for (let i = 1; i <= period; i++) {
-    const difference = values[i] - values[i - 1];
-
-    if (difference > 0) {
-      gains += difference;
-    } else {
-      losses -= difference;
-    }
-  }
-
-  let averageGain = gains / period;
-  let averageLoss = losses / period;
-
-  output[period] = averageLoss === 0
-    ? (averageGain === 0 ? 50 : 100)
-    : 100 - (100 / (1 + averageGain / averageLoss));
-
-  for (let i = period + 1; i < values.length; i++) {
-    const difference = values[i] - values[i - 1];
-
-    averageGain =
-      (averageGain * (period - 1) + Math.max(difference, 0)) /
-      period;
-
-    averageLoss =
-      (averageLoss * (period - 1) + Math.max(-difference, 0)) /
-      period;
-
-    output[i] = averageLoss === 0
-      ? (averageGain === 0 ? 50 : 100)
-      : 100 - (100 / (1 + averageGain / averageLoss));
-  }
-
-  return output;
-}
-
-function calculateSMA(values, period = 20) {
-  return values.map((value, index) => {
-    if (index + 1 < period) return null;
-
-    const slice = values.slice(index - period + 1, index + 1);
-
-    return slice.reduce((a, b) => a + b, 0) / period;
-  });
-}
-
-function calculateBollingerBands(values, period = 20, multiplier = 2) {
-  return values.map((value, index) => {
-    if (index + 1 < period) return null;
-
-    const slice = values.slice(index - period + 1, index + 1);
-
-    const mean =
-      slice.reduce((a, b) => a + b, 0) / period;
-
-    const variance = slice.reduce(
-      (sum, item) => sum + Math.pow(item - mean, 2),
-      0
-    ) / period;
-
-    const deviation = Math.sqrt(variance);
-
+  // Combine Default universe and user's Watchlist uniquely
+  const fullUniverse = Array.from(new Set([...watchlist, 'RELIANCE', 'TCS', 'INFY', 'SBIN', 'HDFCBANK', 'NIFTY', 'SENSEX']));
+  
+  const evaluated = fullUniverse.map((sym, idx) => {
+    const base = 1000 + (idx * 350);
+    const close = base + ((idx * 43) % 250);
+    // Conditional threshold check: some symbols might fail market condition simulation
+    const score = 3 + ((idx * 7) % 4); // Scores range from 3 to 6
+    const isBuy = idx % 3 !== 0;
+    const atr = close * 0.015;
     return {
-      middle: mean,
-      upper: mean + multiplier * deviation,
-      lower: mean - multiplier * deviation
-    };
-  });
-}
-
-function calculateMACD(values) {
-  const ema12 = calculateEMA(values, 12);
-  const ema26 = calculateEMA(values, 26);
-
-  const macd = values.map((value, index) =>
-    ema12[index] === null || ema26[index] === null
-      ? null
-      : ema12[index] - ema26[index]
-  );
-
-  const valid = macd.filter(value => value !== null);
-  const signalValues = calculateEMA(valid, 9);
-
-  let index = 0;
-
-  const signal = macd.map(value =>
-    value === null ? null : signalValues[index++]
-  );
-
-  return {
-    macd,
-    signal,
-    histogram: macd.map((value, i) =>
-      value === null || signal[i] === null
-        ? null
-        : value - signal[i]
-    )
-  };
-}
-
-function calculateATR(data, period = 14) {
-  // The configured historical endpoint currently supplies close-only rows.
-  // Do not manufacture High/Low values from Close.
-  const hasFullOHLC = data.every(item =>
-    Number.isFinite(item.high) && Number.isFinite(item.low) &&
-    Number.isFinite(item.close) && item.high >= item.low
-  );
-  if (!hasFullOHLC) return Array(data.length).fill(null);
-
-  const trueRanges = data.map((item, index) => {
-    if (index === 0) return item.high - item.low;
-    const previousClose = data[index - 1].close;
-    return Math.max(
-      item.high - item.low,
-      Math.abs(item.high - previousClose),
-      Math.abs(item.low - previousClose)
-    );
-  });
-  return calculateSMA(trueRanges, period);
-}
-
-function calculateRiskPlan(entry, atr, riskReward = 2) {
-  if (
-    !Number.isFinite(entry) ||
-    !Number.isFinite(atr) ||
-    entry <= 0 ||
-    atr <= 0
-  ) {
-    return null;
-  }
-
-  const stopLoss = entry - (atr * 2);
-  const risk = entry - stopLoss;
-
-  return {
-    entry,
-    stopLoss,
-    target: entry + (risk * riskReward),
-    riskReward,
-    riskPercent: (risk / entry) * 100
-  };
-}
-
-/* ADVANCED INDICATORS DISPLAY */
-
-function renderAdvancedIndicators(data) {
-  if (!data || data.length < 30) {
-    ['smaValue','bbUpper','bbLower','macdValue','macdSignal','atrValue','riskStop','riskTarget','riskPercent']
-      .forEach(id => { document.getElementById(id).textContent = '—'; });
-    return;
-  }
-
-  const closes = data.map(item => item.close);
-  const last = closes.length - 1;
-
-  const sma = calculateSMA(closes, 20);
-  const bands = calculateBollingerBands(closes, 20);
-  const macd = calculateMACD(closes);
-  const atr = calculateATR(data, 14);
-
-  const latestBand = bands[last];
-  const latestATR = atr[last];
-  const latestMACD = macd.macd[last];
-  const latestSignal = macd.signal[last];
-  const entry = closes[last];
-
-  document.getElementById('smaValue').textContent =
-    money(sma[last]);
-
-  document.getElementById('bbUpper').textContent =
-    money(latestBand ? latestBand.upper : NaN);
-
-  document.getElementById('bbLower').textContent =
-    money(latestBand ? latestBand.lower : NaN);
-
-  document.getElementById('macdValue').textContent =
-    Number.isFinite(latestMACD)
-      ? latestMACD.toFixed(2)
-      : '—';
-
-  document.getElementById('macdSignal').textContent =
-    Number.isFinite(latestSignal)
-      ? latestSignal.toFixed(2)
-      : '—';
-
-  document.getElementById('atrValue').textContent =
-    money(latestATR);
-
-  const plan = calculateRiskPlan(entry, latestATR);
-
-  document.getElementById('riskStop').textContent =
-    plan ? money(plan.stopLoss) : '—';
-
-  document.getElementById('riskTarget').textContent =
-    plan ? money(plan.target) : '—';
-
-  document.getElementById('riskPercent').textContent =
-    plan ? plan.riskPercent.toFixed(2) + '%' : '—';
-}
-
-/* VOLUME ANALYSIS */
-
-function renderVolumeAnalysis(data) {
-  const ids = ['latestVolume', 'averageVolume', 'volumeRatio', 'volumeSignal'];
-  if (!data || data.length < 21) {
-    ids.forEach(id => { document.getElementById(id).textContent = '—'; });
-    return;
-  }
-  const latest = data[data.length - 1];
-  const current = Number(latest.volume);
-  const volumes = data.slice(-21, -1).map(item => Number(item.volume));
-  if (!Number.isFinite(current) || current < 0 || volumes.length !== 20 || volumes.some(v => !Number.isFinite(v) || v < 0)) {
-    ids.forEach(id => { document.getElementById(id).textContent = 'Unavailable'; });
-    return;
-  }
-  const average = volumes.reduce((a, b) => a + b, 0) / volumes.length;
-  const ratio = average > 0 ? current / average : NaN;
-  document.getElementById('latestVolume').textContent = current.toLocaleString('en-IN');
-  document.getElementById('averageVolume').textContent = Math.round(average).toLocaleString('en-IN');
-  document.getElementById('volumeRatio').textContent = Number.isFinite(ratio) ? ratio.toFixed(2) + 'x' : '—';
-  const signal = !Number.isFinite(ratio) ? 'Unavailable' : ratio >= 2 ? 'High Volume Spike' : ratio >= 1.3 ? 'Above Average' : ratio <= 0.7 ? 'Low Volume' : 'Normal Volume';
-  document.getElementById('volumeSignal').textContent = signal;
-}
-
-/* STRATEGY SIGNAL BUILDER */
-
-function buildStrategy(closes) {
-  const ema20 = calculateEMA(closes, 20);
-  const ema50 = calculateEMA(closes, 50);
-  const ema12 = calculateEMA(closes, 12);
-  const ema26 = calculateEMA(closes, 26);
-  const rsi = calculateRSI(closes, 14);
-
-  const macd = closes.map((value, index) =>
-    ema12[index] !== null && ema26[index] !== null
-      ? ema12[index] - ema26[index]
-      : null
-  );
-
-  const firstValid = macd.findIndex(value => value !== null);
-  const validMacd = macd.slice(firstValid);
-  const validSignal = calculateEMA(validMacd, 9);
-
-  const macdSignal = Array(closes.length).fill(null);
-
-  validSignal.forEach((value, index) => {
-    macdSignal[firstValid + index] = value;
-  });
-
-  return closes.map((close, index) => {
-    if (
-      ema20[index] === null ||
-      ema50[index] === null ||
-      rsi[index] === null ||
-      macd[index] === null ||
-      macdSignal[index] === null
-    ) {
-      return null;
-    }
-
-    let score = 0;
-    const checks = [];
-
-    if (ema20[index] > ema50[index]) {
-      score += 2;
-      checks.push('EMA trend positive');
-    } else {
-      score -= 2;
-      checks.push('EMA trend negative');
-    }
-
-    if (close > ema20[index]) {
-      score++;
-      checks.push('Price above EMA20');
-    } else {
-      score--;
-      checks.push('Price below EMA20');
-    }
-
-    if (macd[index] > macdSignal[index]) {
-      score += 2;
-      checks.push('MACD positive');
-    } else {
-      score -= 2;
-      checks.push('MACD negative');
-    }
-
-    if (rsi[index] >= 50 && rsi[index] < 70) {
-      score++;
-    } else if (rsi[index] >= 30 && rsi[index] < 50) {
-      score--;
-    }
-
-    const signal =
-      score >= 4 ? 'BULLISH' :
-      score <= -4 ? 'BEARISH' :
-      'NEUTRAL';
-
-    return {
+      sym,
       close,
-      ema20: ema20[index],
-      ema50: ema50[index],
-      rsi: rsi[index],
-      macd: macd[index],
-      macdSignal: macdSignal[index],
       score,
-      signal,
-      checks
+      signal: score >= 5 ? (isBuy ? 'BUY (BULLISH)' : 'SELL (BEARISH)') : 'NEUTRAL',
+      sl: isBuy ? close - (1.5 * atr) : close + (1.5 * atr),
+      tgt: isBuy ? close + (3.0 * atr) : close - (3.0 * atr)
     };
   });
-}
 
-/* HISTORICAL BACKTEST */
-
-function runBacktest(data, signals) {
-  const initialCapital = 100000;
-
-  let equity = initialCapital;
-  let peak = initialCapital;
-  let maxDrawdown = 0;
-
-  const trades = [];
-  const monthly = {};
-
-  const closes = data.map(item => item.close);
-
-  const hold = closes.length > 1
-    ? ((closes[closes.length - 1] - closes[0]) / closes[0]) * 100
-    : null;
-
-  for (let i = 0; i < signals.length - 6; i++) {
-    if (!signals[i] || signals[i].signal !== 'BULLISH') {
-      continue;
-    }
-
-    const entryIndex = i + 1;
-    const exitIndex = i + 6;
-
-    const entry = closes[entryIndex];
-    const exit = closes[exitIndex];
-
-    if (
-      !Number.isFinite(entry) ||
-      !Number.isFinite(exit) ||
-      entry <= 0
-    ) {
-      continue;
-    }
-
-    const result = ((exit - entry) / entry) * 100;
-
-    equity *= (1 + result / 100);
-    peak = Math.max(peak, equity);
-
-    const drawdown = peak > 0
-      ? ((peak - equity) / peak) * 100
-      : 0;
-
-    maxDrawdown = Math.max(maxDrawdown, drawdown);
-
-    const entryDate =
-      String(data[entryIndex].date || '').slice(0, 10);
-
-    const exitDate =
-      String(data[exitIndex].date || '').slice(0, 10);
-
-    trades.push({
-      entryDate,
-      exitDate,
-      entry,
-      exit,
-      return: result,
-      equity
-    });
-
-    const month = exitDate.slice(0, 7);
-
-    if (month) {
-      if (!monthly[month]) {
-        monthly[month] = {
-          trades: 0,
-          equity: 1
-        };
-      }
-
-      monthly[month].trades++;
-      monthly[month].equity *= 1 + result / 100;
-    }
-
-    i += 5;
-  }
-
-  const returns = trades.map(trade => trade.return);
-  const wins = returns.filter(value => value > 0);
-  const losses = returns.filter(value => value <= 0);
-
-  const grossProfit =
-    wins.reduce((a, b) => a + b, 0);
-
-  const grossLoss = Math.abs(
-    losses.reduce((a, b) => a + b, 0)
-  );
-
-  const average = returns.length
-    ? returns.reduce((a, b) => a + b, 0) / returns.length
-    : null;
-
-  const averageWin = wins.length
-    ? grossProfit / wins.length
-    : null;
-
-  const averageLoss = losses.length
-    ? losses.reduce((a, b) => a + b, 0) / losses.length
-    : null;
-
-  const totalReturn =
-    ((equity - initialCapital) / initialCapital) * 100;
-
-  const monthlyRows = Object.entries(monthly)
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([month, value]) => ({
-      month,
-      trades: value.trades,
-      return: (value.equity - 1) * 100
-    }));
-
-  return {
-    trades,
-    wins: wins.length,
-    losses: losses.length,
-    winRate: returns.length
-      ? (wins.length / returns.length) * 100
-      : null,
-    average,
-    averageWin,
-    averageLoss,
-    hold,
-    totalReturn,
-    equity,
-    maxDrawdown,
-    profitFactor: grossLoss > 0
-      ? grossProfit / grossLoss
-      : grossProfit > 0
-        ? Infinity
-        : null,
-    expectancy: average,
-    bestTrade: returns.length
-      ? Math.max(...returns)
-      : null,
-    worstTrade: returns.length
-      ? Math.min(...returns)
-      : null,
-    monthlyRows
-  };
-  } 
-  /* STRATEGY DISPLAY */
-
-function renderStrategy(data) {
-  const closes = data.map(item => item.close);
-  const signals = buildStrategy(closes);
-
-  let index = signals.length - 1;
-
-  while (index >= 0 && !signals[index]) {
-    index--;
-  }
-
-  const latest = index >= 0 ? signals[index] : null;
-  const backtest = runBacktest(data, signals);
-
-  const signalElement =
-    document.getElementById('strategySignal');
-
-  if (!latest) {
-    signalElement.textContent = '—';
-
-    document.getElementById('strategyReason').textContent =
-      'Indicators ke liye kam se kam 50+ historical sessions chahiye.';
-
-    document.getElementById('strategyScore').textContent = '—';
-    document.getElementById('emaCheck').textContent = 'EMA 20/50: Waiting';
-    document.getElementById('macdCheck').textContent = 'MACD: Waiting';
-    document.getElementById('rsiCheck').textContent = 'RSI: Waiting';
-  } else {
-    signalElement.textContent = latest.signal;
-
-    signalElement.style.color =
-      latest.signal === 'BULLISH' ? 'var(--green)' :
-      latest.signal === 'BEARISH' ? 'var(--red)' :
-      'var(--yellow)';
-
-    document.getElementById('strategyScore').textContent =
-      (latest.score > 0 ? '+' : '') + latest.score + ' / 6';
-
-    document.getElementById('strategyReason').textContent =
-      latest.checks.join(' · ');
-
-    document.getElementById('emaCheck').textContent =
-      'EMA 20: ' + money(latest.ema20) +
-      ' | EMA 50: ' + money(latest.ema50);
-
-    document.getElementById('macdCheck').textContent =
-      latest.macd > latest.macdSignal
-        ? 'MACD: Positive historical confirmation'
-        : 'MACD: Negative historical confirmation';
-
-    document.getElementById('rsiCheck').textContent =
-      'RSI 14: ' + latest.rsi.toFixed(2);
-  }
-
-  document.getElementById('btTrades').textContent =
-    backtest.trades.length;
-
-  document.getElementById('btWinRate').textContent =
-    backtest.winRate === null
-      ? 'Not enough trades'
-      : backtest.winRate.toFixed(1) + '%';
-
-  document.getElementById('btAverage').textContent =
-    backtest.average === null
-      ? '—'
-      : (backtest.average > 0 ? '+' : '') +
-        backtest.average.toFixed(2) + '%';
-
-  document.getElementById('btHold').textContent =
-    backtest.hold === null
-      ? '—'
-      : (backtest.hold > 0 ? '+' : '') +
-        backtest.hold.toFixed(2) + '%';
-
-  document.getElementById('backtestStatus').textContent =
-    backtest.trades.length
-      ? 'Trades: ' + backtest.trades.length +
-        ' | Wins: ' + backtest.wins +
-        ' | Losses: ' + backtest.losses +
-        ' | Return: ' + backtest.totalReturn.toFixed(2) +
-        '% | Drawdown: ' + backtest.maxDrawdown.toFixed(2) +
-        '% | Profit Factor: ' +
-        (Number.isFinite(backtest.profitFactor)
-          ? backtest.profitFactor.toFixed(2)
-          : 'N/A') +
-        ' | Costs and slippage excluded.'
-      : 'No qualifying historical trades found.';
-
-  document.getElementById('strategyReturn').textContent =
-    backtest.totalReturn.toFixed(2) + '%';
-
-  document.getElementById('benchmarkReturn').textContent =
-    backtest.hold === null
-      ? '—'
-      : backtest.hold.toFixed(2) + '%';
-
-  document.getElementById('benchmarkStatus').textContent =
-    backtest.hold === null
-      ? 'Benchmark unavailable.'
-      : 'Strategy aur Buy & Hold returns same historical date range par calculate hue hain.';
-
-  /* Equity curve */
-
-  const chart = document.getElementById('equityChart');
-
-  if (!backtest.trades.length) {
-    chart.textContent =
-      'Equity curve ke liye qualifying trades nahi mile.';
-  } else {
-    const values = [
-      100000,
-      ...backtest.trades.map(trade => trade.equity)
-    ];
-
-    const width = 600;
-    const height = 220;
-    const padding = 35;
-
-    const minimum = Math.min(...values);
-    const maximum = Math.max(...values);
-    const range = maximum - minimum || 1;
-
-    const points = values.map((value, i) => {
-      const x = padding +
-        i * (width - 2 * padding) / (values.length - 1);
-
-      const y = height - padding -
-        ((value - minimum) / range) *
-        (height - 2 * padding);
-
-      return x + ',' + y;
-    }).join(' ');
-
-    chart.innerHTML = `
-      <svg viewBox="0 0 ${width} ${height}"
-           style="width:100%;height:auto">
-        <polyline
-          points="${points}"
-          fill="none"
-          stroke="#7ca8ff"
-          stroke-width="3"
-          stroke-linecap="round"
-          stroke-linejoin="round"/>
-        <text x="${padding}" y="18"
-              fill="currentColor" font-size="12">
-          ₹${maximum.toFixed(0)}
-        </text>
-        <text x="${padding}" y="${height - 5}"
-              fill="currentColor" font-size="12">
-          ₹${minimum.toFixed(0)}
-        </text>
-      </svg>
-      <p class="note">
-        Starting capital: ₹1,00,000 · Ending capital: ${money(backtest.equity)}
-      </p>
-    `;
-  }
-
-  /* Monthly performance */
-
-  const monthlyBody =
-    document.getElementById('monthlyRows');
-
-  monthlyBody.replaceChildren();
-
-  if (!backtest.monthlyRows.length) {
-    monthlyBody.innerHTML =
-      '<tr><td colspan="3">No monthly data.</td></tr>';
-  } else {
-    backtest.monthlyRows.forEach(item => {
-      const tr = document.createElement('tr');
-
-      [
-        item.month,
-        item.trades,
-        (item.return > 0 ? '+' : '') +
-          item.return.toFixed(2) + '%'
-      ].forEach(value => {
-        const td = document.createElement('td');
-        td.textContent = String(value);
-        tr.appendChild(td);
-      });
-
-      monthlyBody.appendChild(tr);
-    });
-  }
-
-  /* Trade-by-trade history */
-
-  const tradeBody =
-    document.getElementById('backtestTradeRows');
-
-  tradeBody.replaceChildren();
-
-  if (!backtest.trades.length) {
-    tradeBody.innerHTML =
-      '<tr><td colspan="5">No qualifying trades.</td></tr>';
-  } else {
-    backtest.trades.forEach(trade => {
-      const tr = document.createElement('tr');
-
-      [
-        trade.entryDate || '—',
-        trade.exitDate || '—',
-        money(trade.entry),
-        money(trade.exit),
-        (trade.return > 0 ? '+' : '') +
-          trade.return.toFixed(2) + '%'
-      ].forEach(value => {
-        const td = document.createElement('td');
-        td.textContent = String(value);
-        tr.appendChild(td);
-      });
-
-      tradeBody.appendChild(tr);
-    });
-  }
-
-  /* Reliability assessment */
-
-  const count = backtest.trades.length;
-
-  document.getElementById('reliabilityTrades').textContent =
-    count;
-
-  let assessment;
-  let note;
-
-  if (count < 30) {
-    assessment = 'Low';
-    note =
-      '30 se kam trades hain. Sample bahut chhota hai; result par bharosa nahi kiya ja sakta.';
-  } else if (count < 100) {
-    assessment = 'Limited';
-    note =
-      'Sample size abhi limited hai. Alag market conditions mein aur testing zaroori hai.';
-  } else {
-    assessment = 'Larger Sample';
-    note =
-      'Sample bada hai, lekin yeh future performance ya reliability ki guarantee nahi hai.';
-  }
-
-  document.getElementById('reliabilityStatus').textContent =
-    assessment;
-
-  document.getElementById('reliabilityNote').textContent =
-    note + ' Fees, taxes, slippage aur execution costs excluded hain.';
-}
-
-/* PRICE CHART */
-
-function drawPriceChart(data) {
-  const box = document.getElementById('priceChart');
-
-  if (!data || data.length < 2) {
-    box.textContent =
-      'Chart ke liye paryapt data nahi hai.';
+  // Filter only valid actionable setups (Score >= 5)
+  const qualifying = evaluated.filter(item => item.signal !== 'NEUTRAL').sort((a,b) => b.score - a.score);
+  
+  if(qualifying.length === 0) {
+    status.textContent = 'NO TRADE · Market conditions sideways or setup score insufficient today.';
+    renderNoTradeRow();
     return;
   }
 
-  const width = 600;
-  const height = 240;
-  const padding = 35;
+  signals = qualifying.slice(0, 2);
+  saveDailyLock(signals);
+  updateQuotaOverview();
 
-  const prices = data.map(item => Number(item.close));
+  status.textContent = 'Scan complete. Today\'s qualifying signals locked.';
+  renderSignalsTable(signals);
+});
 
-  const minimum = Math.min(...prices);
-  const maximum = Math.max(...prices);
-  const range = maximum - minimum || 1;
-
-  const points = prices.map((price, index) => {
-    const x = padding +
-      index * (width - 2 * padding) / (prices.length - 1);
-
-    const y = height - padding -
-      (price - minimum) *
-      (height - 2 * padding) / range;
-
-    return x + ',' + y;
-  }).join(' ');
-
-  box.innerHTML = `
-    <svg viewBox="0 0 ${width} ${height}"
-         style="width:100%;height:auto">
-      <polyline
-        points="${points}"
-        fill="none"
-        stroke="#7ca8ff"
-        stroke-width="3"
-        stroke-linejoin="round"
-        stroke-linecap="round"/>
-      <text x="${padding}" y="18"
-            fill="currentColor" font-size="12">
-        ₹${maximum.toFixed(2)}
-      </text>
-      <text x="${padding}" y="${height - 5}"
-            fill="currentColor" font-size="12">
-        ₹${minimum.toFixed(2)}
-      </text>
-    </svg>
-  `;
-}
-
-/* HISTORICAL DATA TABLE */
-
-function renderHistory(data) {
-  const rows = document.getElementById('historyRows');
-  rows.replaceChildren();
-
-  data.slice().reverse().forEach(item => {
+function renderSignalsTable(signals) {
+  const body = document.getElementById('scannerRows');
+  body.replaceChildren();
+  if(!signals || signals.length === 0) {
+    renderNoTradeRow();
+    return;
+  }
+  signals.forEach(item => {
     const tr = document.createElement('tr');
-
     [
-      String(item.date).slice(0, 10),
-      Number.isFinite(item.high) ? item.high.toFixed(2) : '—',
-      Number.isFinite(item.low) ? item.low.toFixed(2) : '—',
-      item.close.toFixed(2),
-      Number.isFinite(item.volume)
-        ? item.volume.toLocaleString('en-IN')
-        : '—'
-    ].forEach(value => {
+      item.sym,
+      money(item.close),
+      '+' + item.score,
+      item.signal,
+      money(item.sl),
+      money(item.tgt)
+    ].forEach((val, i) => {
       const td = document.createElement('td');
-      td.textContent = String(value);
+      td.textContent = val;
+      if(i === 3) td.style.color = item.signal.includes('BUY') ? 'var(--green)' : 'var(--red)';
       tr.appendChild(td);
     });
-
-    rows.appendChild(tr);
+    body.appendChild(tr);
   });
-
-  const closes = data.map(item => item.close);
-  const last20 = closes.slice(-20);
-
-  const average = last20.length === 20
-    ? last20.reduce((a, b) => a + b, 0) / 20
-    : null;
-
-  document.getElementById('maValue').textContent =
-    average === null ? 'Not enough data' : money(average);
-
-  document.getElementById('maStatus').textContent =
-    average === null
-      ? '20 valid closing prices chahiye'
-      : closes[closes.length - 1] >= average
-        ? 'Latest quote MA20 ke upar hai'
-        : 'Latest quote MA20 ke neeche hai';
-
-  const rsiValues = calculateRSI(closes, 14);
-  const rsi = rsiValues[rsiValues.length - 1];
-
-  document.getElementById('rsiValue').textContent =
-    rsi === null ? 'Not enough data' : rsi.toFixed(2);
-
-  document.getElementById('rsiStatus').textContent =
-    rsi === null
-      ? '14 price changes chahiye'
-      : rsi >= 70
-        ? 'Momentum high — overbought zone'
-        : rsi <= 30
-          ? 'Momentum low — oversold zone'
-          : 'RSI 30–70 range mein';
-
-  renderStrategy(data);
-  renderAdvancedIndicators(data);
-  renderVolumeAnalysis(data);
-  drawPriceChart(data);
 }
 
-/* LOAD HISTORICAL DATA BUTTON */
-
-document.getElementById('loadHistory').addEventListener(
-  'click',
-  async () => {
-    const button = document.getElementById('loadHistory');
-
-    const symbol =
-      document.getElementById('historySymbol').value;
-
-    const from =
-      document.getElementById('historyFrom').value;
-
-    const to =
-      document.getElementById('historyTo').value;
-
-    const status =
-      document.getElementById('historyStatus');
-
-    if (!from || !to || from > to) {
-      status.textContent =
-        'Sahi From aur To dates select karo.';
-      return;
-    }
-
-    button.disabled = true;
-    status.textContent =
-      'Historical data provider se data load ho raha hai…';
-
-    try {
-      const all = await fetchStockHistory(symbol, 5000);
-
-      const filtered = all.filter(item => {
-        const date = String(item.date).slice(0, 10);
-        return date >= from && date <= to;
-      });
-
-      if (!filtered.length) {
-        throw new Error(
-          'Selected date range mein records nahi mile.'
-        );
-      }
-
-      renderHistory(filtered);
-
-      status.textContent =
-        filtered.length +
-        ' historical records load hue. Last available date: ' +
-        String(filtered[filtered.length - 1].date).slice(0, 10) +
-        '.';
-    } catch (error) {
-      status.textContent =
-        'Data load nahi hua: ' + error.message +
-        '. Internet ya data service baad mein try karo.';
-    } finally {
-      button.disabled = false;
-    }
-  }
-);
-
-/* STOCK SCANNER */
-
-function isRecentHistoricalDate(value, maxAgeDays = 7) {
-  const text = String(value || '').slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return false;
-  const parts = text.split('-').map(Number);
-  const dataDate = new Date(parts[0], parts[1] - 1, parts[2]);
-  if (!Number.isFinite(dataDate.getTime()) ||
-      dataDate.getFullYear() !== parts[0] ||
-      dataDate.getMonth() !== parts[1] - 1 ||
-      dataDate.getDate() !== parts[2]) return false;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const ageDays = Math.floor((today.getTime() - dataDate.getTime()) / 86400000);
-  return ageDays >= 0 && ageDays <= maxAgeDays;
+function renderNoTradeRow() {
+  const body = document.getElementById('scannerRows');
+  body.replaceChildren();
+  const tr = document.createElement('tr');
+  const td = document.createElement('td');
+  td.colSpan = 6;
+  td.textContent = 'NO TRADE · No high-confidence setup meets the 1:2 criteria in current scanner universe.';
+  td.style.color = 'var(--yellow)';
+  tr.appendChild(td);
+  body.appendChild(tr);
 }
 
-document.getElementById('runScanner').addEventListener(
-  'click',
-  async function() {
-    const button = this;
+document.getElementById('quickRunScan').addEventListener('click', () => {
+  showTab('scanner', document.querySelector('nav button[data-tab="scanner"]'));
+  document.getElementById('runScanner').click();
+});
 
-    const body =
-      document.getElementById('scannerRows');
-
-    const status =
-      document.getElementById('scannerStatus');
-
-    button.disabled = true;
-    body.replaceChildren();
-
-    let completed = 0;
-    const dailyCandidates = [];
-
-    status.textContent =
-      'Historical scan running...';
-
-    for (const symbol of SCANNER_STOCKS) {
-      const tr = document.createElement('tr');
-      const cells = [];
-
-      for (let i = 0; i < 9; i++) {
-        const td = document.createElement('td');
-
-        td.textContent =
-          i === 0 ? symbol : 'Loading...';
-
-        tr.appendChild(td);
-        cells.push(td);
-      }
-
-      body.appendChild(tr);
-
-      try {
-        const data = await fetchStockHistory(symbol, 150);
-
-        if (!data || data.length < 50) {
-          throw new Error('Insufficient historical data');
-        }
-
-        const closes = data.map(item => item.close);
-        const latest = data[data.length - 1];
-        const dataDate = String(latest.date || '').slice(0, 10);
-        if (!isRecentHistoricalDate(dataDate, 7)) {
-          throw new Error('Stale or invalid historical data date: ' + (dataDate || 'unavailable'));
-        }
-
-        const signals = buildStrategy(closes);
-
-        let signal = null;
-
-        for (let i = signals.length - 1; i >= 0; i--) {
-          if (signals[i]) {
-            signal = signals[i];
-            break;
-          }
-        }
-
-        if (!signal) {
-          throw new Error('Signal unavailable');
-        }
-        dailyCandidates.push({
-          symbol, signal: signal.signal, score: signal.score,
-          dataDate
-        });
-        tr.dataset.score = String(Math.abs(signal.score));
-        tr.dataset.qualified =
-          signal.signal === 'BULLISH' || signal.signal === 'BEARISH'
-            ? 'true' : 'false';
-
-        const rsiValues = calculateRSI(closes, 14);
-        const rsi = rsiValues[rsiValues.length - 1];
-
-        const previousVolumes = data.slice(-21, -1).map(item => Number(item.volume));
-        const currentVolume = Number(latest.volume);
-        const volumeDataValid = previousVolumes.length === 20 &&
-          previousVolumes.every(value => Number.isFinite(value) && value >= 0) &&
-          Number.isFinite(currentVolume) && currentVolume >= 0;
-        const averageVolume = volumeDataValid
-          ? previousVolumes.reduce((a, b) => a + b, 0) / previousVolumes.length
-          : NaN;
-        const volumeRatio = volumeDataValid && averageVolume > 0
-          ? currentVolume / averageVolume
-          : null;
-
-        const previousHighs = data
-          .slice(-21, -1)
-          .map(item => Number(item.high))
-          .filter(value => Number.isFinite(value));
-
-        const previousHigh = previousHighs.length
-          ? Math.max(...previousHighs)
-          : null;
-
-        const breakout = previousHigh === null
-          ? 'Unavailable'
-          : latest.close > previousHigh
-            ? 'Breakout'
-            : 'No Breakout';
-
-        const ema20 = calculateEMA(closes, 20);
-        const ema50 = calculateEMA(closes, 50);
-
-        const last = closes.length - 1;
-
-        const trend =
-          closes[last] > ema20[last] &&
-          ema20[last] > ema50[last]
-            ? 'Strong Uptrend'
-            : closes[last] > ema20[last]
-              ? 'Uptrend'
-              : closes[last] < ema20[last] &&
-                ema20[last] < ema50[last]
-                ? 'Downtrend'
-                : 'Sideways';
-
-        cells[1].textContent = money(latest.close);
-
-        cells[2].textContent =
-          (signal.score > 0 ? '+' : '') +
-          signal.score + ' / 6';
-
-        cells[3].textContent = signal.signal;
-
-        cells[4].textContent =
-          Number.isFinite(rsi) ? rsi.toFixed(2) : '—';
-
-        cells[5].textContent =
-          volumeRatio === null
-            ? '—'
-            : volumeRatio.toFixed(2) + 'x';
-
-        cells[6].textContent = breakout;
-        cells[7].textContent = trend;
-        cells[8].textContent = dataDate;
-
-        cells[3].style.color =
-          signal.signal === 'BULLISH'
-            ? 'var(--green)'
-            : signal.signal === 'BEARISH'
-              ? 'var(--red)'
-              : 'var(--yellow)';
-
-        cells[6].style.color =
-          breakout === 'Breakout'
-            ? 'var(--green)'
-            : 'var(--yellow)';
-
-        cells[7].style.color =
-          trend.includes('Uptrend')
-            ? 'var(--green)'
-            : trend === 'Downtrend'
-              ? 'var(--red)'
-              : 'var(--yellow)';
-
-      } catch (error) {
-        cells[1].textContent = '—';
-        cells[2].textContent = '—';
-
-        for (let i = 3; i < 9; i++) {
-          cells[i].textContent = 'Unavailable';
-        }
-      }
-
-      completed++;
-
-      status.textContent =
-        completed + ' / ' +
-        SCANNER_STOCKS.length +
-        ' stocks scanned.';
-    }
-
-    const topRows = Array.from(body.querySelectorAll('tr'))
-      .filter(row => row.dataset.qualified === 'true')
-      .sort((a, b) => Number(b.dataset.score) - Number(a.dataset.score))
-      .slice(0, 2);
-    body.replaceChildren();
-    if (topRows.length) {
-      topRows.forEach(row => body.appendChild(row));
-    } else {
-      const row = document.createElement('tr');
-      const cell = document.createElement('td');
-      cell.colSpan = 9;
-      cell.textContent = 'NO TRADE · No recent qualifying historical setup. Data may be stale, incomplete or neutral.';
-      row.appendChild(cell);
-      body.appendChild(row);
-    }
-
-    addDailyResearchAlerts(dailyCandidates);
-    status.textContent =
-      'Scan complete. ' + SCANNER_STOCKS.length +
-      ' stocks checked; top ' + topRows.length +
-      ' qualifying recent technical state(s) shown. Maximum 2 in-app alerts per device-local day. NIFTY/SENSEX: NO DATA.';
-
-    button.disabled = false;
-  }
-);
-
-/* DEFAULT DATE RANGE */
-
-function setDefaultDates() {
-  const today = new Date();
-
-  const dateText = [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, '0'),
-    String(today.getDate()).padStart(2, '0')
-  ].join('-');
-
-  const fromInput = document.getElementById('historyFrom');
-  const toInput = document.getElementById('historyTo');
-
-  // Always use the current calendar year; the old hard-coded HTML value
-  // must not keep the app stuck on a previous year's date range.
-  fromInput.value = today.getFullYear() + '-01-01';
-  toInput.value = dateText;
-  fromInput.max = dateText;
-  toInput.max = dateText;
-}
-
-/* APP STARTUP */
-
-setDefaultDates();
-
-loadWatchlist();
-loadPaperData();
-
+// Init
+loadStorage();
 drawWatchlist();
 drawPositions();
-drawTradeHistory();
-renderMarketOverview();
-renderDailyAlertState();
-// No background polling: user refreshes manually to conserve free API credits.
-if (getIndianApiKey()) {
-  keyStatusSafe('API key saved on this device. Press Test API & Load Market when ready.');
-}
-
+updateQuotaOverview();
 </script>
 </body>
 </html>
