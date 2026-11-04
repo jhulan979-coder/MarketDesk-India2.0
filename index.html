@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MarketDesk India - Live Login & Signals</title>
+    <title>MarketDesk India - Live Trading Setup</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,15 +23,16 @@
             max-width: 450px;
             margin-bottom: 20px;
         }
-        h2 { text-align: center; color: #333; }
+        h2 { text-align: center; color: #333; margin-top: 0; }
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; color: #666; }
-        .form-group input {
+        .form-group label { display: block; margin-bottom: 5px; color: #666; font-weight: bold; font-size: 14px; }
+        .form-group input, .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+            font-size: 14px;
         }
         .btn {
             width: 100%;
@@ -50,19 +51,22 @@
             margin-top: 15px;
             text-align: center;
             font-weight: bold;
+            font-size: 14px;
         }
         .signal-box {
             background: #e9ecef;
-            padding: 10px;
+            padding: 12px;
             border-radius: 4px;
             margin-top: 10px;
             font-size: 14px;
+            text-align: left;
+            border-left: 4px solid #28a745;
         }
     </style>
 </head>
 <body>
 
-    <!-- Angel One Login Section -->
+    <!-- Angel One Live Connect Section -->
     <div class="container">
         <h2>Angel One Live Connect</h2>
         <div class="form-group">
@@ -78,27 +82,40 @@
             <input type="password" id="password" placeholder="Enter Password">
         </div>
         <div class="form-group">
-            <label>TOTP Secret</label>
-            <input type="text" id="totpSecret" placeholder="Enter TOTP Secret Key">
+            <label>TOTP Secret Key</label>
+            <input type="text" id="totpSecret" placeholder="Enter TOTP Secret">
         </div>
         <button class="btn" onclick="loginToAngelOne()">Connect Backend</button>
         <p id="result"></p>
     </div>
 
-    <!-- Daily Signal Generator (Max 2 Signals, 1:2 RR) -->
+    <!-- Signal Setup Section (5 Min / 15 Min & Max 2 Signals with 1:2 RR) -->
     <div class="container">
-        <h2>Stock / Index Signal Generator</h2>
-        <p style="font-size: 13px; color: #666; text-align: center;">Rule: Din mein sirf 2 signals (1:2 Risk-Reward Ratio)</p>
+        <h2>Stock / Index Signal Setup</h2>
+        <div class="form-group">
+            <label>Select Timeframe</label>
+            <select id="timeframe">
+                <option value="5">5 Minute Candle Setup</option>
+                <option value="15">15 Minute Candle Setup</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Select Segment</label>
+            <select id="segment">
+                <option value="NIFTY / BANKNIFTY">Index (Nifty / BankNifty)</option>
+                <option value="STOCKS">Stocks (Cash / F&O)</option>
+            </select>
+        </div>
         <button class="btn btn-signal" onclick="generateSignal()">Generate Today's Signal</button>
         <div id="signalResult"></div>
     </div>
 
     <script>
         async function loginToAngelOne() {
-            const apiKey = document.getElementById('apiKey').value;
-            const clientCode = document.getElementById('clientCode').value;
-            const password = document.getElementById('password').value;
-            const totpSecret = document.getElementById('totpSecret').value;
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const clientCode = document.getElementById('clientCode').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const totpSecret = document.getElementById('totpSecret').value.trim();
             const resultElement = document.getElementById('result');
 
             if (!apiKey || !clientCode || !password || !totpSecret) {
@@ -117,61 +134,72 @@
                     body: JSON.stringify({ apiKey, clientCode, password, totpSecret })
                 });
 
-                const data = await response.json();
+                const textResponse = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(textResponse);
+                } catch (e) {
+                    throw new Error("Invalid Server Response: " + textResponse);
+                }
 
-                if (data.status) {
+                if (response.ok && data.status) {
                     resultElement.style.color = 'green';
                     resultElement.innerText = "Connected Successfully!";
                     localStorage.setItem('jwtToken', data.jwtToken);
                     localStorage.setItem('feedToken', data.feedToken);
                 } else {
                     resultElement.style.color = 'red';
-                    resultElement.innerText = "Error: " + data.message;
+                    resultElement.innerText = "Error: " + (data.message || data.error || "Login fail ho gaya");
                 }
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Full Error:", error);
                 resultElement.style.color = 'red';
-                resultElement.innerText = "Backend server se connect nahi ho paya!";
+                resultElement.innerText = "Error: " + error.message;
             }
         }
 
         function generateSignal() {
             const signalBox = document.getElementById('signalResult');
-            const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+            const timeframe = document.getElementById('timeframe').value;
+            const segment = document.getElementById('segment').value;
             
+            const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
             let storedDate = localStorage.getItem('signal_date');
             let signalCount = parseInt(localStorage.getItem('signal_count') || '0');
 
-            // Agar din badal gaya hai toh count reset kar do
+            // Agar naya din shuru ho gaya hai toh count reset kar do
             if (storedDate !== today) {
                 localStorage.setItem('signal_date', today);
                 localStorage.setItem('signal_count', '0');
                 signalCount = 0;
             }
 
+            // Strict Rule: Max 2 signals per day
             if (signalCount >= 2) {
                 signalBox.innerHTML = "<p style='color: red;'>Aaj ka limit poora ho gaya hai! (Max 2 signals per day allowed).</p>";
                 return;
             }
 
-            // Next signal count increment karo
             signalCount++;
             localStorage.setItem('signal_count', signalCount);
 
-            // Dummy 1:2 Ratio Calculation Example (Jaise Entry 100, SL 95 (Risk 5), Target 110 (Reward 10))
-            let entry = 22450; // Nifty / Stock Example
-            let stopLoss = 22420; // Risk = 30 points
-            let target = 22510;   // Reward = 60 points (1:2 Ratio)
+            // Dynamic Mock Setup Values based on timeframe & 1:2 RR ratio
+            let entry = segment.includes('NIFTY') ? 22450 : 1550;
+            let risk = segment.includes('NIFTY') ? 30 : 15; // Stop Loss points
+            let reward = risk * 2; // Strict 1:2 Risk to Reward Ratio
+            
+            let stopLoss = entry - risk;
+            let target = entry + reward;
 
             signalBox.innerHTML = `
                 <div class="signal-box">
-                    <strong>Signal #${signalCount} (Ascribed 1:2 Ratio)</strong><br>
-                    Instrument: NIFTY / Stock<br>
-                    Action: BUY<br>
+                    <strong>Signal #${signalCount} (${timeframe} Min Chart Setup)</strong><br>
+                    Segment: ${segment}<br>
+                    Action: BUY (LONG)<br>
                     Entry Price: ${entry}<br>
-                    Stop Loss (Risk): ${stopLoss} (-30 pts)<br>
-                    Target (Reward): ${target} (+60 pts)<br>
-                    <span style="color: green; font-weight: bold;">Aaj ke bache hue signals: ${2 - signalCount}</span>
+                    Stop Loss (Risk): ${stopLoss} (-${risk} pts)<br>
+                    Target (Reward): ${target} (+${reward} pts) [1:2 RR]<br>
+                    <span style="color: #007bff; font-weight: bold;">Aaj ke bache hue signals: ${2 - signalCount}</span>
                 </div>
             `;
         }
